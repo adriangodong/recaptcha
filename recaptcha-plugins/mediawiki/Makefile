@@ -1,6 +1,9 @@
 PLUGINNAME=recaptcha-mediawiki
 VERSION=1.4
 
+DESCRIPTION="reCAPTCHA Plugin for MediaWiki - v$(VERSION)"
+
+
 FILES =						\
 	AUTHORS					\
 	ConfirmEdit.i18n.php			\
