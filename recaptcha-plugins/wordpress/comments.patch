@@ -1,0 +1,21 @@
+--- comments.php	2007-04-19 13:51:29.000000000 -0400
++++ comments.php	2007-04-19 23:06:30.000000000 -0400
+@@ -91,8 +91,17 @@
+ <!--<p><small><strong>XHTML:</strong> You can use these tags: <?php echo allowed_tags(); ?></small></p>-->
+ 
+ <p><textarea name="comment" id="comment" cols="100%" rows="10" tabindex="4"></textarea></p>
++<?php if ( function_exists('recaptcha_wp_show_captcha_for_comment')  && recaptcha_wp_show_captcha_for_comment ()) : ?>
++<script>
++var RecaptchaOptions = {
++   tabindex : 5
++};
++</script>
+ 
+-<p><input name="submit" type="submit" id="submit" tabindex="5" value="Submit Comment" />
++<?php echo recaptcha_wp_get_html () ?>
++<?php endif; // should show captcha ?>
++
++<p><input name="submit" type="submit" id="submit" tabindex="6" value="Submit Comment" />
+ <input type="hidden" name="comment_post_ID" value="<?php echo $id; ?>" />
+ </p>
+ <?php do_action('comment_form', $post->ID); ?>
