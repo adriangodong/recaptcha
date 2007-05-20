@@ -10,3 +10,6 @@ distdir : $(FILES) $(COPYFILES) Makefile ../Makefile.frag
 dist : distdir
 	zip -r $(PLUGINNAME)-$(VERSION).zip $(distdir)
 	rm -rf $(distdir)
+
+googleupload : dist
+	../googlecode-upload.py --project recaptcha --user $(GOOGUSER) --summary $(DESCRIPTION) $(PLUGINNAME)-$(VERSION).zip
