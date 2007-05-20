@@ -243,7 +243,7 @@ function recaptcha_mailhide_url($pubkey, $privkey, $email) {
  * eg, given johndoe@example,com return ["john", "example.com"].
  * the email is then displayed as john...@example.com
  */
-function recaptcha_mailhide_email_parts ($email) {
+function _recaptcha_mailhide_email_parts ($email) {
 	$arr = preg_split("/@/", $email );
 
 	if (strlen ($arr[0]) <= 4) {
@@ -263,7 +263,7 @@ function recaptcha_mailhide_email_parts ($email) {
  * http://mailhide.recaptcha.net/apikey
  */
 function recaptcha_mailhide_html($pubkey, $privkey, $email) {
-	$emailparts = recaptcha_mailhide_email_parts ($email);
+	$emailparts = _recaptcha_mailhide_email_parts ($email);
 	$url = recaptcha_mailhide_url ($pubkey, $privkey, $email);
 	
 	return htmlentities($emailparts[0]) . "<a href='" . htmlentities ($url) .
