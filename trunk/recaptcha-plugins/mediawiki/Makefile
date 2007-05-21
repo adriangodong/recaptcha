@@ -1,5 +1,5 @@
 PLUGINNAME=recaptcha-mediawiki
-VERSION=1.4
+VERSION=1.5
 
 DESCRIPTION="reCAPTCHA Plugin for MediaWiki - v$(VERSION)"
 
