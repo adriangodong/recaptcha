@@ -1,5 +1,5 @@
 PLUGINNAME=recaptcha-wordpress
-VERSION=1.4
+VERSION=1.5
 
 DESCRIPTION="reCAPTCHA Plugin for WordPress - v$(VERSION)"
 
