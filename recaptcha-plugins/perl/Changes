@@ -1,0 +1,24 @@
+Revision history for Captcha-reCAPTCHA
+
+0.1 2007-05-25
+    Initial release.
+
+0.2 2007-05-25
+    Added t/20.check_answer.t, minor doc fixes.
+
+0.3 2007-05-26
+    Minor doc fixes
+
+0.4 2007-05-26
+    Made LWP::UserAgent creation lazy
+    Added Mailhide support
+
+0.5 2007-05-27
+    Added better validation for keys to provide helpful diagnostics in
+    the case where the wrong key is used.
+    Improved test coverage.
+    Added support for generation of RecaptchaOptions options hash.
+
+0.6 2007-05-29
+    Remove key validation code: keys may change format in the future.
+    Switched server error code to 'recaptcha-not-reachable'
