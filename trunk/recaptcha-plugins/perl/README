@@ -1,4 +1,4 @@
-Captcha-reCAPTCHA version 0.6
+Captcha-reCAPTCHA version 0.7
 
 INSTALLATION
 
@@ -15,6 +15,7 @@ DEPENDENCIES
 LWP::UserAgent
 Crypt::Rijndael
 MIME::Base64
+HTML::Tiny
 
 COPYRIGHT AND LICENCE
 

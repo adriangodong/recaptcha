@@ -4,6 +4,7 @@
 use strict;
 use warnings;
 use Captcha::reCAPTCHA;
+use Captcha::reCAPTCHA::Mailhide;
 use CGI::Simple;
 
 # Your reCAPTCHA keys from
@@ -20,6 +21,7 @@ $| = 1;
 
 my $q = CGI::Simple->new;
 my $c = Captcha::reCAPTCHA->new;
+my $m = Captcha::reCAPTCHA::Mailhide->new;
 
 my $error = undef;
 
@@ -57,7 +59,7 @@ EOT
 
 # Output a protected email address
 print "<p>Mail ",
-  $c->mailhide_html( MAIL_PUBLIC_KEY, MAIL_PRIVATE_KEY, 'someone@example.com' ), "</p>\n";
+  $m->mailhide_html( MAIL_PUBLIC_KEY, MAIL_PRIVATE_KEY, 'someone@example.com' ), "</p>\n";
 
 print <<EOT;
   </body>

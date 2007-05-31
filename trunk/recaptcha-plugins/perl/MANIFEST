@@ -1,6 +1,7 @@
 Changes
 examples/captcha.pl
 lib/Captcha/reCAPTCHA.pm
+lib/Captcha/reCAPTCHA/Mailhide.pm
 Makefile.PL
 MANIFEST
 README
@@ -9,6 +10,5 @@ t/10.get_html.t
 t/20.check_answer.t
 t/30.mailhide.t
 t/40.errors.t
-t/50.misc.t
 t/pod-coverage.t
 t/pod.t

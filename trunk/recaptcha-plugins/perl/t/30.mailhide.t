@@ -1,12 +1,13 @@
 use strict;
 use warnings;
-use Test::More tests => 3;
-use Captcha::reCAPTCHA;
+use Test::More tests => 4;
+use Captcha::reCAPTCHA::Mailhide;
 
 use constant PUBKEY  => 'UcV0oq5XNVM01AyYmMNRqvRA==';
 use constant PRIVKEY => 'E542D5DB870FF2D2B9D01070FF04F0C8';
 
-ok my $captcha = Captcha::reCAPTCHA->new, "create ok";
+ok my $captcha = Captcha::reCAPTCHA::Mailhide->new, "create ok";
+isa_ok $captcha, 'Captcha::reCAPTCHA::Mailhide';
 
 my $mh_url = $captcha->mailhide_url( PUBKEY, PRIVKEY, 'someone@example.com' );
 is $mh_url, 'http://mailhide.recaptcha.net/d?c=4jBBJ29mAjTuEk81neCXmYlMeLR6'
