@@ -2,6 +2,7 @@ use strict;
 use warnings;
 use Test::More;
 use Captcha::reCAPTCHA;
+use Captcha::reCAPTCHA::Mailhide;
 
 use constant PUBKEY     => '6LdAAAkAwAAAFJj6ACG3Wlix_GuQJMNGjMQnw5UY';
 use constant PRIVKEY    => '6LdAAAkAwAAAix_GF6AMQnw5UCG3JjWluQJMNGjY';
@@ -13,55 +14,62 @@ my @schedule;
 BEGIN {
     @schedule = (
         {
-            name => 'new: Bad args',
-            try  => sub {
+            name  => 'new: Bad args',
+            class => 'T::Captcha::reCAPTCHA',
+            try   => sub {
                 my $c = Captcha::reCAPTCHA->new( PUBKEY );
             },
             expect => qr/reference to a hash/
         },
         {
-            name => 'get_html: No args',
-            try  => sub {
+            name  => 'get_html: No args',
+            class => 'T::Captcha::reCAPTCHA',
+            try   => sub {
                 my $c = shift;
                 $c->get_html();
             },
             expect => qr/To use reCAPTCHA you must get an API key from/
         },
         {
-            name => 'get_html: No key',
-            try  => sub {
+            name  => 'get_html: No key',
+            class => 'T::Captcha::reCAPTCHA',
+            try   => sub {
                 my $c = shift;
                 $c->get_html( '' );
             },
             expect => qr/To use reCAPTCHA you must get an API key from/
         },
         {
-            name => 'check_answer: No args',
-            try  => sub {
+            name  => 'check_answer: No args',
+            class => 'T::Captcha::reCAPTCHA',
+            try   => sub {
                 my $c = shift;
                 $c->check_answer();
             },
             expect => qr/To use reCAPTCHA you must get an API key from/
         },
         {
-            name => 'check_answer: no ip',
-            try  => sub {
+            name  => 'check_answer: no ip',
+            class => 'T::Captcha::reCAPTCHA',
+            try   => sub {
                 my $c = shift;
                 $c->check_answer( PRIVKEY );
             },
             expect => qr/you must pass the remote ip/
         },
         {
-            name => 'mailhide_html: No args',
-            try  => sub {
+            name  => 'mailhide_html: No args',
+            class => 'Captcha::reCAPTCHA::Mailhide',
+            try   => sub {
                 my $c = shift;
                 $c->mailhide_html();
             },
             expect => qr/you have to sign up for a public and private key/
         },
         {
-            name => 'mailhide_html: No email',
-            try  => sub {
+            name  => 'mailhide_html: No email',
+            class => 'Captcha::reCAPTCHA::Mailhide',
+            try   => sub {
                 my $c = shift;
                 $c->mailhide_html( MH_PUBKEY, MH_PRIVKEY );
             },
@@ -97,8 +105,9 @@ package main;
 
 for my $test ( @schedule ) {
     my $name = $test->{name};
-    ok my $captcha = T::Captcha::reCAPTCHA->new, "$name: create OK";
-    isa_ok $captcha, 'Captcha::reCAPTCHA';
+    my $class = $test->{class};
+    ok my $captcha = $class->new, "$name: create OK";
+    isa_ok $captcha, $class;
     eval { $test->{try}->( $captcha ); };
     if ( my $expect = $test->{expect} ) {
         like $@, $expect, "$name: error OK";

@@ -19,6 +19,7 @@ WriteMakefile(
         'LWP::UserAgent'  => 0,
         'Crypt::Rijndael' => 0,
         'MIME::Base64'    => 0,
+        'HTML::Tiny'      => 'v0.5',
     },
     dist  => { COMPRESS => 'gzip -9f', SUFFIX => 'gz', },
     clean => { FILES    => 'Captcha-reCAPTCHA-*' },

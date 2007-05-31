@@ -22,3 +22,7 @@ Revision history for Captcha-reCAPTCHA
 0.6 2007-05-29
     Remove key validation code: keys may change format in the future.
     Switched server error code to 'recaptcha-not-reachable'
+
+0.7 2007-05-31
+    Switched to HTML::Tiny for markup generation.
+    Split Captcha::reCAPTCHA::Mailhide into a separate module
