@@ -89,7 +89,38 @@ class ReCaptcha extends SimpleCaptcha {
 		$recaptcha_error = null;
                 return true;
 
-	}	
+	}
+
+
+
+        /**
+         * Called on all edit page saves. (EditFilter events)
+         * @return boolean - true if page save should continue, false if should display Captcha widget.
+         */
+        function confirmEdit( &$editPage, $newtext, $section ) {
+                if( $this->shouldCheck( $editPage, $newtext, $section ) ) {
+
+                        if (!isset($_POST['recaptcha_response_field'])) {
+                                //User has not yet been presented with Captcha, show the widget.
+                                $editPage->showEditForm( array( &$this, 'editCallback' ) );
+                                return false;
+                        }
+
+                        if( $this->passCaptcha() ) {
+                                return true;
+                        } else {
+                                //Try again - show the widget
+                                $editPage->showEditForm( array( &$this, 'editCallback' ) );
+                                return false;
+                        }
+
+                } else {
+                        wfDebug( "ConfirmEdit: no need to show captcha.\n" );
+                        return true;
+                }
+        }
+
+	
 
 	/**
 	 * Show a message asking the user to enter a captcha on edit
