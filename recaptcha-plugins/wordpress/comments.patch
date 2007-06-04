@@ -1,9 +1,11 @@
---- comments.php	2007-04-19 13:51:29.000000000 -0400
-+++ comments.php	2007-04-19 23:06:30.000000000 -0400
-@@ -91,8 +91,17 @@
- <!--<p><small><strong>XHTML:</strong> You can use these tags: <?php echo allowed_tags(); ?></small></p>-->
+--- comments.php.orig	2007-04-19 23:52:41.000000000 -0400
++++ comments.php	2007-06-04 17:30:35.000000000 -0400
+@@ -90,9 +90,18 @@
  
- <p><textarea name="comment" id="comment" cols="100%" rows="10" tabindex="4"></textarea></p>
+ <!--<p><small><strong>XHTML:</strong> You can use these tags: <code><?php echo allowed_tags(); ?></code></small></p>-->
+ 
+-<p><textarea name="comment" id="comment" cols="100%" rows="10" tabindex="4"></textarea></p>
++<p><textarea name="comment" id="comment" cols="100%" rows="10" tabindex="4"><?php session_start(); echo stripslashes($_SESSION['recaptcha_saved_comment']); ?></textarea></p>
 +<?php if ( function_exists('recaptcha_wp_show_captcha_for_comment')  && recaptcha_wp_show_captcha_for_comment ()) : ?>
 +<script>
 +var RecaptchaOptions = {
@@ -12,7 +14,7 @@
 +</script>
  
 -<p><input name="submit" type="submit" id="submit" tabindex="5" value="Submit Comment" />
-+<?php echo recaptcha_wp_get_html () ?>
++<?php echo recaptcha_wp_get_html ()  ?>
 +<?php endif; // should show captcha ?>
 +
 +<p><input name="submit" type="submit" id="submit" tabindex="6" value="Submit Comment" />
