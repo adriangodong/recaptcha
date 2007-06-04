@@ -113,7 +113,7 @@ function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false)
 	}
 	
 	if ($use_ssl) {
-           $server = $recaptcha_api_ssl_server;
+           $server = $recaptcha_api_secure_server;
         } else {
            $server = $recaptcha_api_server;
         }
