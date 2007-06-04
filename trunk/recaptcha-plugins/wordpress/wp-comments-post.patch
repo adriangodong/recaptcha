@@ -1,0 +1,37 @@
+--- wp-comments-post.php.orig	2007-06-04 11:48:33.000000000 -0400
++++ wp-comments-post.php	2007-06-04 17:41:34.000000000 -0400
+@@ -60,18 +60,24 @@
+ 
+ $commentdata = compact('comment_post_ID', 'comment_author', 'comment_author_email', 'comment_author_url', 'comment_content', 'comment_type', 'user_ID');
+ 
+-$comment_id = wp_new_comment( $commentdata );
+-
+-$comment = get_comment($comment_id);
+-if ( !$user->ID ) :
+-	setcookie('comment_author_' . COOKIEHASH, $comment->comment_author, time() + 30000000, COOKIEPATH, COOKIE_DOMAIN);
+-	setcookie('comment_author_email_' . COOKIEHASH, $comment->comment_author_email, time() + 30000000, COOKIEPATH, COOKIE_DOMAIN);
+-	setcookie('comment_author_url_' . COOKIEHASH, clean_url($comment->comment_author_url), time() + 30000000, COOKIEPATH, COOKIE_DOMAIN);
++if ( !$user->ID ) : 
++	setcookie('comment_author_' . COOKIEHASH, $comment_author, time() + 30000000, COOKIEPATH, COOKIE_DOMAIN);
++        setcookie('comment_author_email_' . COOKIEHASH, $comment_author_email, time() + 30000000, COOKIEPATH, COOKIE_DOMAIN);
++        setcookie('comment_author_url_' . COOKIEHASH, clean_url($comment_author_url), time() + 30000000, COOKIEPATH, COOKIE_DOMAIN);
+ endif;
+ 
+-$location = ( empty($_POST['redirect_to']) ? get_permalink($comment_post_ID) : $_POST['redirect_to'] ) . '#comment-' . $comment_id;
+-$location = apply_filters('comment_post_redirect', $location, $comment);
++session_start();
++if (!recaptcha_wp_check_comment($commentdata)) { 
++	$_SESSION['recaptcha_saved_comment'] = $comment_content;
++	$location = ( empty($_POST['redirect_to']) ? get_permalink($comment_post_ID) : $_POST['redirect_to'] ) . '#comment';
++} else { 
++	
++	$comment_id = wp_new_comment( $commentdata );
++	$comment = get_comment($comment_id);
++	$_SESSION['recaptcha_saved_comment'] = '';
++	$location = ( empty($_POST['redirect_to']) ? get_permalink($comment_post_ID) : $_POST['redirect_to'] ) . '#comment-' . $comment_id;
+ 
++}
++$location = apply_filters('comment_post_redirect', $location, $comment);
+ wp_redirect($location);
+-
+ ?>
