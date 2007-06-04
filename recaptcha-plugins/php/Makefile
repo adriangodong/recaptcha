@@ -1,5 +1,5 @@
 PLUGINNAME=recaptcha-php
-VERSION=1.6
+VERSION=1.7
 
 DESCRIPTION="reCAPTCHA Library for PHP - v$(VERSION)"
 
