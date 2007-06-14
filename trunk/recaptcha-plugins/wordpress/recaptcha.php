@@ -3,31 +3,65 @@
 Plugin Name: reCAPTCHA
 Plugin URI: http://recaptcha.net/plugins/wordpress
 Description: Integrates a reCAPTCHA with wordpress
-Version: 1.0
+Version: 2.0
 Author: Ben Maurer
+Email: support@recaptcha.net
 Author URI: http://bmaurer.blogspot.com
 */
 
 require_once ('recaptchalib.php');
 $recaptcha_opt = get_option('plugin_recaptcha');
+session_start();
 
 
 function recaptcha_wp_get_html () 
 {
 	global $recaptcha_opt;
-	return recaptcha_get_html ($recaptcha_opt ['pubkey'],null);
+		
+	if (isset($_SESSION['comment_recaptcha_error']) && strlen($_SESSION['comment_recaptcha_error']) > 0) {
+		return recaptcha_get_html($recaptcha_opt ['pubkey'],$_SESSION['comment_recaptcha_error']);
+	} else {
+		return recaptcha_get_html($recaptcha_opt ['pubkey'],null);
+	}
 }
+
+/**
+ *  Embeds the reCAPTCHA widget into the comment form.
+ * 
+ */	
+function recaptcha_comment_form() {
+
+	//modify the comment form for the reCAPTCHA widget 
+	$comment_string = <<<COMMENT_FORM
+		<div id="recaptcha-submit-btn-area"></div> 
+		<script type='text/javascript'>
+		var sub = document.getElementById('submit');
+		sub.parentNode.removeChild(sub);
+		document.getElementById('recaptcha-submit-btn-area').appendChild (sub);
+		</script>
+		<noscript>
+		 <style type='text/css'>#submit {display:none;}</style>
+		 <input name="submit" type="submit" id="submit-alt" tabindex="6" value="Submit Comment"/> 
+		</noscript>
+COMMENT_FORM;
+	echo recaptcha_wp_get_html() . $comment_string;
+}
+
+
+add_action( 'comment_form', 'recaptcha_comment_form' );
+
 
 function recaptcha_wp_show_captcha_for_comment () {
-	global $user_ID;
-
-	/*	if (isset ($user_ID)) {
-		return false;
-		}*/
-
-	return true;
+        global $user_ID;
+        return true;
 }
 
+
+/**
+ * Checks if the reCAPTCHA guess was correct and sets an error session variable if not
+ * @param array $comment_data
+ * @return array $comment_data
+ */
 function recaptcha_wp_check_comment($comment_data) {
 
 	global $user_ID, $recaptcha_opt;
@@ -40,19 +74,94 @@ function recaptcha_wp_check_comment($comment_data) {
 		
 			$recaptcha_response = recaptcha_check_answer ($recaptcha_opt ['privkey'], $_SERVER['REMOTE_ADDR'], $challenge, $response);
 			if ($recaptcha_response->is_valid) {
+				$_SESSION['comment_recaptcha_error'] = '';
 				return $comment_data;
 			}
 			else {
-				//TODO - Pass the error ($recaptcha_response->error) to the widget so it can display the error message. 
-				wp_die( __('CAPTCHA answer incorrect.  Use your browser\'s back button to try again.') );	
+				$_SESSION['comment_recaptcha_error'] = $recaptcha_response->error;
+				$_SESSION['recaptcha_saved_comment'] = $comment_data['comment_content'];
+				$comment_data['comment_approved'] = false;
+				return $comment_data;
 			}
 		}
-		
 	}
-	
 	return $comment_data;
-	
 }
+
+
+/*
+ * If the reCAPTCHA guess was incorrect from recaptcha_wp_check_comment, then the comment is not approved 
+ * @param boolean $approved
+ * @return boolean $approved
+ */
+function recaptcha_wp_check_approved($approved) {
+	if (isset($_SESSION['comment_recaptcha_error']) && strlen($_SESSION['comment_recaptcha_error']) > 0) {
+		return false;
+	} else {
+		return $approved;
+	}
+}
+
+
+
+/*
+ * If the reCAPTCHA guess was incorrect from recaptcha_wp_check_comment, then redirect back to the comment form 
+ * @param string $location
+ * @param OBJECT $comment
+ * @return string $location
+ */
+function recaptcha_wp_relative_redirect($location, $comment) {
+        if (isset($_SESSION['comment_recaptcha_error']) && strlen($_SESSION['comment_recaptcha_error']) > 0) {
+		//replace the '#comment-' chars on the end of $location with '#commentform'.
+		$location = substr($location, 0,strrpos($location, '#')) . '#commentform';
+
+		//delete the comment that was saved to the db
+		wp_delete_comment($comment->comment_ID);	
+		
+
+        } else {
+		$_SESSION['recaptcha_saved_comment'] = '';
+	}
+		
+	return $location;
+}
+
+
+/*
+ * If the reCAPTCHA guess was incorrect from recaptcha_wp_check_comment, then insert their saved comment text
+ * back in the comment form. 
+ * @param boolean $approved
+ * @return boolean $approved
+ */
+function recaptcha_wp_saved_comment() {
+	if ( !is_single() && !is_page() )
+		return;
+
+        if (isset($_SESSION['comment_recaptcha_error']) && strlen($_SESSION['comment_recaptcha_error']) > 0) {
+		if (isset($_SESSION['recaptcha_saved_comment']) && strlen($_SESSION['recaptcha_saved_comment'])) {
+			echo "<script type='text/javascript'>
+        			function addLoadEvent(func) {
+                			var oldonload = window.onload;
+			                if (typeof window.onload != 'function') {
+                        			window.onload = func;
+			                } else {
+                        			window.onload = function() {
+			                                oldonload();
+        	        			        func();
+                        			}
+                			}
+        			}
+
+			        function insertSavedComment() {
+		        	        var commentText = document.getElementById('comment');
+					commentText.value = '" . stripslashes($_SESSION[recaptcha_saved_comment]) . "';
+				}
+        			addLoadEvent(insertSavedComment);
+			     </script>";
+		}
+	}
+}
+
 
 function recaptcha_wp_blog_domain ()
 {
@@ -60,8 +169,10 @@ function recaptcha_wp_blog_domain ()
 	return $uri['host'];
 }
 
-add_filter('preprocess_comment', 'recaptcha_wp_check_comment', 0);
-
+add_filter('wp_head', 'recaptcha_wp_saved_comment',0);
+add_filter('preprocess_comment', 'recaptcha_wp_check_comment',0);
+add_filter('pre_comment_approved','recaptcha_wp_check_approved',0);
+add_filter('comment_post_redirect', 'recaptcha_wp_relative_redirect',0,2);
 
 function recaptcha_wp_add_options_to_admin() {
     if (function_exists('add_options_page')) {
@@ -96,6 +207,7 @@ function recaptcha_wp_options_subpanel() {
 <!-- ############################## BEGIN: ADMIN OPTIONS ################### -->
 <div class="wrap">
 
+
 	<h2>reCAPTCHA Options</h2>
 	<p>reCAPTCHA asks commenters to read two words from a book. One of these words proves
 	   that they are a human, not a computer. The other word is a word that a computer couldn't read.
@@ -116,7 +228,7 @@ function recaptcha_wp_options_subpanel() {
 		</p>
 		<label style="font-weight:bold" for="recaptcha_opt_pubkey">Public Key:</label>
 		<br />
-		<input name="recaptcha_opt_pubkey" id="recaptcha_opt_pubkey" size="40" value="<?php  echo $optionarray_def['privkey']; ?>" />
+		<input name="recaptcha_opt_pubkey" id="recaptcha_opt_pubkey" size="40" value="<?php  echo $optionarray_def['pubkey']; ?>" />
 		<label style="font-weight:bold" for="recaptcha_opt_privkey">Private Key:</label>
 		<br />
 		<input name="recaptcha_opt_privkey" id="recaptcha_opt_privkey" size="40" value="<?php  echo $optionarray_def['privkey']; ?>" />
@@ -147,6 +259,7 @@ function recaptcha_wp_options_subpanel() {
 ============================================================================= */
 
 add_action('admin_menu', 'recaptcha_wp_add_options_to_admin');
+
 
 if ( !($recaptcha_opt ['pubkey'] && $recaptcha_opt['privkey'] ) && !isset($_POST['submit']) ) {
         function recaptcha_warning() {
