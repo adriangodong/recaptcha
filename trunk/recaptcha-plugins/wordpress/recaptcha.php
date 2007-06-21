@@ -3,15 +3,14 @@
 Plugin Name: reCAPTCHA
 Plugin URI: http://recaptcha.net/plugins/wordpress
 Description: Integrates a reCAPTCHA with wordpress
-Version: 2.1
-Author: Ben Maurer
+Version: 2.2
+Author: Ben Maurer & Mike Crawford
 Email: support@recaptcha.net
 Author URI: http://bmaurer.blogspot.com
 */
 
-require_once ('recaptchalib.php');
+require_once (dirname(__FILE__) . '/recaptchalib.php');
 $recaptcha_opt = get_option('plugin_recaptcha');
-
 
 function recaptcha_wp_get_html ($recaptcha_error) 
 {
@@ -28,10 +27,14 @@ function recaptcha_comment_form() {
 	$comment_string = <<<COMMENT_FORM
 		<div id="recaptcha-submit-btn-area"></div> 
 		<script type='text/javascript'>
-		var sub = document.getElementById('submit');
-		sub.parentNode.removeChild(sub);
-		document.getElementById('recaptcha-submit-btn-area').appendChild (sub);
-		document.getElementById('submit').tabIndex = 6;
+			var sub = document.getElementById('submit');
+			sub.parentNode.removeChild(sub);
+			document.getElementById('recaptcha-submit-btn-area').appendChild (sub);
+			document.getElementById('submit').tabIndex = 6;
+	                var RecaptchaOptions = {
+                        	theme : 'red',
+                       	 	tabindex : 5
+			};
 		</script>
 		<noscript>
 		 <style type='text/css'>#submit {display:none;}</style>
@@ -71,6 +74,7 @@ function recaptcha_wp_check_comment($comment_data) {
 				return $comment_data;
 			}
 			else {
+				//save the reCAPTCHA error with the comment in the db to avoid using $_SESSION to save state
 				$comment_data['comment_content'] = $comment_data['comment_content'] . "reCAPTCHA WP Error:" . $recaptcha_response->error;
 				$comment_data['comment_approved'] = false;
 				return $comment_data;
@@ -108,7 +112,7 @@ function recaptcha_wp_relative_redirect($location, $comment) {
 function recaptcha_wp_saved_comment() {
 	if ( !is_single() && !is_page() )
 		return;
-	
+	global $recaptcha_error;
 
 	if ($_GET['rcommentid']) {
 		$comment = get_comment($_GET['rcommentid']);
@@ -127,8 +131,9 @@ function recaptcha_wp_saved_comment() {
         			}
 
 			        function insertSavedComment() {
-		        	        var commentText = document.getElementById('comment');
-					commentText.value = '" . addslashes(substr($comment->comment_content, 0, strpos($comment->comment_content, 'reCAPTCHA WP Error:'))) . "';
+					var commentText = document.getElementById('comment');
+					commentText.value = '" . rawurlencode(substr($comment->comment_content, 0, strpos($comment->comment_content, 'reCAPTCHA WP Error:'))) ."' ;
+					commentText.value = unescape(commentText.value);
 				}
         			addLoadEvent(insertSavedComment);
 			     </script>";
@@ -136,6 +141,7 @@ function recaptcha_wp_saved_comment() {
 	}
 
 }
+
 
 
 function recaptcha_wp_blog_domain ()
