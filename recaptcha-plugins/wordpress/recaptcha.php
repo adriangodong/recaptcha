@@ -3,7 +3,7 @@
 Plugin Name: reCAPTCHA
 Plugin URI: http://recaptcha.net/plugins/wordpress
 Description: Integrates a reCAPTCHA with wordpress
-Version: 2.2
+Version: 2.3
 Author: Ben Maurer & Mike Crawford
 Email: support@recaptcha.net
 Author URI: http://bmaurer.blogspot.com
@@ -35,6 +35,9 @@ function recaptcha_comment_form() {
                         	theme : 'red',
                        	 	tabindex : 5
 			};
+			if ( typeof _recaptcha_wordpress_savedcomment != 'undefined') {
+				document.getElementById('comment').value = _recaptcha_wordpress_savedcomment;
+			}
 		</script>
 		<noscript>
 		 <style type='text/css'>#submit {display:none;}</style>
@@ -116,28 +119,11 @@ function recaptcha_wp_saved_comment() {
 
 	if ($_GET['rcommentid']) {
 		$comment = get_comment($_GET['rcommentid']);
-
-			echo "<script type='text/javascript'>
-        			function addLoadEvent(func) {
-                			var oldonload = window.onload;
-			                if (typeof window.onload != 'function') {
-                        			window.onload = func;
-			                } else {
-                        			window.onload = function() {
-			                                oldonload();
-        	        			        func();
-                        			}
-                			}
-        			}
-
-			        function insertSavedComment() {
-					var commentText = document.getElementById('comment');
-					commentText.value = '" . rawurlencode(substr($comment->comment_content, 0, strpos($comment->comment_content, 'reCAPTCHA WP Error:'))) ."' ;
-					commentText.value = unescape(commentText.value);
-				}
-        			addLoadEvent(insertSavedComment);
-			     </script>";
-		wp_delete_comment($comment->comment_ID);
+		echo "<script type='text/javascript'>
+			var _recaptcha_wordpress_savedcomment =  '" . rawurlencode(substr($comment->comment_content, 0, strpos($comment->comment_content, 'reCAPTCHA WP Error:'))) ."';
+			_recaptcha_wordpress_savedcomment = unescape(_recaptcha_wordpress_savedcomment);
+		      </script>";
+		wp_delete_comment($comment->comment_ID);	
 	}
 
 }
