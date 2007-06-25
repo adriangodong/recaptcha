@@ -1,5 +1,5 @@
---- usercp_register.php.orig	2007-05-08 13:58:23.000000000 -0400
-+++ usercp_register.php	2007-05-10 10:44:44.000000000 -0400
+--- usercp_register.php.orig	2007-06-25 15:20:20.953211000 -0700
++++ usercp_register.php	2007-06-25 15:18:57.237525000 -0700
 @@ -6,7 +6,7 @@
   *   copyright            : (C) 2001 The phpBB Group
   *   email                : support@phpbb.com
@@ -109,7 +109,7 @@
  	if( $mode == 'editprofile' )
  	{
  		$s_hidden_fields .= '<input type="hidden" name="user_id" value="' . $userdata['user_id'] . '" />';
-@@ -952,70 +909,12 @@
+@@ -952,70 +909,11 @@
  
  
  	// Visual Confirmation
@@ -182,7 +182,7 @@
  		$template->assign_block_vars('switch_confirm', array());
  	}
  
-@@ -1033,7 +932,7 @@
+@@ -1033,7 +931,7 @@
  		'NEW_PASSWORD' => isset($new_password) ? $new_password : '',
  		'PASSWORD_CONFIRM' => isset($password_confirm) ? $password_confirm : '',
  		'EMAIL' => isset($email) ? $email : '',
