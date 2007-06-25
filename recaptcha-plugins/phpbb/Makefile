@@ -1,5 +1,5 @@
 PLUGINNAME=recaptcha-phpbb
-VERSION=1.6
+VERSION=1.7
 
 DESCRIPTION="reCAPTCHA Plugin for phpBB - v$(VERSION)"
 
