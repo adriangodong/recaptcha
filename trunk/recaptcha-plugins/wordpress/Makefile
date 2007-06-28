@@ -4,7 +4,6 @@ VERSION=2.4
 DESCRIPTION="reCAPTCHA Plugin for WordPress - v$(VERSION)"
 
 FILES  =					\
-	comments.patch				\
 	LICENSE					\
 	README					\
 	recaptcha.php
