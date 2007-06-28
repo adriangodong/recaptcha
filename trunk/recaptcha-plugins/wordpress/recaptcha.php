@@ -3,7 +3,7 @@
 Plugin Name: reCAPTCHA
 Plugin URI: http://recaptcha.net/plugins/wordpress
 Description: Integrates a reCAPTCHA with wordpress
-Version: 2.4
+Version: 2.5
 Author: Ben Maurer & Mike Crawford
 Email: support@recaptcha.net
 Author URI: http://bmaurer.blogspot.com
@@ -117,7 +117,8 @@ function recaptcha_wp_relative_redirect($location, $comment) {
 		//replace the '#comment-' chars on the end of $location with '#commentform'.
 
 		$location = substr($location, 0,strrpos($location, '#')) .
-			'&rcommentid=' . $comment->comment_ID . 
+			((strrpos($location, "?") === false) ? "?" : "&") .
+			'rcommentid=' . $comment->comment_ID . 
 			'&rerror=' . $recaptcha_saved_error .
 			'&rchash=' . recaptcha_wp_hash_comment ($comment->comment_ID) . 
 			'#commentform';
