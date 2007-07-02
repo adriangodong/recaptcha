@@ -1,3 +1,5 @@
+// MIT License:
+
 //Copyright (c) 2007 Adrian Godong
 
 //Permission is hereby granted, free of charge, to any person obtaining a copy
@@ -20,6 +22,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Configuration;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -27,7 +30,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace Recaptcha
+namespace WebVenture.Library.CommonUI
 {
   [DefaultProperty("Text")]
   [ToolboxData("<{0}:RecaptchaControl runat=server />")]
@@ -44,6 +47,12 @@ namespace Recaptcha
     private Boolean isSecure;
     private String error = "";
     private RecaptchaTheme theme;
+
+    public RecaptchaControl()
+    {
+      this.publicKey = ConfigurationManager.AppSettings["RecaptchaPublicKey"];
+      this.privateKey = ConfigurationManager.AppSettings["RecaptchaPrivateKey"];
+    }
 
     protected override void OnInit(EventArgs e)
     {
@@ -181,6 +190,7 @@ namespace Recaptcha
       request.Method = "POST";
 
       request.ContentType = "application/x-www-form-urlencoded";
+
 
       String postData = String.Format("privatekey={0}&remoteip={1}&challenge={2}&response={3}",
       this.PrivateKey,
