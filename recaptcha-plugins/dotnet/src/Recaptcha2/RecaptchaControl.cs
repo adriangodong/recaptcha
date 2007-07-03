@@ -32,8 +32,7 @@ using System.Web.UI.WebControls;
 
 namespace WebVenture.Library.CommonUI
 {
-  [DefaultProperty("Text")]
-  [ToolboxData("<{0}:RecaptchaControl runat=server />")]
+  [ToolboxData("<{0}:RecaptchaControl Theme=red runat=server />")]
   public class RecaptchaControl : WebControl, IValidator
   {
     private const string RECAPTCHA_CHALLENGE_FIELD = "recaptcha_challenge_field";
@@ -221,7 +220,7 @@ namespace WebVenture.Library.CommonUI
       }
       finally
       {
-        httpResponse.Close();
+        if (httpResponse != null) httpResponse.Close();
       }
 
       switch (results[0])
@@ -242,7 +241,7 @@ namespace WebVenture.Library.CommonUI
       StringBuilder urlBuilder = new StringBuilder();
       urlBuilder.Append(this.isSecure ? this.secureApiBaseUrl : this.standardApiBaseUrl);
       //TODO: add validation if last character is "/", move to property when set
-      urlBuilder.Append(noScript ? "/noscript?" : "/challenge?"); //TODO: customize "challenge" text
+      urlBuilder.Append(noScript ? "/noscript?" : "/challenge?");
       urlBuilder.AppendFormat("k={0}&error={1}", this.publicKey, this.error);
       return urlBuilder.ToString();
     }
