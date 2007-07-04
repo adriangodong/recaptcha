@@ -35,6 +35,7 @@ namespace WebVenture.Library.CommonUI
   [ToolboxData("<{0}:RecaptchaControl Theme=red runat=server />")]
   public class RecaptchaControl : WebControl, IValidator
   {
+    #region Private Fields
     private const string RECAPTCHA_CHALLENGE_FIELD = "recaptcha_challenge_field";
     private const string RECAPTCHA_RESPONSE_FIELD = "recaptcha_response_field";
 
@@ -46,6 +47,8 @@ namespace WebVenture.Library.CommonUI
     private Boolean isSecure;
     private String error = "";
     private RecaptchaTheme theme;
+    private Boolean useExpect100Continue;
+    #endregion
 
     public RecaptchaControl()
     {
@@ -102,6 +105,15 @@ namespace WebVenture.Library.CommonUI
     {
       get { return base.TabIndex; }
       set { base.TabIndex = value; }
+    }
+
+    [Category("Settings")]
+    [DefaultValue(true)]
+    [Description("Set this to false if having 417 errors.")]
+    public Boolean UseExpect100Continue
+    {
+      get { return this.useExpect100Continue; }
+      set { this.useExpect100Continue = value; }
     }
     #endregion
 
@@ -185,11 +197,11 @@ namespace WebVenture.Library.CommonUI
     #region Private Methods
     private void DoValidation()
     {
+      ServicePointManager.Expect100Continue = this.useExpect100Continue;
       WebRequest request = WebRequest.Create(GenerateVerifyUrl());
       request.Method = "POST";
 
       request.ContentType = "application/x-www-form-urlencoded";
-
 
       String postData = String.Format("privatekey={0}&remoteip={1}&challenge={2}&response={3}",
       this.PrivateKey,
@@ -217,6 +229,7 @@ namespace WebVenture.Library.CommonUI
       catch (WebException ex) //timeout
       {
         results = new string[] { "false", "recaptcha-not-reachable" };
+        System.Diagnostics.EventLog.WriteEntry("Application", ex.Message, System.Diagnostics.EventLogEntryType.Error);
       }
       finally
       {
@@ -234,6 +247,8 @@ namespace WebVenture.Library.CommonUI
         default:
           throw new InvalidProgramException("Unknown status response.");
       }
+
+      ServicePointManager.Expect100Continue = true;
     }
 
     private string GenerateChallengeUrl(Boolean noScript)
