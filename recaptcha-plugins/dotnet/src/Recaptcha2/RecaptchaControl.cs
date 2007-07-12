@@ -48,6 +48,7 @@ namespace WebVenture.Library.CommonUI
     private String error = "";
     private RecaptchaTheme theme;
     private Boolean useExpect100Continue;
+    private Boolean skipRecaptcha = false;
     #endregion
 
     public RecaptchaControl()
@@ -115,12 +116,22 @@ namespace WebVenture.Library.CommonUI
       get { return this.useExpect100Continue; }
       set { this.useExpect100Continue = value; }
     }
+
+    [Category("Settings")]
+    [DefaultValue(false)]
+    [Description("Set this to true to stop reCAPTCHA validation. Useful for testing platform.")]
+    public Boolean SkipRecaptcha
+    {
+      get { return this.skipRecaptcha; }
+      set { this.skipRecaptcha = value; }
+    }
     #endregion
 
     #region Overriden Methods
     protected override void Render(HtmlTextWriter writer)
     {
-      RenderContents(writer);
+      if (skipRecaptcha) writer.WriteLine("reCAPTCHA validation is skipped. Set SkipRecaptcha property to false to enable validation.");
+      else RenderContents(writer);
     }
 
     protected override void RenderContents(HtmlTextWriter output)
@@ -144,28 +155,28 @@ namespace WebVenture.Library.CommonUI
       output.RenderEndTag();
 
       // <noscript> display
-      output.RenderBeginTag(HtmlTextWriterTag.Noscript);
-      output.Indent++;
-      output.AddAttribute(HtmlTextWriterAttribute.Src, GenerateChallengeUrl(true), false);
-      output.AddAttribute(HtmlTextWriterAttribute.Width, "500");
-      output.AddAttribute(HtmlTextWriterAttribute.Height, "300");
-      output.AddAttribute("frameborder", "0");
-      output.RenderBeginTag(HtmlTextWriterTag.Iframe);
-      output.RenderEndTag();
-      output.RenderBeginTag(HtmlTextWriterTag.Br);
-      output.RenderEndTag();
-      output.AddAttribute(HtmlTextWriterAttribute.Name, "recaptcha_challenge_field");
-      output.AddAttribute(HtmlTextWriterAttribute.Rows, "3");
-      output.AddAttribute(HtmlTextWriterAttribute.Cols, "40");
-      output.RenderBeginTag(HtmlTextWriterTag.Textarea);
-      output.RenderEndTag();
-      output.AddAttribute(HtmlTextWriterAttribute.Name, "recaptcha_response_field");
-      output.AddAttribute(HtmlTextWriterAttribute.Value, "manual_challenge");
-      output.AddAttribute(HtmlTextWriterAttribute.Type, "hidden");
-      output.RenderBeginTag(HtmlTextWriterTag.Input);
-      output.RenderEndTag();
-      output.Indent--;
-      output.RenderEndTag();
+      //output.RenderBeginTag(HtmlTextWriterTag.Noscript);
+      //output.Indent++;
+      //output.AddAttribute(HtmlTextWriterAttribute.Src, GenerateChallengeUrl(true), false);
+      //output.AddAttribute(HtmlTextWriterAttribute.Width, "500");
+      //output.AddAttribute(HtmlTextWriterAttribute.Height, "300");
+      //output.AddAttribute("frameborder", "0");
+      //output.RenderBeginTag(HtmlTextWriterTag.Iframe);
+      //output.RenderEndTag();
+      //output.RenderBeginTag(HtmlTextWriterTag.Br);
+      //output.RenderEndTag();
+      //output.AddAttribute(HtmlTextWriterAttribute.Name, "recaptcha_challenge_field");
+      //output.AddAttribute(HtmlTextWriterAttribute.Rows, "3");
+      //output.AddAttribute(HtmlTextWriterAttribute.Cols, "40");
+      //output.RenderBeginTag(HtmlTextWriterTag.Textarea);
+      //output.RenderEndTag();
+      //output.AddAttribute(HtmlTextWriterAttribute.Name, "recaptcha_response_field");
+      //output.AddAttribute(HtmlTextWriterAttribute.Value, "manual_challenge");
+      //output.AddAttribute(HtmlTextWriterAttribute.Type, "hidden");
+      //output.RenderBeginTag(HtmlTextWriterTag.Input);
+      //output.RenderEndTag();
+      //output.Indent--;
+      //output.RenderEndTag();
     }
     #endregion
 
@@ -175,7 +186,7 @@ namespace WebVenture.Library.CommonUI
       get { return this.error; }
       set
       {
-        throw new Exception("The method or operation is not implemented.");
+
       }
     }
 
@@ -184,13 +195,12 @@ namespace WebVenture.Library.CommonUI
       get { return (error == String.Empty); }
       set
       {
-        throw new Exception("The method or operation is not implemented.");
       }
     }
 
     public void Validate()
     {
-      DoValidation();
+      if (!skipRecaptcha) DoValidation();
     }
     #endregion
 
