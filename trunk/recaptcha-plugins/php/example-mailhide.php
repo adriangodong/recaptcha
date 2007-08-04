@@ -2,7 +2,7 @@
 <?
 require_once ("recaptchalib.php");
 
-// get a key at http://mailhide.recaptcha.net/getkey
+// get a key at http://mailhide.recaptcha.net/apikey
 $mailhide_pubkey = '';
 $mailhide_privkey = '';
 

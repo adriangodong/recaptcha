@@ -35,10 +35,9 @@
 /**
  * The reCAPTCHA server URL's
  */
-$recaptcha_api_server = 'http://api.recaptcha.net';
-$recaptcha_api_secure_server = 'https://api-secure.recaptcha.net';
-$recaptcha_verify_server = 'api-verify.recaptcha.net';
-
+define("RECAPTCHA_API_SERVER", "http://api.recaptcha.net");
+define("RECAPTCHA_API_SECURE_SERVER", "https://api-secure.recaptcha.net");
+define("RECAPTCHA_VERIFY_SERVER", "api-verify.recaptcha.net");
 
 /**
  * Encodes the given data into a query string format
@@ -106,17 +105,16 @@ function _recaptcha_http_post($host, $path, $data, $port = 80) {
  */
 function recaptcha_get_html ($pubkey, $error = null, $use_ssl = false)
 {
-        global $recaptcha_api_server, $recaptcha_api_secure_server;
-
 	if ($pubkey == null || $pubkey == '') {
 		die ("To use reCAPTCHA you must get an API key from <a href='http://recaptcha.net/api/getkey'>http://recaptcha.net/api/getkey</a>");
 	}
 	
 	if ($use_ssl) {
-           $server = $recaptcha_api_secure_server;
+                $server = RECAPTCHA_API_SECURE_SERVER;
         } else {
-           $server = $recaptcha_api_server;
+                $server = RECAPTCHA_API_SERVER;
         }
+
         $errorpart = "";
         if ($error) {
            $errorpart = "&amp;error=" . $error;
@@ -170,8 +168,7 @@ function recaptcha_check_answer ($privkey, $remoteip, $challenge, $response)
                 return $recaptcha_response;
         }
 
-        global $recaptcha_verify_server;
-        $response = _recaptcha_http_post ($recaptcha_verify_server, "/verify",
+        $response = _recaptcha_http_post (RECAPTCHA_VERIFY_SERVER, "/verify",
                                           array (
                                                  'privatekey' => $privkey,
                                                  'remoteip' => $remoteip,
@@ -205,7 +202,11 @@ function recaptcha_get_signup_url ($domain = null, $appname = null) {
 	return "http://recaptcha.net/api/getkey?" .  _recaptcha_qsencode (array ('domain' => $domain, 'app' => $appname));
 }
 
-
+function _recaptcha_aes_pad($val) {
+	$block_size = 16;
+	$numpad = $block_size - (strlen ($val) % $block_size);
+	return str_pad($val, strlen ($val) + $numpad, chr($numpad));
+}
 
 /* Mailhide related code */
 
@@ -215,7 +216,7 @@ function _recaptcha_aes_encrypt($val,$ky) {
 	}
 	$mode=MCRYPT_MODE_CBC;   
 	$enc=MCRYPT_RIJNDAEL_128;
-	$val=str_pad($val, (16*(floor(strlen($val) / 16)+(strlen($val) % 16==0?2:1))), chr(16-(strlen($val) % 16)));
+	$val=_recaptcha_aes_pad($val);
 	return mcrypt_encrypt($enc, $ky, $val, $mode, "\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0");
 }
 
