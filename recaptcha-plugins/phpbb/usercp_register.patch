@@ -1,48 +1,17 @@
 --- usercp_register.php.orig	2007-06-25 15:20:20.953211000 -0700
 +++ usercp_register.php	2007-06-25 15:18:57.237525000 -0700
-@@ -6,7 +6,7 @@
-  *   copyright            : (C) 2001 The phpBB Group
-  *   email                : support@phpbb.com
-  *
-- *   $Id: usercp_register.php,v 1.20.2.78 2006/12/17 10:51:27 acydburn Exp $
-+ *   $Id: usercp_register.php,v 1.20.2.76 2006/05/30 19:29:43 grahamje Exp $
-  *
-  *
-  ***************************************************************************/
 @@ -40,6 +40,11 @@
  	exit;
  }
  
 +require_once('recaptchalib.php');
-+$recaptcha_public_key = '<your_public_key>';
-+$recaptcha_private_key = '<your_private_key>';
++$recaptcha_public_key = ''; # You need to put your public and private key here
++$recaptcha_private_key = '';
 +$recaptcha_code = null;
 +
  $unhtml_specialchars_match = array('#&gt;#', '#&lt;#', '#&quot;#', '#&amp;#');
  $unhtml_specialchars_replace = array('>', '<', '"', '&');
  
-@@ -144,7 +149,6 @@
- 	$notifyreply = ( isset($HTTP_POST_VARS['notifyreply']) ) ? ( ($HTTP_POST_VARS['notifyreply']) ? TRUE : 0 ) : 0;
- 	$notifypm = ( isset($HTTP_POST_VARS['notifypm']) ) ? ( ($HTTP_POST_VARS['notifypm']) ? TRUE : 0 ) : TRUE;
- 	$popup_pm = ( isset($HTTP_POST_VARS['popup_pm']) ) ? ( ($HTTP_POST_VARS['popup_pm']) ? TRUE : 0 ) : TRUE;
--	$sid = (isset($HTTP_POST_VARS['sid'])) ? $HTTP_POST_VARS['sid'] : 0;
- 
- 	if ( $mode == 'register' )
- 	{
-@@ -254,13 +258,6 @@
- {
- 	include($phpbb_root_path . 'includes/usercp_avatar.'.$phpEx);
- 
--	// session id check
--	if ($sid == '' || $sid != $userdata['session_id'])
--	{
--		$error = true;
--		$error_msg .= ( ( isset($error_msg) ) ? '<br />' : '' ) . $lang['Session_invalid'];
--	}
--
- 	$passwd_sql = '';
- 	if ( $mode == 'editprofile' )
- 	{
 @@ -281,53 +278,14 @@
  
  	if ($board_config['enable_confirm'] && $mode == 'register')
@@ -101,14 +70,6 @@
  	}
  
  	$passwd_sql = '';
-@@ -901,7 +859,6 @@
- 	}
- 
- 	$s_hidden_fields = '<input type="hidden" name="mode" value="' . $mode . '" /><input type="hidden" name="agreed" value="true" /><input type="hidden" name="coppa" value="' . $coppa . '" />';
--	$s_hidden_fields .= '<input type="hidden" name="sid" value="' . $userdata['session_id'] . '" />';
- 	if( $mode == 'editprofile' )
- 	{
- 		$s_hidden_fields .= '<input type="hidden" name="user_id" value="' . $userdata['user_id'] . '" />';
 @@ -952,70 +909,11 @@
  
  
