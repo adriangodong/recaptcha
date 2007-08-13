@@ -23,6 +23,7 @@
 using System;
 using System.ComponentModel;
 using System.Configuration;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Text;
@@ -30,18 +31,19 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 
-namespace WebVenture.Library.CommonUI
+namespace Recaptcha2
 {
   [ToolboxData("<{0}:RecaptchaControl Theme=red runat=server />")]
   public class RecaptchaControl : WebControl, IValidator
   {
     #region Private Fields
+
     private const string RECAPTCHA_CHALLENGE_FIELD = "recaptcha_challenge_field";
     private const string RECAPTCHA_RESPONSE_FIELD = "recaptcha_response_field";
 
-    private String standardApiBaseUrl = "http://api.recaptcha.net"; //TODO: create public property
-    private String secureApiBaseUrl = "https://api-secure.recaptcha.net"; //TODO: create public property
-    private String verifyApiUrl = "http://api-verify.recaptcha.net/verify"; //TODO: create public property
+    private readonly String standardApiBaseUrl = "http://api.recaptcha.net"; //TODO: create public property
+    private readonly String secureApiBaseUrl = "https://api-secure.recaptcha.net"; //TODO: create public property
+    private readonly String verifyApiUrl = "http://api-verify.recaptcha.net/verify"; //TODO: create public property
     private String publicKey;
     private String privateKey;
     private Boolean isSecure;
@@ -49,12 +51,13 @@ namespace WebVenture.Library.CommonUI
     private RecaptchaTheme theme;
     private Boolean useExpect100Continue;
     private Boolean skipRecaptcha = false;
+
     #endregion
 
     public RecaptchaControl()
     {
-      this.publicKey = ConfigurationManager.AppSettings["RecaptchaPublicKey"];
-      this.privateKey = ConfigurationManager.AppSettings["RecaptchaPrivateKey"];
+      publicKey = ConfigurationManager.AppSettings["RecaptchaPublicKey"];
+      privateKey = ConfigurationManager.AppSettings["RecaptchaPrivateKey"];
     }
 
     protected override void OnInit(EventArgs e)
@@ -70,34 +73,35 @@ namespace WebVenture.Library.CommonUI
     //}
 
     #region Public Properties
+
     [Category("Settings")]
     public String PublicKey
     {
-      get { return this.publicKey; }
-      set { this.publicKey = value; }
+      get { return publicKey; }
+      set { publicKey = value; }
     }
 
     [Category("Settings")]
     public String PrivateKey
     {
-      get { return this.privateKey; }
-      set { this.privateKey = value; }
+      get { return privateKey; }
+      set { privateKey = value; }
     }
 
     [Category("Settings")]
     [DefaultValue(false)]
     public Boolean IsSecure
     {
-      get { return this.isSecure; }
-      set { this.isSecure = value; }
+      get { return isSecure; }
+      set { isSecure = value; }
     }
 
     [Category("Settings")]
     [DefaultValue(RecaptchaTheme.red)]
     public RecaptchaTheme Theme
     {
-      get { return this.theme; }
-      set { this.theme = value; }
+      get { return theme; }
+      set { theme = value; }
     }
 
     [Category("Settings")]
@@ -113,8 +117,8 @@ namespace WebVenture.Library.CommonUI
     [Description("Set this to false if having 417 errors.")]
     public Boolean UseExpect100Continue
     {
-      get { return this.useExpect100Continue; }
-      set { this.useExpect100Continue = value; }
+      get { return useExpect100Continue; }
+      set { useExpect100Continue = value; }
     }
 
     [Category("Settings")]
@@ -122,109 +126,116 @@ namespace WebVenture.Library.CommonUI
     [Description("Set this to true to stop reCAPTCHA validation. Useful for testing platform.")]
     public Boolean SkipRecaptcha
     {
-      get { return this.skipRecaptcha; }
-      set { this.skipRecaptcha = value; }
+      get { return skipRecaptcha; }
+      set { skipRecaptcha = value; }
     }
+
     #endregion
 
     #region Overriden Methods
+
     protected override void Render(HtmlTextWriter writer)
     {
-      if (skipRecaptcha) writer.WriteLine("reCAPTCHA validation is skipped. Set SkipRecaptcha property to false to enable validation.");
+      if (skipRecaptcha)
+        writer.WriteLine("reCAPTCHA validation is skipped. Set SkipRecaptcha property to false to enable validation.");
       else RenderContents(writer);
     }
 
     protected override void RenderContents(HtmlTextWriter output)
     {
-      // <script> setting
-      output.RenderBeginTag(HtmlTextWriterTag.Script);
-      output.Indent++;
-      output.WriteLine("var RecaptchaOptions = {");
-      output.Indent++;
-      output.WriteLine("theme : '{0}',", this.theme.ToString());
-      output.WriteLine("tabindex : {0}", base.TabIndex);
-      output.Indent--;
-      output.WriteLine("};");
-      output.Indent--;
-      output.RenderEndTag();
+      if (HttpContext.Current.Request.Browser.EcmaScriptVersion.Major > 1)
+      {
+        // <script> setting
+        output.RenderBeginTag(HtmlTextWriterTag.Script);
+        output.Indent++;
+        output.WriteLine("var RecaptchaOptions = {");
+        output.Indent++;
+        output.WriteLine("theme : '{0}',", theme.ToString());
+        output.WriteLine("tabindex : {0}", base.TabIndex);
+        output.Indent--;
+        output.WriteLine("};");
+        output.Indent--;
+        output.RenderEndTag();
 
-      // <script> display
-      output.AddAttribute(HtmlTextWriterAttribute.Type, "text/javascript");
-      output.AddAttribute(HtmlTextWriterAttribute.Src, GenerateChallengeUrl(false), false);
-      output.RenderBeginTag(HtmlTextWriterTag.Script);
-      output.RenderEndTag();
-
-      // <noscript> display
-      //output.RenderBeginTag(HtmlTextWriterTag.Noscript);
-      //output.Indent++;
-      //output.AddAttribute(HtmlTextWriterAttribute.Src, GenerateChallengeUrl(true), false);
-      //output.AddAttribute(HtmlTextWriterAttribute.Width, "500");
-      //output.AddAttribute(HtmlTextWriterAttribute.Height, "300");
-      //output.AddAttribute("frameborder", "0");
-      //output.RenderBeginTag(HtmlTextWriterTag.Iframe);
-      //output.RenderEndTag();
-      //output.RenderBeginTag(HtmlTextWriterTag.Br);
-      //output.RenderEndTag();
-      //output.AddAttribute(HtmlTextWriterAttribute.Name, "recaptcha_challenge_field");
-      //output.AddAttribute(HtmlTextWriterAttribute.Rows, "3");
-      //output.AddAttribute(HtmlTextWriterAttribute.Cols, "40");
-      //output.RenderBeginTag(HtmlTextWriterTag.Textarea);
-      //output.RenderEndTag();
-      //output.AddAttribute(HtmlTextWriterAttribute.Name, "recaptcha_response_field");
-      //output.AddAttribute(HtmlTextWriterAttribute.Value, "manual_challenge");
-      //output.AddAttribute(HtmlTextWriterAttribute.Type, "hidden");
-      //output.RenderBeginTag(HtmlTextWriterTag.Input);
-      //output.RenderEndTag();
-      //output.Indent--;
-      //output.RenderEndTag();
+        // <script> display
+        output.AddAttribute(HtmlTextWriterAttribute.Type, "text/javascript");
+        output.AddAttribute(HtmlTextWriterAttribute.Src, GenerateChallengeUrl(false), false);
+        output.RenderBeginTag(HtmlTextWriterTag.Script);
+        output.RenderEndTag();
+      }
+      else
+      {
+        // <noscript> display
+        output.RenderBeginTag(HtmlTextWriterTag.Noscript);
+        output.Indent++;
+        output.AddAttribute(HtmlTextWriterAttribute.Src, GenerateChallengeUrl(true), false);
+        output.AddAttribute(HtmlTextWriterAttribute.Width, "500");
+        output.AddAttribute(HtmlTextWriterAttribute.Height, "300");
+        output.AddAttribute("frameborder", "0");
+        output.RenderBeginTag(HtmlTextWriterTag.Iframe);
+        output.RenderEndTag();
+        output.RenderBeginTag(HtmlTextWriterTag.Br);
+        output.RenderEndTag();
+        output.AddAttribute(HtmlTextWriterAttribute.Name, "recaptcha_challenge_field");
+        output.AddAttribute(HtmlTextWriterAttribute.Rows, "3");
+        output.AddAttribute(HtmlTextWriterAttribute.Cols, "40");
+        output.RenderBeginTag(HtmlTextWriterTag.Textarea);
+        output.RenderEndTag();
+        output.AddAttribute(HtmlTextWriterAttribute.Name, "recaptcha_response_field");
+        output.AddAttribute(HtmlTextWriterAttribute.Value, "manual_challenge");
+        output.AddAttribute(HtmlTextWriterAttribute.Type, "hidden");
+        output.RenderBeginTag(HtmlTextWriterTag.Input);
+        output.RenderEndTag();
+        output.Indent--;
+        output.RenderEndTag();
+      }
     }
+
     #endregion
 
     #region IValidator Members
+
     public string ErrorMessage
     {
-      get { return this.error; }
-      set
-      {
-
-      }
+      get { return error; }
+      set { }
     }
 
     public bool IsValid
     {
       get { return (error == String.Empty); }
-      set
-      {
-      }
+      set { }
     }
 
     public void Validate()
     {
       if (!skipRecaptcha) DoValidation();
     }
+
     #endregion
 
     #region Private Methods
+
     private void DoValidation()
     {
-      ServicePointManager.Expect100Continue = this.useExpect100Continue;
-      WebRequest request = WebRequest.Create(GenerateVerifyUrl());
+      HttpWebRequest request = (HttpWebRequest) WebRequest.Create(GenerateVerifyUrl());
+      request.ProtocolVersion = HttpVersion.Version10;
       request.Method = "POST";
 
       request.ContentType = "application/x-www-form-urlencoded";
 
       String postData = String.Format("privatekey={0}&remoteip={1}&challenge={2}&response={3}",
-      this.PrivateKey,
-      this.Page.Request.UserHostAddress,
-      this.Context.Request.Form[RECAPTCHA_CHALLENGE_FIELD],
-      this.Context.Request.Form[RECAPTCHA_RESPONSE_FIELD]);
+                                      PrivateKey,
+                                      Page.Request.UserHostAddress,
+                                      Context.Request.Form[RECAPTCHA_CHALLENGE_FIELD],
+                                      Context.Request.Form[RECAPTCHA_RESPONSE_FIELD]);
       byte[] postBytes = Encoding.UTF8.GetBytes(postData);
 
       using (Stream requestStream = request.GetRequestStream())
         requestStream.Write(postBytes, 0, postBytes.Length);
 
       WebResponse httpResponse = null;
-      string[] results = null;
+      string[] results;
       try
       {
         httpResponse = request.GetResponse();
@@ -238,8 +249,8 @@ namespace WebVenture.Library.CommonUI
       }
       catch (WebException ex) //timeout
       {
-        results = new string[] { "false", "recaptcha-not-reachable" };
-        System.Diagnostics.EventLog.WriteEntry("Application", ex.Message, System.Diagnostics.EventLogEntryType.Error);
+        results = new string[] {"false", "recaptcha-not-reachable"};
+        EventLog.WriteEntry("Application", ex.Message, EventLogEntryType.Error);
       }
       finally
       {
@@ -249,10 +260,10 @@ namespace WebVenture.Library.CommonUI
       switch (results[0])
       {
         case "true":
-          this.error = String.Empty;
+          error = String.Empty;
           break;
         case "false":
-          this.error = results[1];
+          error = results[1];
           break;
         default:
           throw new InvalidProgramException("Unknown status response.");
@@ -264,19 +275,20 @@ namespace WebVenture.Library.CommonUI
     private string GenerateChallengeUrl(Boolean noScript)
     {
       StringBuilder urlBuilder = new StringBuilder();
-      urlBuilder.Append(this.isSecure ? this.secureApiBaseUrl : this.standardApiBaseUrl);
+      urlBuilder.Append(isSecure ? secureApiBaseUrl : standardApiBaseUrl);
       //TODO: add validation if last character is "/", move to property when set
       urlBuilder.Append(noScript ? "/noscript?" : "/challenge?");
-      urlBuilder.AppendFormat("k={0}&error={1}", this.publicKey, this.error);
+      urlBuilder.AppendFormat("k={0}&error={1}", publicKey, error);
       return urlBuilder.ToString();
     }
 
     private string GenerateVerifyUrl()
     {
       StringBuilder urlBuilder = new StringBuilder();
-      urlBuilder.Append(this.verifyApiUrl);
+      urlBuilder.Append(verifyApiUrl);
       return urlBuilder.ToString();
     }
+
     #endregion
   }
 
