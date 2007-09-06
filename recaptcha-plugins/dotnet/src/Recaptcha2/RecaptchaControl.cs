@@ -32,7 +32,7 @@ using System.Web.UI.WebControls;
 
 namespace Recaptcha2
 {
-  [ToolboxData("<{0}:RecaptchaControl Theme=red runat=server />")]
+  [ToolboxData("<{0}:RecaptchaControl runat=server />")]
   public class RecaptchaControl : WebControl, IValidator
   {
     #region Private Fields
@@ -40,15 +40,15 @@ namespace Recaptcha2
     private const string RECAPTCHA_CHALLENGE_FIELD = "recaptcha_challenge_field";
     private const string RECAPTCHA_RESPONSE_FIELD = "recaptcha_response_field";
 
-    private String standardApiBaseUrl;
-    private String secureApiBaseUrl;
-    private String verifyApiUrl;
+    private String standardApiBaseUrl = "http://api.recaptcha.net";
+    private String secureApiBaseUrl = "https://api-secure.recaptcha.net";
+    private String verifyApiUrl = "http://api-verify.recaptcha.net/verify";
     private String publicKey;
     private String privateKey;
     private Boolean isSecure;
-    private String error = "";
-    private RecaptchaTheme theme;
-    private Boolean useExpect100Continue;
+    private String error = string.Empty;
+    private RecaptchaTheme theme = RecaptchaTheme.red;
+    private Boolean useExpect100Continue = true;
     private Boolean skipRecaptcha = false;
 
     #endregion
@@ -86,7 +86,7 @@ namespace Recaptcha2
     }
 
     [Category("Settings")]
-    [DefaultValue(0)]
+    [DefaultValue(typeof(Int16), "0")]
     public override Int16 TabIndex
     {
       get { return base.TabIndex; }
@@ -116,11 +116,7 @@ namespace Recaptcha2
     public string StandardApiBaseUrl
     {
       get { return standardApiBaseUrl; }
-      set
-      {
-        standardApiBaseUrl = standardApiBaseUrl.TrimEnd('/');
-        standardApiBaseUrl = value;
-      }
+      set { standardApiBaseUrl = value.TrimEnd('/'); }
     }
 
     [Category("Settings")]
@@ -128,11 +124,7 @@ namespace Recaptcha2
     public string SecureApiBaseUrl
     {
       get { return secureApiBaseUrl; }
-      set
-      {
-        secureApiBaseUrl = secureApiBaseUrl.TrimEnd('/');
-        secureApiBaseUrl = value;
-      }
+      set { secureApiBaseUrl = value.TrimEnd('/'); }
     }
 
     [Category("Settings")]
@@ -140,7 +132,7 @@ namespace Recaptcha2
     public string VerifyApiUrl
     {
       get { return verifyApiUrl; }
-      set { verifyApiUrl = value; }
+      set { verifyApiUrl = value.TrimEnd('/'); }
     }
 
     #endregion
@@ -300,7 +292,7 @@ namespace Recaptcha2
     private string GenerateChallengeUrl(Boolean noScript)
     {
       StringBuilder urlBuilder = new StringBuilder();
-      urlBuilder.Append(isSecure ? SecureApiBaseUrl : StandardApiBaseUrl);
+      urlBuilder.Append(isSecure ? secureApiBaseUrl : standardApiBaseUrl);
       urlBuilder.Append(noScript ? "/noscript?" : "/challenge?");
       urlBuilder.AppendFormat("k={0}&error={1}", publicKey, error);
       return urlBuilder.ToString();
@@ -309,7 +301,7 @@ namespace Recaptcha2
     private string GenerateVerifyUrl()
     {
       StringBuilder urlBuilder = new StringBuilder();
-      urlBuilder.Append(VerifyApiUrl);
+      urlBuilder.Append(verifyApiUrl);
       return urlBuilder.ToString();
     }
 
