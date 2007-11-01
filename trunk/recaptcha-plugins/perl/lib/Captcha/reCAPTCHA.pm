@@ -4,16 +4,14 @@ use warnings;
 use strict;
 use Carp;
 use LWP::UserAgent;
-# use Crypt::Rijndael;
-# use MIME::Base64;
 use HTML::Tiny;
 
-use version; our $VERSION = qv( '0.7' );
+use version; our $VERSION = qv( '0.8' );
 
-use constant API_SERVER          => 'http://api.recaptcha.net';
-use constant API_SECURE_SERVER   => 'https://api-secure.recaptcha.net';
-use constant API_VERIFY_SERVER   => 'http://api-verify.recaptcha.net';
-use constant SERVER_ERROR        => 'recaptcha-not-reachable';
+use constant API_SERVER        => 'http://api.recaptcha.net';
+use constant API_SECURE_SERVER => 'https://api-secure.recaptcha.net';
+use constant API_VERIFY_SERVER => 'http://api-verify.recaptcha.net';
+use constant SERVER_ERROR      => 'recaptcha-not-reachable';
 
 sub new {
     my $class = shift;
@@ -126,7 +124,7 @@ sub check_answer {
     croak "For security reasons, you must pass the remote ip to reCAPTCHA"
       unless $remoteip;
 
-    return { is_valid => 0, error => 'incorrect-challenge-sol' }
+    return { is_valid => 0, error => 'incorrect-captcha-sol' }
       unless $challenge && $response;
 
     my $resp = $self->_post_request(
@@ -163,7 +161,7 @@ Captcha::reCAPTCHA - A Perl implementation of the reCAPTCHA API
 
 =head1 VERSION
 
-This document describes Captcha::reCAPTCHA version 0.7
+This document describes Captcha::reCAPTCHA version 0.8
 
 =head1 SYNOPSIS
 

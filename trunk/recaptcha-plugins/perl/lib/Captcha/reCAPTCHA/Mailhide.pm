@@ -7,7 +7,7 @@ use Crypt::Rijndael;
 use MIME::Base64;
 use HTML::Tiny;
 
-use version; our $VERSION = qv( '0.7' );
+use version; our $VERSION = qv( '0.8' );
 
 use constant API_MAILHIDE_SERVER => 'http://mailhide.recaptcha.net';
 
@@ -126,11 +126,19 @@ Captcha::reCAPTCHA::Mailhide - A Perl implementation of the reCAPTCHA Mailhide A
 
 =head1 VERSION
 
-This document describes Captcha::reCAPTCHA::Mailhide version 0.7
+This document describes Captcha::reCAPTCHA::Mailhide version 0.8
 
 =head1 SYNOPSIS
 
     use Captcha::reCAPTCHA::Mailhide;
+    
+    my $m = Captcha::reCAPTCHA::Mailhide->new;
+
+    # Get the URL that reveals the email
+    my $url = $m->mailhide_url( MAIL_PUBLIC_KEY, MAIL_PRIVATE_KEY, 'someone@example.com' );
+
+    # Or - even easier - get the formatted HTML for an email link
+    print $m->mailhide_html( MAIL_PUBLIC_KEY, MAIL_PRIVATE_KEY, 'someone@example.com' );
 
 For complete examples see the /examples subdirectory
 
@@ -154,8 +162,6 @@ found here:
 L<http://recaptcha.net/plugins/php/>
 
 =head1 INTERFACE
-
-=head2 reCAPTCHA Mailhide
 
 To use reCAPTCHA Mailhide you need to get a public, private key pair
 from this page:
