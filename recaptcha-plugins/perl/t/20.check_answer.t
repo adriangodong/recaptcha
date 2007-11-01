@@ -30,7 +30,7 @@ BEGIN {
         {
             name => 'Simple incorrect',
             args => [ PRIVKEY, '192.168.0.1', '..challenge..', '..response..' ],
-            response   => "false\nincorrect-challenge-sol\n",
+            response   => "false\nincorrect-captcha-sol\n",
             check_args => {
                 privatekey => PRIVKEY,
                 remoteip   => '192.168.0.1',
@@ -38,7 +38,7 @@ BEGIN {
                 response   => '..response..'
             },
             check_url => 'http://api-verify.recaptcha.net/verify',
-            expect => { is_valid => 0, error => 'incorrect-challenge-sol' },
+            expect => { is_valid => 0, error => 'incorrect-captcha-sol' },
         },
     );
     plan tests => 6 * @schedule;

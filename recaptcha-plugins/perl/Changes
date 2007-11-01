@@ -26,3 +26,7 @@ Revision history for Captcha-reCAPTCHA
 0.7 2007-05-31
     Switched to HTML::Tiny for markup generation.
     Split Captcha::reCAPTCHA::Mailhide into a separate module
+
+0.8 2007-11-01
+    s/incorrect-challenge-sol/incorrect-captcha-sol/g #29693
+    Thanks to William Campbell for finding it.
