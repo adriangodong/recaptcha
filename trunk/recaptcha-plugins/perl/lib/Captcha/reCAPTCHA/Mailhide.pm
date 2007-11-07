@@ -7,7 +7,7 @@ use Crypt::Rijndael;
 use MIME::Base64;
 use HTML::Tiny;
 
-use version; our $VERSION = qv( '0.8' );
+our $VERSION = '0.92';
 
 use constant API_MAILHIDE_SERVER => 'http://mailhide.recaptcha.net';
 
@@ -126,7 +126,7 @@ Captcha::reCAPTCHA::Mailhide - A Perl implementation of the reCAPTCHA Mailhide A
 
 =head1 VERSION
 
-This document describes Captcha::reCAPTCHA::Mailhide version 0.8
+This document describes Captcha::reCAPTCHA::Mailhide version 0.92
 
 =head1 SYNOPSIS
 
