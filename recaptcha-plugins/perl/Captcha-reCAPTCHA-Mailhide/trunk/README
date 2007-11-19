@@ -1,4 +1,4 @@
-Captcha-reCAPTCHA version 0.93
+Captcha-reCAPTCHA-Mailhide version 0.92
 
 INSTALLATION
 
@@ -12,7 +12,8 @@ To install this module, run the following commands:
 
 DEPENDENCIES
 
-LWP::UserAgent
+Crypt::Rijndael
+MIME::Base64
 HTML::Tiny
 
 COPYRIGHT AND LICENCE

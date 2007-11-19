@@ -40,5 +40,4 @@ Revision history for Captcha-reCAPTCHA
         Ditched use of version.pm. Sick of version number confusion.
 
 0.92    2007-11-19
-        Split Captcha::reCAPTCHA::Mailhide into a separate distro so we
-        don't have to depend on Crypt::Rijndael.
+        Split from mail Captcha::reCAPTCHA distro.
