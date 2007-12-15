@@ -28,10 +28,16 @@ sub _initialize {
       unless 'HASH' eq ref $args;
 }
 
+sub _html { shift->{_html} ||= HTML::Tiny->new }
+
 sub get_options_setter {
-    my $self    = shift;
+    my $self = shift;
     my $options = shift || return '';
-    my $h       = HTML::Tiny->new();
+
+    croak "The argument to get_options_setter must be a hashref"
+      unless 'HASH' eq ref $options;
+
+    my $h = $self->_html;
 
     return $h->script(
         { type => 'text/javascript' },
@@ -50,7 +56,7 @@ sub get_html {
       "To use reCAPTCHA you must get an API key from http://recaptcha.net/api/getkey"
       unless $pubkey;
 
-    my $h = HTML::Tiny->new();
+    my $h = $self->_html;
     my $server = $use_ssl ? API_SECURE_SERVER : API_SERVER;
 
     my $query = { k => $pubkey };
@@ -121,7 +127,8 @@ sub check_answer {
       "To use reCAPTCHA you must get an API key from http://recaptcha.net/api/getkey"
       unless $privkey;
 
-    croak "For security reasons, you must pass the remote ip to reCAPTCHA"
+    croak
+      "For security reasons, you must pass the remote ip to reCAPTCHA"
       unless $remoteip;
 
     return { is_valid => 0, error => 'incorrect-captcha-sol' }
