@@ -14,6 +14,7 @@ is $mh_url, 'http://mailhide.recaptcha.net/d?c=4jBBJ29mAjTuEk81neCXmYlMeLR6'
   . 'FAqNTe_fq72Tkq4%3d&k=UcV0oq5XNVM01AyYmMNRqvRA%3d%3d', 'url OK';
 
 my $mh_html = $captcha->mailhide_html( PUBKEY, PRIVKEY, 'someone@example.com' );
+$mh_html =~ s/&#39;/&apos;/g;
 is $mh_html,
   'some<a href="http://mailhide.recaptcha.net/d?c=4jBBJ29mAjTuEk'
   . '81neCXmYlMeLR6FAqNTe_fq72Tkq4%3d&amp;k=UcV0oq5XNVM01AyYmMNR'
