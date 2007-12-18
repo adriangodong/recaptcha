@@ -41,3 +41,6 @@ Revision history for Captcha-reCAPTCHA
 
 0.92    2007-11-19
         Split from mail Captcha::reCAPTCHA distro.
+
+0.93    2007-12-18
+        Handle versions of HTML::Tiny that encode &apos; as &#39;
