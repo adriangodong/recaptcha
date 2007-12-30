@@ -53,7 +53,7 @@ sub mailhide_url {
     croak "You must supply an email address"
       unless $email;
 
-    my $h = $self->{_html} ||= HTML::Tiny->new();
+    my $h = HTML::Tiny->new();
 
     return
       API_MAILHIDE_SERVER . '/d?'
