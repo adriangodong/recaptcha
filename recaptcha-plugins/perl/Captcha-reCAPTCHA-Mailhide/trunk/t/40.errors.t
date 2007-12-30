@@ -21,6 +21,16 @@ BEGIN {
               qr/you have to sign up for a public and private key/
         },
         {
+            name  => 'mailhide_html: One arg',
+            class => 'Captcha::reCAPTCHA::Mailhide',
+            try   => sub {
+                my $c = shift;
+                $c->mailhide_html( MH_PUBKEY );
+            },
+            expect =>
+              qr/you have to sign up for a public and private key/
+        },
+        {
             name  => 'mailhide_html: No email',
             class => 'Captcha::reCAPTCHA::Mailhide',
             try   => sub {
