@@ -14,16 +14,8 @@ use constant API_MAILHIDE_SERVER => 'http://mailhide.recaptcha.net';
 sub new {
     my $class = shift;
     my $self = bless {}, $class;
-    $self->_initialize( @_ );
+    croak "new takes no parameters" if @_;
     return $self;
-}
-
-sub _initialize {
-    my $self = shift;
-    my $args = shift || {};
-
-    croak "new must be called with a reference to a hash of parameters"
-      unless 'HASH' eq ref $args;
 }
 
 sub _aes_encrypt {
@@ -53,20 +45,24 @@ sub mailhide_url {
     my $self = shift;
     my ( $pubkey, $privkey, $email ) = @_;
 
-    croak "To use reCAPTCHA::Mailhide, you have to sign up for a public and "
+    croak
+      "To use reCAPTCHA::Mailhide, you have to sign up for a public and "
       . "private key. You can do so at http://mailhide.recaptcha.net/apikey."
       unless $pubkey && $privkey;
 
     croak "You must supply an email address"
       unless $email;
 
-    my $h = HTML::Tiny->new();
+    my $h = $self->{_html} ||= HTML::Tiny->new();
 
-    return API_MAILHIDE_SERVER . '/d?'
+    return
+      API_MAILHIDE_SERVER . '/d?'
       . $h->query_encode(
         {
             k => $pubkey,
-            c => _urlbase64( _aes_encrypt( $email, pack( 'H*', $privkey ) ) )
+            c => _urlbase64(
+                _aes_encrypt( $email, pack( 'H*', $privkey ) )
+            )
         }
       );
 }
@@ -74,8 +70,8 @@ sub mailhide_url {
 sub _email_parts {
     my ( $user, $dom ) = split( /\@/, shift, 2 );
     my $ul = length( $user );
-    return ( substr( $user, 0, $ul <= 4 ? 1 : $ul <= 6 ? 3 : 4 ), '...', '@',
-        $dom );
+    return ( substr( $user, 0, $ul <= 4 ? 1 : $ul <= 6 ? 3 : 4 ),
+        '...', '@', $dom );
 }
 
 sub mailhide_html {
@@ -106,9 +102,10 @@ sub mailhide_html {
         $h->entity_encode( $user ),
         $h->a(
             {
-                href    => $url,
-                onclick => "window.open('$url', '', '$options'); return false;",
-                title   => 'Reveal this e-mail address'
+                href => $url,
+                onclick =>
+                  "window.open('$url', '', '$options'); return false;",
+                title => 'Reveal this e-mail address'
             },
             $dots
         ),

@@ -17,7 +17,8 @@ BEGIN {
                 my $c = shift;
                 $c->mailhide_html();
             },
-            expect => qr/you have to sign up for a public and private key/
+            expect =>
+              qr/you have to sign up for a public and private key/
         },
         {
             name  => 'mailhide_html: No email',
@@ -30,11 +31,11 @@ BEGIN {
         },
     );
 
-    plan tests => 3 * @schedule;
+    plan tests => 3 * @schedule + 1;
 }
 
 for my $test ( @schedule ) {
-    my $name = $test->{name};
+    my $name  = $test->{name};
     my $class = $test->{class};
     ok my $captcha = $class->new, "$name: create OK";
     isa_ok $captcha, $class;
@@ -46,3 +47,6 @@ for my $test ( @schedule ) {
         ok !$@, "$name: no error OK";
     }
 }
+
+eval { Captcha::reCAPTCHA::Mailhide->new( 'An argument' ) };
+like $@, qr{no\s+parameters}, 'new';
