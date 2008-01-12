@@ -5,7 +5,17 @@
 ===Short Term===
   * Integrate Mailhide
     ** Remove unnecessary options
-    ** Check for mcrypt PHP module: We can use *extension_loaded*
+    ** Don't describe MailHide; give an example. Link to the [http://mailhide.recaptcha.net/ user] page instead.
+    ** Don't show CSS or Regex as options in the admin panel. Show the CSS class for hidden emails on the admin page.
+    ** Check for mcrypt PHP module: We can use *extension_loaded*. Show an alert of this on the admin page.
+    {{{
+    if (extension_loaded('mcrypt'))
+    }}}
   * Option to turn off reCAPTCHA for admins
-  * Fix the Akismet conflicts
+  * Fix the Akismet conflicts: WordPress Hook priority level problems?
   * Use WordPress Plugins database to make use of WordPress plugin update notifications
+  * A way to bypass the MailHide filter. Something like [nomailhide][/nomailhide]. Should be possible with another regular expression.
+  * Make XSS-proof. Apostrophes are allowed in email matching regex for MailHide, can it be used to escape out of Javascript.
+===Long Term===
+  * Integrate with Akismet. If Akismet says comment is okay, then bypass reCAPTCHA, else, give another chance with reCAPTCHA: Might be possible with Akismet API given Akismet conflicts are fixed
+  * Karma model. If, based on karma model, user can be trusted, don't show reCAPTCHA to them.
