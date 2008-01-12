@@ -1,0 +1,12 @@
+#summary Todo list for the WordPress reCAPTCHA plugin version 2.8.
+#labels Phase-Requirements
+
+=2.8=
+===Short Term===
+*Integrate Mailhide
+**Remove unnecessary options
+**Check for mcrypt PHP module
+We can use '''extension_loaded'''
+*Option to turn off reCAPTCHA for admins
+*Fix the Akismet conflicts
+*Use WordPress Codex' Plugins database to make use of WordPress' plugin update notifications
