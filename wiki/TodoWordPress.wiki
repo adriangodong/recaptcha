@@ -3,10 +3,9 @@
 
 =2.8=
 ===Short Term===
-*Integrate Mailhide<br />
-**Remove unnecessary options<br />
-**Check for mcrypt PHP module<br />
-We can use '''extension_loaded'''<br />
-*Option to turn off reCAPTCHA for admins<br />
-*Fix the Akismet conflicts<br />
-*Use WordPress Codex' Plugins database to make use of WordPress' plugin update notifications
+  *Integrate Mailhide
+    **Remove unnecessary options
+    **Check for mcrypt PHP module: We can use '''extension_loaded'''
+  *Option to turn off reCAPTCHA for admins
+  *Fix the Akismet conflicts
+  *Use WordPress Codex' Plugins database to make use of WordPress' plugin update notifications
