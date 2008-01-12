@@ -14,7 +14,7 @@
   * Option to turn off reCAPTCHA for admins
   * Fix the Akismet conflicts: WordPress Hook priority level problems?
   * Use WordPress Plugins database to make use of WordPress plugin update notifications
-  * A way to bypass the MailHide filter. Something like [nomailhide][/nomailhide]. Should be possible with another regular expression.
+  * A way to bypass the MailHide filter. Something like {{{[nomailhide][/nomailhide]}}}. Should be possible with another regular expression.
   * Make XSS-proof. Apostrophes are allowed in email matching regex for MailHide, can it be used to escape out of Javascript.
 ===Long Term===
   * Integrate with Akismet. If Akismet says comment is okay, then bypass reCAPTCHA, else, give another chance with reCAPTCHA: Might be possible with Akismet API given Akismet conflicts are fixed
