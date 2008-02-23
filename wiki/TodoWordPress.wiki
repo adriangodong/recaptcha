@@ -4,10 +4,10 @@
 =2.8=
 ===Short Term===
   * Integrate Mailhide
-    ** Remove unnecessary options. Done
-    ** Don't describe MailHide; give an example. Link to the [http://mailhide.recaptcha.net/ user] page instead. Done
-    ** Don't show CSS or Regex as options in the admin panel. Show the CSS class for hidden emails on the admin page. Done
-    ** Check for mcrypt PHP module: We can use *extension_loaded*. Show an alert of this on the admin page. Done
+    ** Remove unnecessary options. *Done*
+    ** Don't describe MailHide; give an example. Link to the [http://mailhide.recaptcha.net/ user] page instead. *Done*
+    ** Don't show CSS or Regex as options in the admin panel. Show the CSS class for hidden emails on the admin page. *Done*
+    ** Check for mcrypt PHP module: We can use *extension_loaded*. Show an alert of this on the admin page. *Done*
     {{{
     if (extension_loaded('mcrypt'))
     }}}
