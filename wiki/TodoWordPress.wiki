@@ -12,6 +12,7 @@
     if (extension_loaded('mcrypt'))
     }}}
   * Option to turn off reCAPTCHA for admins
+  * What of <a href="me@haha.com">Email Me</a>
   * Fix the Akismet conflicts: WordPress Hook priority level problems?
   * Use WordPress Plugins database to make use of WordPress plugin update notifications
   * A way to bypass the MailHide filter. Something like {{{[nomailhide][/nomailhide]}}}. Should be possible with another regular expression.
