@@ -22,5 +22,4 @@
 ===Long Term===
   * Integrate with Akismet. If Akismet says comment is okay, then bypass reCAPTCHA, else, give another chance with reCAPTCHA: Might be possible with Akismet API given Akismet conflicts are fixed
   * Karma model. If, based on karma model, user can be trusted, don't show reCAPTCHA to them.
-  * XHTML 1.0 Transitional compliant [http://validator.w3.org/ W3 Validator]
   * XHTML 1.0 Strict compliant [http://validator.w3.org/ W3 Validator]
