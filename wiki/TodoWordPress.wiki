@@ -15,12 +15,12 @@
     }}}
   * Option to turn off reCAPTCHA for admins. *Done*
   * Option to turn off MailHide for admins.
+  * Drop down list for preset themes. [http://recaptcha.net/apidocs/captcha/client.html More Info]
   * What of <a href="me@haha.com">Email Me</a>. Will need new regex for searching for links with emails in them or something similar, then make a function similar to recaptcha_mailhide_html without the emailparts padded on both sides. This will replace the href part of the link but not touch the link text, therefore preserving the desired and expected effect. 
-  * Fix the Akismet conflicts: WordPress Hook priority level problems?
   * A way to bypass the MailHide filter. Something like {{{[nomailhide][/nomailhide]}}}. Should be possible with another regular expression.
   * Make XSS-proof. Apostrophes are allowed in email matching regex for MailHide, can it be used to escape out of Javascript.
   * XHTML 1.0 Strict compliant [http://validator.w3.org/ W3 Validator]
-  * Drop down list for preset themes. [http://recaptcha.net/apidocs/captcha/client.html More Info]
+  * Fix the Akismet conflicts: WordPress Hook priority level problems?
 ===Long Term===
   * Integrate with Akismet. If Akismet says comment is okay, then bypass reCAPTCHA, else, give another chance with reCAPTCHA: Might be possible with Akismet API given Akismet conflicts are fixed
   * Karma model. If, based on karma model, user can be trusted, don't show reCAPTCHA to them.
