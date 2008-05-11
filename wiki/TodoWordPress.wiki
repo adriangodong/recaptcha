@@ -18,8 +18,8 @@
   * Fix the Akismet conflicts: WordPress Hook priority level problems?
   * A way to bypass the MailHide filter. Something like {{{[nomailhide][/nomailhide]}}}. Should be possible with another regular expression.
   * Make XSS-proof. Apostrophes are allowed in email matching regex for MailHide, can it be used to escape out of Javascript.
+  * XHTML 1.0 Strict compliant [http://validator.w3.org/ W3 Validator]
   * Drop down list for preset themes. [http://recaptcha.net/apidocs/captcha/client.html More Info]
 ===Long Term===
   * Integrate with Akismet. If Akismet says comment is okay, then bypass reCAPTCHA, else, give another chance with reCAPTCHA: Might be possible with Akismet API given Akismet conflicts are fixed
   * Karma model. If, based on karma model, user can be trusted, don't show reCAPTCHA to them.
-  * XHTML 1.0 Strict compliant [http://validator.w3.org/ W3 Validator]
