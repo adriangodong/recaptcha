@@ -18,7 +18,7 @@
   * Use a recaptcha.css stylesheet for all recaptcha styling inside and outside of the admin interface. *Done*
   * Drop down list for preset themes. [http://recaptcha.net/apidocs/captcha/client.html More Info]. *Done*
   * Drop down list for languages. *Done*
-  * What of <a href="me@haha.com">Email Me</a>. Will need new regex for searching for links with emails in them or something similar, then make a function similar to recaptcha_mailhide_html without the emailparts padded on both sides. This will replace the href part of the link but not touch the link text, therefore preserving the desired and expected effect. 
+  * What of <a href="me@haha.com">Email Me</a>. Will need new regex for searching for links with emails in them or something similar, then make a function similar to recaptcha_mailhide_html without the emailparts padded on both sides. This will replace the href part of the link but not touch the link text, therefore preserving the desired and expected effect. *Done*
   * A way to bypass the MailHide filter. Something like {{{[nomailhide][/nomailhide]}}}. Should be possible with another regular expression.
   * Make XSS-proof. Apostrophes are allowed in email matching regex for MailHide, can it be used to escape out of Javascript.
   * XHTML 1.0 Strict compliant [http://validator.w3.org/ W3 Validator]. *Done*
