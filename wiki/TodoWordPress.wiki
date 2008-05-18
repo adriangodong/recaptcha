@@ -26,7 +26,11 @@
   * Add option to add reCAPTCHA to the registration form. *Done*
   * Fix the Akismet conflicts: WordPress Hook priority level problems? *Done*
     ** Now whenever reCAPTCHA blocks spam through failure of CAPTCHA solution, comment isn't reported to Akismet and added to the spam queue anyways, as it used to happen (_It seems that way at least, after my tests using *viagra-test-123* as outlined [http://akismet.com/development/api/ here]_). It was indeed a hook priority problem, set hook level to 0 since Akismet is level 1.
-  * There is a way to show the CAPTCHA on the registration form. Maybe allow the CAPTCHA to not be shown at all on regular posts in case the user has WP setup so that only registered users can comment.
+  * There is a way to show the CAPTCHA on the registration form. Maybe allow the CAPTCHA to not be shown at all on regular posts in case the user has WP setup so that only registered users can comment. *Done*
+  * Add an XHTML 1.0 Strict compliance option with disclaimer. *Done*
+    ** Had to add an extra argument for the *recaptcha_get_html* function in recaptbhalib.php.
+  * Add an option to use SSL. *Done*
+  * Add ability to choose theme for registration recaptcha. *Done*
   * Show disclaimer at the top of post box saying that users should feel safe posting their email addresses.
   * Make XSS-proof. Apostrophes are allowed in email matching regex for MailHide, can it be used to escape out of Javascript.
 ===Long Term===
