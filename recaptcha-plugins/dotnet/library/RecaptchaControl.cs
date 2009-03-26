@@ -201,13 +201,16 @@ namespace Recaptcha
             if (skipRecaptcha) {
                 recaptchaResponse = RecaptchaResponse.Valid;
             } else {
-                RecaptchaValidator validator = new RecaptchaValidator();
-                validator.PrivateKey = PrivateKey;
-                validator.RemoteIP = Page.Request.UserHostAddress;
-                validator.Challenge = Context.Request.Form[RECAPTCHA_CHALLENGE_FIELD];
-                validator.Response = Context.Request.Form[RECAPTCHA_RESPONSE_FIELD];
+                if (Visible && Enabled)
+                {
+                    RecaptchaValidator validator = new RecaptchaValidator();
+                    validator.PrivateKey = PrivateKey;
+                    validator.RemoteIP = Page.Request.UserHostAddress;
+                    validator.Challenge = Context.Request.Form[RECAPTCHA_CHALLENGE_FIELD];
+                    validator.Response = Context.Request.Form[RECAPTCHA_RESPONSE_FIELD];
 
-                recaptchaResponse = validator.Validate();
+                    recaptchaResponse = validator.Validate();
+                }
             }
         }
 
