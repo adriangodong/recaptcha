@@ -47,6 +47,7 @@ namespace Recaptcha
         private string publicKey;
         private string privateKey;
         private string theme;
+        private string customThemeWidget = null;
         private bool skipRecaptcha;
         private string errorMessage;
 
@@ -77,6 +78,15 @@ namespace Recaptcha
         {
             get { return this.theme; }
             set { this.theme = value; }
+        }
+
+        [Category("Appearence")]
+        [DefaultValue(null)]
+        [Description("When using custom theming, this is a div element which contains the widget. ")]
+        public string CustomThemeWidget
+        {
+            get { return this.customThemeWidget; }
+            set { this.customThemeWidget = value; }
         }
 
         [Category("Settings")]
@@ -137,6 +147,8 @@ namespace Recaptcha
             output.WriteLine("var RecaptchaOptions = {");
             output.Indent++;
             output.WriteLine("theme : '{0}',", this.theme ?? string.Empty);
+            if (null != customThemeWidget)
+                output.WriteLine("custom_theme_widget : '{0}',", customThemeWidget);
             output.WriteLine("tabindex : {0}", TabIndex);
             output.Indent--;
             output.WriteLine("};");
@@ -218,11 +230,11 @@ namespace Recaptcha
             {
                 if (Visible && Enabled)
                 {
-                    RecaptchaValidator validator = new RecaptchaValidator();
+                RecaptchaValidator validator = new RecaptchaValidator();
                     validator.PrivateKey = this.PrivateKey;
-                    validator.RemoteIP = Page.Request.UserHostAddress;
-                    validator.Challenge = Context.Request.Form[RECAPTCHA_CHALLENGE_FIELD];
-                    validator.Response = Context.Request.Form[RECAPTCHA_RESPONSE_FIELD];
+                validator.RemoteIP = Page.Request.UserHostAddress;
+                validator.Challenge = Context.Request.Form[RECAPTCHA_CHALLENGE_FIELD];
+                validator.Response = Context.Request.Form[RECAPTCHA_RESPONSE_FIELD];
 
                     this.recaptchaResponse = validator.Validate();
                 }
