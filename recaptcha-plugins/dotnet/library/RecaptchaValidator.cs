@@ -20,11 +20,11 @@
 
 using System;
 using System.Diagnostics;
-using System.Text;
-using System.Web;
+using System.IO;
 using System.Net;
 using System.Net.Sockets;
-using System.IO;
+using System.Text;
+using System.Web;
 
 namespace Recaptcha
 {
@@ -34,71 +34,75 @@ namespace Recaptcha
     /// </summary>
     public class RecaptchaValidator
     {
+        private const string VerifyUrl = "http://api-verify.recaptcha.net/verify";
 
-        public RecaptchaValidator(){}
-
-        private string privateKey;  
+        private string privateKey;
         private string remoteIp;
-        
+
         private string challenge;
         private string response;
 
-        const string VerifyUrl = "http://api-verify.recaptcha.net/verify";
+        public string PrivateKey
+        {
+            get { return this.privateKey; }
+            set { this.privateKey = value; }
+        }
 
-	    public string PrivateKey
-	    {
-		    get { return privateKey; }
-		    set { privateKey = value; }
-	    }
+        public string RemoteIP
+        {
+            get
+            {
+                return this.remoteIp;
+            }
 
-	    public string RemoteIP
-	    {
-		    get { return remoteIp;}
-		    set { 
+            set
+            {
                 IPAddress ip = IPAddress.Parse(value);
 
-                if (ip.AddressFamily != AddressFamily.InterNetwork &&
-                    ip.AddressFamily != AddressFamily.InterNetworkV6) {
+                if (ip == null ||
+                    (ip.AddressFamily != AddressFamily.InterNetwork &&
+                    ip.AddressFamily != AddressFamily.InterNetworkV6))
+                {
                     throw new ArgumentException("Expecting an IP address, got " + ip);
                 }
 
-                remoteIp = ip.ToString();
+                this.remoteIp = ip.ToString();
             }
-	    }
+        }
 
-	    public string Challenge
-	    {
-		    get { return challenge;}
-		    set { challenge = value;}
-	    }
+        public string Challenge
+        {
+            get { return this.challenge; }
+            set { this.challenge = value; }
+        }
 
-	    public string Response
-	    {
-		    get { return response;}
-		    set { response = value;}
-	    }
+        public string Response
+        {
+            get { return this.response; }
+            set { this.response = value; }
+        }
 
-        void CheckNotNull(object obj, string name)
+        private void CheckNotNull(object obj, string name)
         {
             if (obj == null)
             {
                 throw new ArgumentNullException(name);
             }
         }
-	
+
         public RecaptchaResponse Validate()
         {
-            CheckNotNull(PrivateKey, "PrivateKey");
-            CheckNotNull(RemoteIP, "RemoteIp");
-            CheckNotNull(Challenge, "Challenge");
-            CheckNotNull(Response, "Response");
+            this.CheckNotNull(this.PrivateKey, "PrivateKey");
+            this.CheckNotNull(this.RemoteIP, "RemoteIp");
+            this.CheckNotNull(this.Challenge, "Challenge");
+            this.CheckNotNull(this.Response, "Response");
 
-            if (challenge == "" || response == "") {
+            if (this.challenge == string.Empty || this.response == string.Empty)
+            {
                 return RecaptchaResponse.InvalidSolution;
             }
 
             HttpWebRequest request = (HttpWebRequest)WebRequest.Create(VerifyUrl);
-            // to avoid issues with Expect headers
             request.ProtocolVersion = HttpVersion.Version10;
             request.Timeout = 30 * 1000 /* 30 seconds */;
             request.Method = "POST";
@@ -106,20 +110,24 @@ namespace Recaptcha
 
             request.ContentType = "application/x-www-form-urlencoded";
 
-            string formdata = String.Format("privatekey={0}&remoteip={1}&challenge={2}&response={3}",
-                                    HttpUtility.UrlEncode(PrivateKey),
-                                    HttpUtility.UrlEncode(RemoteIP),
-                                    HttpUtility.UrlEncode(Challenge),
-                                    HttpUtility.UrlEncode(Response));
+            string formdata = String.Format(
+                "privatekey={0}&remoteip={1}&challenge={2}&response={3}",
+                                    HttpUtility.UrlEncode(this.PrivateKey),
+                                    HttpUtility.UrlEncode(this.RemoteIP),
+                                    HttpUtility.UrlEncode(this.Challenge),
+                                    HttpUtility.UrlEncode(this.Response));
 
             byte[] formbytes = Encoding.ASCII.GetBytes(formdata);
 
             using (Stream requestStream = request.GetRequestStream())
+            {
                 requestStream.Write(formbytes, 0, formbytes.Length);
+            }
 
             string[] results;
 
-            try {
+            try
+            {
                 using (WebResponse httpResponse = request.GetResponse())
                 {
                     using (TextReader readStream = new StreamReader(httpResponse.GetResponseStream(), Encoding.UTF8))
@@ -127,7 +135,9 @@ namespace Recaptcha
                         results = readStream.ReadToEnd().Split();
                     }
                 }
-            } catch (WebException ex) {
+            }
+            catch (WebException ex)
+            {
                 EventLog.WriteEntry("Application", ex.Message, EventLogEntryType.Error);
                 return RecaptchaResponse.RecaptchaNotReachable;
             }

@@ -1,19 +1,17 @@
-using System;
-using System.Collections.Generic;
-using System.Text;
-using System.Web.UI.Design;
 using System.ComponentModel.Design;
-using System.Diagnostics;
+using System.Web.UI.Design;
 
 namespace Recaptcha.Design
 {
-    class RecaptchaControlDesigner : ControlDesigner
+    /// <summary>
+    /// This class provide designer support code for <see cref="RecaptchaControl"/>.
+    /// </summary>
+    public class RecaptchaControlDesigner : ControlDesigner
     {
         public override string GetDesignTimeHtml()
         {
             return CreatePlaceHolderDesignTimeHtml("reCAPTCHA Validator");
         }
-
 
         public override bool AllowResize
         {
@@ -41,26 +39,25 @@ namespace Recaptcha.Design
         {
             private RecaptchaControlDesigner _parent;
 
-            // Constructor
+            /// <summary>
+            /// Initializes a new instance of the <see cref="ActionList"/> class.
+            /// </summary>
             public ActionList(RecaptchaControlDesigner parent)
                 : base(parent.Component)
             {
-                _parent = parent;
-
+                this._parent = parent;
             }
 
             // Create the ActionItem collection and add one command
             public override DesignerActionItemCollection GetSortedActionItems()
             {
                 // fixme -- I can't get this to open up automatically (
-                DesignerActionItemCollection _items = new DesignerActionItemCollection();
-                _items.Add(new DesignerActionHeaderItem("API Key"));
-                _items.Add(new DesignerActionTextItem("To use reCAPTCHA, you need an API key from http://admin.recaptcha.net/", ""));
+                DesignerActionItemCollection items = new DesignerActionItemCollection();
+                items.Add(new DesignerActionHeaderItem("API Key"));
+                items.Add(new DesignerActionTextItem("To use reCAPTCHA, you need an API key from http://admin.recaptcha.net/", string.Empty));
 
-                return _items;
+                return items;
             }
         }
-
-
     }
 }

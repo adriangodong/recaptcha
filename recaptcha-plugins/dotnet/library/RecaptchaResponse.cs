@@ -18,20 +18,25 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
-using System;
-using System.Text;
-
 namespace Recaptcha
 {
+    /// <summary>
+    /// Encapsulates a response from reCAPTCHA web service.
+    /// </summary>
     public class RecaptchaResponse
     {
-        public static RecaptchaResponse Valid = new RecaptchaResponse(true, "");
-        public static RecaptchaResponse InvalidSolution = new RecaptchaResponse(false, "incorrect-captcha-sol");
-        public static RecaptchaResponse RecaptchaNotReachable = new RecaptchaResponse(false, "recaptcha-not-reachable");
+        public static readonly RecaptchaResponse Valid = new RecaptchaResponse(true, string.Empty);
+        public static readonly RecaptchaResponse InvalidSolution = new RecaptchaResponse(false, "incorrect-captcha-sol");
+        public static readonly RecaptchaResponse RecaptchaNotReachable = new RecaptchaResponse(false, "recaptcha-not-reachable");
 
-        bool isValid;
-        string errorCode;
+        private bool isValid;
+        private string errorCode;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RecaptchaResponse"/> class.
+        /// </summary>
+        /// <param name="isValid">Value indicates whether submitted reCAPTCHA is valid.</param>
+        /// <param name="errorCode">Error code returned from reCAPTCHA web service.</param>
         internal RecaptchaResponse(bool isValid, string errorCode)
         {
             this.isValid = isValid;
@@ -40,12 +45,12 @@ namespace Recaptcha
 
         public bool IsValid
         {
-            get { return isValid; }
+            get { return this.isValid; }
         }
 
         public string ErrorCode
         {
-            get { return errorCode; }
+            get { return this.errorCode; }
         }
 
         public override bool Equals(object obj)
@@ -56,12 +61,12 @@ namespace Recaptcha
                 return false;
             }
 
-            return other.IsValid == IsValid && other.ErrorCode == ErrorCode;
+            return other.IsValid == this.IsValid && other.ErrorCode == this.ErrorCode;
         }
 
         public override int GetHashCode()
         {
-            return IsValid.GetHashCode() ^ ErrorCode.GetHashCode();
+            return this.IsValid.GetHashCode() ^ this.ErrorCode.GetHashCode();
         }
     }
 }
