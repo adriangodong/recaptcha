@@ -160,7 +160,7 @@ namespace Recaptcha
             output.AddAttribute(HtmlTextWriterAttribute.Src, this.GenerateChallengeUrl(false), false);
             output.RenderBeginTag(HtmlTextWriterTag.Script);
             output.RenderEndTag();
-            
+
             output.RenderBeginTag(HtmlTextWriterTag.Noscript);
             output.Indent++;
             output.AddAttribute(HtmlTextWriterAttribute.Src, this.GenerateChallengeUrl(true), false);
@@ -193,7 +193,7 @@ namespace Recaptcha
         [DefaultValue("The verification words are incorrect.")]
         public string ErrorMessage
         {
-            get 
+            get
             {
                 if (this.errorMessage != null)
                 {
@@ -212,21 +212,33 @@ namespace Recaptcha
         [Browsable(false)]
         public bool IsValid
         {
-            get { return this.recaptchaResponse != null && this.recaptchaResponse.IsValid; }
-            set { }
+            get
+            {
+                if (Page.IsPostBack && Visible && Enabled)
+                {
+                    return this.recaptchaResponse != null && this.recaptchaResponse.IsValid;
+                }
+                
+                return true;
+            }
+
+            set
+            {
+                throw new NotImplementedException("This setter is not implemented.");
+            }
         }
 
         public void Validate()
         {
-            if (this.skipRecaptcha) 
+            if (this.skipRecaptcha)
             {
                 this.recaptchaResponse = RecaptchaResponse.Valid;
-            } 
+            }
             else if (this.recaptchaResponse != null)
             {
                 throw new InvalidOperationException("Duplicate call to Validate() method. reCAPTCHA have been validated. Use IsValid property to retrieve the validation result.");
             }
-            else 
+            else
             {
                 if (Visible && Enabled)
                 {
@@ -236,7 +248,15 @@ namespace Recaptcha
                 validator.Challenge = Context.Request.Form[RECAPTCHA_CHALLENGE_FIELD];
                 validator.Response = Context.Request.Form[RECAPTCHA_RESPONSE_FIELD];
 
-                    this.recaptchaResponse = validator.Validate();
+                    try
+                    {
+                        this.recaptchaResponse = validator.Validate();
+                    }
+                    catch (ArgumentNullException ex)
+                    {
+                        this.recaptchaResponse = null;
+                        this.errorMessage = ex.Message;
+                    }
                 }
             }
         }
