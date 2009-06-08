@@ -118,12 +118,29 @@ namespace Recaptcha
         protected override void OnInit(EventArgs e)
         {
             base.OnInit(e);
+
             if (string.IsNullOrEmpty(this.PublicKey) || string.IsNullOrEmpty(this.PrivateKey))
             {
                 throw new ApplicationException("reCAPTCHA needs to be configured with a public & private key.");
             }
 
-            Page.Validators.Add(this);
+            if (!this.CheckIfRecaptchaExists())
+            {
+                Page.Validators.Add(this);
+            }
+        }
+
+        private bool CheckIfRecaptchaExists()
+        {
+            foreach (var validator in Page.Validators)
+            {
+                if (validator is RecaptchaControl)
+                {
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         protected override void Render(HtmlTextWriter writer)
@@ -214,11 +231,16 @@ namespace Recaptcha
         {
             get
             {
-                if (Page.IsPostBack && Visible && Enabled)
+                if (Page.IsPostBack && Visible && Enabled && !this.skipRecaptcha)
                 {
+                    if (this.recaptchaResponse == null)
+                    {
+                        this.Validate();
+                    }
+
                     return this.recaptchaResponse != null && this.recaptchaResponse.IsValid;
                 }
-                
+
                 return true;
             }
 
@@ -242,11 +264,11 @@ namespace Recaptcha
             {
                 if (Visible && Enabled)
                 {
-                RecaptchaValidator validator = new RecaptchaValidator();
+                    RecaptchaValidator validator = new RecaptchaValidator();
                     validator.PrivateKey = this.PrivateKey;
-                validator.RemoteIP = Page.Request.UserHostAddress;
-                validator.Challenge = Context.Request.Form[RECAPTCHA_CHALLENGE_FIELD];
-                validator.Response = Context.Request.Form[RECAPTCHA_RESPONSE_FIELD];
+                    validator.RemoteIP = Page.Request.UserHostAddress;
+                    validator.Challenge = Context.Request.Form[RECAPTCHA_CHALLENGE_FIELD];
+                    validator.Response = Context.Request.Form[RECAPTCHA_RESPONSE_FIELD];
 
                     try
                     {
