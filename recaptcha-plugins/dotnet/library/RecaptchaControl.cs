@@ -1,4 +1,4 @@
-// Copyright (c) 2007 Adrian Godong, Ben Maurer
+// Copyright (c) 2007 Adrian Godong, Ben Maurer, Mike Hatalski
 //
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -47,8 +47,9 @@ namespace Recaptcha
         private string publicKey;
         private string privateKey;
         private string theme;
-        private string customThemeWidget = null;
+        private string customThemeWidget;
         private bool skipRecaptcha;
+        private bool allowMultipleInstances;
         private string errorMessage;
 
         #endregion
@@ -91,11 +92,20 @@ namespace Recaptcha
 
         [Category("Settings")]
         [DefaultValue(false)]
-        [Description("Set this to true to stop reCAPTCHA validation. Useful for testing platform. Can also be set using RecaptchaSkipValidation in AppSettings")]
+        [Description("Set this to true to stop reCAPTCHA validation. Useful for testing platform. Can also be set using RecaptchaSkipValidation in AppSettings.")]
         public bool SkipRecaptcha
         {
             get { return this.skipRecaptcha; }
             set { this.skipRecaptcha = value; }
+        }
+
+        [Category("Settings")]
+        [DefaultValue(false)]
+        [Description("Set this to true to enable multiple reCAPTCHA on a single page. There may be complication between controls when this is enabled.")]
+        public bool AllowMultipleInstances
+        {
+            get { return this.allowMultipleInstances; }
+            set { this.allowMultipleInstances = value; }
         }
 
         #endregion
@@ -124,12 +134,16 @@ namespace Recaptcha
                 throw new ApplicationException("reCAPTCHA needs to be configured with a public & private key.");
             }
 
-            if (!this.CheckIfRecaptchaExists())
+            if (this.allowMultipleInstances || !this.CheckIfRecaptchaExists())
             {
                 Page.Validators.Add(this);
             }
         }
 
+        /// <summary>
+        /// Iterates through the Page.Validators property and look for registered instance of <see cref="RecaptchaControl"/>.
+        /// </summary>
+        /// <returns>True if an instance is found, False otherwise.</returns>
         private bool CheckIfRecaptchaExists()
         {
             foreach (var validator in Page.Validators)
@@ -250,17 +264,17 @@ namespace Recaptcha
             }
         }
 
+        /// <summary>
+        /// Perform validation of reCAPTCHA.
+        /// </summary>
         public void Validate()
         {
             if (this.skipRecaptcha)
             {
                 this.recaptchaResponse = RecaptchaResponse.Valid;
             }
-            else if (this.recaptchaResponse != null)
-            {
-                throw new InvalidOperationException("Duplicate call to Validate() method. reCAPTCHA have been validated. Use IsValid property to retrieve the validation result.");
-            }
-            else
+            
+            if (this.recaptchaResponse == null)
             {
                 if (Visible && Enabled)
                 {
