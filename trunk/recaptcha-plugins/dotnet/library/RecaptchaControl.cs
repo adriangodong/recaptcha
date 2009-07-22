@@ -192,6 +192,7 @@ namespace Recaptcha
             output.RenderBeginTag(HtmlTextWriterTag.Script);
             output.RenderEndTag();
 
+            // <noscript> display
             output.RenderBeginTag(HtmlTextWriterTag.Noscript);
             output.Indent++;
             output.AddAttribute(HtmlTextWriterAttribute.Src, this.GenerateChallengeUrl(true), false);
@@ -200,8 +201,7 @@ namespace Recaptcha
             output.AddAttribute("frameborder", "0");
             output.RenderBeginTag(HtmlTextWriterTag.Iframe);
             output.RenderEndTag();
-            output.RenderBeginTag(HtmlTextWriterTag.Br);
-            output.RenderEndTag();
+            output.WriteBreak(); // modified to make XHTML-compliant. Patch by xitch13@gmail.com.
             output.AddAttribute(HtmlTextWriterAttribute.Name, "recaptcha_challenge_field");
             output.AddAttribute(HtmlTextWriterAttribute.Rows, "3");
             output.AddAttribute(HtmlTextWriterAttribute.Cols, "40");
