@@ -48,9 +48,10 @@ namespace Recaptcha
         private string privateKey;
         private string theme;
         private string customThemeWidget;
+        private string errorMessage;
         private bool skipRecaptcha;
         private bool allowMultipleInstances;
-        private string errorMessage;
+        private bool overrideSecureMode;
 
         #endregion
 
@@ -106,6 +107,15 @@ namespace Recaptcha
         {
             get { return this.allowMultipleInstances; }
             set { this.allowMultipleInstances = value; }
+        }
+
+        [Category("Settings")]
+        [DefaultValue(false)]
+        [Description("Set this to true to override reCAPTCHA usage of Secure API.")]
+        public bool OverrideSecureMode
+        {
+            get { return this.overrideSecureMode; }
+            set { this.overrideSecureMode = value; }
         }
 
         #endregion
@@ -305,7 +315,7 @@ namespace Recaptcha
         private string GenerateChallengeUrl(bool noScript)
         {
             StringBuilder urlBuilder = new StringBuilder();
-            urlBuilder.Append(Context.Request.IsSecureConnection ? RECAPTCHA_SECURE_HOST : RECAPTCHA_HOST);
+            urlBuilder.Append(Context.Request.IsSecureConnection || this.overrideSecureMode ? RECAPTCHA_SECURE_HOST : RECAPTCHA_HOST);
             urlBuilder.Append(noScript ? "/noscript?" : "/challenge?");
             urlBuilder.AppendFormat("k={0}", this.PublicKey);
             if (this.recaptchaResponse != null && this.recaptchaResponse.ErrorCode != string.Empty)
