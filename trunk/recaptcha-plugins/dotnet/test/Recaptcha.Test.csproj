@@ -59,6 +59,7 @@
   </ItemGroup>
   <ItemGroup>
     <Content Include="CreateUserWizard.aspx" />
+    <Content Include="CreateUserWizardCustom.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="FormView.aspx" />
     <Content Include="ListView.aspx" />
@@ -75,6 +76,13 @@
     </Compile>
     <Compile Include="CreateUserWizard.aspx.designer.cs">
       <DependentUpon>CreateUserWizard.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CreateUserWizardCustom.aspx.cs">
+      <DependentUpon>CreateUserWizardCustom.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="CreateUserWizardCustom.aspx.designer.cs">
+      <DependentUpon>CreateUserWizardCustom.aspx</DependentUpon>
     </Compile>
     <Compile Include="Default.aspx.cs">
       <SubType>ASPXCodeBehind</SubType>
