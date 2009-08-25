@@ -3,6 +3,8 @@ Microsoft Visual Studio Solution File, Format Version 10.00
 # Visual Studio 2008
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recaptcha", "Recaptcha.csproj", "{7D501169-F895-4F94-BEF0-15671D065DD9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recaptcha.Test", "..\test\Recaptcha.Test.csproj", "{027EC450-3782-4806-A1FA-3D31F3DA7A63}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -13,6 +15,10 @@ Global
 		{7D501169-F895-4F94-BEF0-15671D065DD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7D501169-F895-4F94-BEF0-15671D065DD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7D501169-F895-4F94-BEF0-15671D065DD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{027EC450-3782-4806-A1FA-3D31F3DA7A63}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{027EC450-3782-4806-A1FA-3D31F3DA7A63}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{027EC450-3782-4806-A1FA-3D31F3DA7A63}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{027EC450-3782-4806-A1FA-3D31F3DA7A63}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
