@@ -236,7 +236,7 @@ namespace Recaptcha
         {
             get
             {
-                if (this.errorMessage != null)
+                if (!string.IsNullOrEmpty(this.errorMessage))
                 {
                     return this.errorMessage;
                 }
@@ -294,14 +294,19 @@ namespace Recaptcha
                     validator.Challenge = Context.Request.Form[RECAPTCHA_CHALLENGE_FIELD];
                     validator.Response = Context.Request.Form[RECAPTCHA_RESPONSE_FIELD];
 
-                    try
+                    if (string.IsNullOrEmpty(validator.Challenge))
+                    {
+                        this.recaptchaResponse = RecaptchaResponse.InvalidGeneric;
+                        this.errorMessage = "Invalid reCAPTCHA request. Missing challenge value.";
+                    }
+                    else if (string.IsNullOrEmpty(validator.Response))
+                    {
+                        this.recaptchaResponse = RecaptchaResponse.InvalidGeneric;
+                        this.errorMessage = "Invalid reCAPTCHA request. Missing response value.";
+                    }
+                    else
                     {
                         this.recaptchaResponse = validator.Validate();
-                    }
-                    catch (ArgumentNullException ex)
-                    {
-                        this.recaptchaResponse = null;
-                        this.errorMessage = ex.Message;
                     }
                 }
             }

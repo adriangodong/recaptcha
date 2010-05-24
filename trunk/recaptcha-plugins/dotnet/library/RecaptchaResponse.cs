@@ -26,6 +26,7 @@ namespace Recaptcha
     public class RecaptchaResponse
     {
         public static readonly RecaptchaResponse Valid = new RecaptchaResponse(true, string.Empty);
+        public static readonly RecaptchaResponse InvalidGeneric = new RecaptchaResponse(false, string.Empty);
         public static readonly RecaptchaResponse InvalidSolution = new RecaptchaResponse(false, "incorrect-captcha-sol");
         public static readonly RecaptchaResponse RecaptchaNotReachable = new RecaptchaResponse(false, "recaptcha-not-reachable");
 

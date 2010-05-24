@@ -67,20 +67,41 @@ namespace Recaptcha
             private const string CHALLENGE_FIELD_KEY = "recaptcha_challenge_field";
             private const string RESPONSE_FIELD_KEY = "recaptcha_response_field";
 
+            private RecaptchaResponse recaptchaResponse;
+            private string errorMessage;
+
             public override void OnActionExecuting(ActionExecutingContext filterContext)
             {
-                var captchaValidtor = new Recaptcha.RecaptchaValidator
+                RecaptchaValidator validator = new Recaptcha.RecaptchaValidator();
+                validator.PrivateKey = RecaptchaControlMvc.PrivateKey;
+                validator.RemoteIP = filterContext.HttpContext.Request.UserHostAddress;
+                validator.Challenge = filterContext.HttpContext.Request.Form[CHALLENGE_FIELD_KEY];
+                validator.Response = filterContext.HttpContext.Request.Form[RESPONSE_FIELD_KEY];
+
+                if (string.IsNullOrEmpty(validator.Challenge))
                 {
-                    PrivateKey = RecaptchaControlMvc.PrivateKey,
-                    RemoteIP = filterContext.HttpContext.Request.UserHostAddress,
-                    Challenge = filterContext.HttpContext.Request.Form[CHALLENGE_FIELD_KEY],
-                    Response = filterContext.HttpContext.Request.Form[RESPONSE_FIELD_KEY]
-                };
+                    this.recaptchaResponse = RecaptchaResponse.InvalidGeneric;
+                    this.errorMessage = "Invalid reCAPTCHA request. Missing challenge value.";
+                }
+                else if (string.IsNullOrEmpty(validator.Response))
+                {
+                    this.recaptchaResponse = RecaptchaResponse.InvalidGeneric;
+                    this.errorMessage = "Invalid reCAPTCHA request. Missing response value.";
+                }
+                else
+                {
+                    this.recaptchaResponse = validator.Validate();
+                }
 
-                var recaptchaResponse = captchaValidtor.Validate();
-
-                // this will push the result value into a parameter in our Action  
-                filterContext.ActionParameters["captchaValid"] = recaptchaResponse.IsValid;
+                // this will push the result value into a parameter in our Action
+                filterContext.ActionParameters["captchaValid"] = this.recaptchaResponse.IsValid;
+                if (!this.recaptchaResponse.IsValid)
+                {
+                    filterContext.ActionParameters["captchaErrorMessage"] =
+                        string.IsNullOrEmpty(this.errorMessage) ?
+                        "The verification words are incorrect." :
+                        this.errorMessage;
+                }
 
                 base.OnActionExecuting(filterContext);
             }
