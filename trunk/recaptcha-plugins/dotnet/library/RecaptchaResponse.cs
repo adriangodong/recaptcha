@@ -18,6 +18,7 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+using System;
 namespace Recaptcha
 {
     /// <summary>
@@ -26,22 +27,49 @@ namespace Recaptcha
     public class RecaptchaResponse
     {
         public static readonly RecaptchaResponse Valid = new RecaptchaResponse(true, string.Empty);
-        public static readonly RecaptchaResponse InvalidGeneric = new RecaptchaResponse(false, string.Empty);
-        public static readonly RecaptchaResponse InvalidSolution = new RecaptchaResponse(false, "incorrect-captcha-sol");
-        public static readonly RecaptchaResponse RecaptchaNotReachable = new RecaptchaResponse(false, "recaptcha-not-reachable");
+        public static readonly RecaptchaResponse InvalidChallenge = new RecaptchaResponse(false, "Invalid reCAPTCHA request. Missing challenge value.");
+        public static readonly RecaptchaResponse InvalidResponse = new RecaptchaResponse(false, "Invalid reCAPTCHA request. Missing response value.");
+        public static readonly RecaptchaResponse InvalidSolution = new RecaptchaResponse(false, "The verification words are incorrect.");
+        public static readonly RecaptchaResponse RecaptchaNotReachable = new RecaptchaResponse(false, "The reCAPTCHA server is unavailable.");
 
         private bool isValid;
-        private string errorCode;
+        private string errorMessage;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="RecaptchaResponse"/> class.
         /// </summary>
         /// <param name="isValid">Value indicates whether submitted reCAPTCHA is valid.</param>
         /// <param name="errorCode">Error code returned from reCAPTCHA web service.</param>
-        internal RecaptchaResponse(bool isValid, string errorCode)
+        internal RecaptchaResponse(bool isValid, string errorMessage)
         {
-            this.isValid = isValid;
-            this.errorCode = errorCode;
+            RecaptchaResponse templateResponse = null;
+
+            if (IsValid)
+            {
+                templateResponse = RecaptchaResponse.Valid;
+            }
+            else
+            {
+                switch (errorMessage)
+                {
+                    case "incorrect-captcha-sol":
+                        templateResponse = RecaptchaResponse.InvalidSolution;
+                        break;
+                    case null:
+                        throw new ArgumentNullException("errorMessage");
+                }
+            }
+
+            if (templateResponse != null)
+            {
+                this.isValid = templateResponse.IsValid;
+                this.errorMessage = templateResponse.ErrorMessage;
+            }
+            else
+            {
+                this.isValid = isValid;
+                this.errorMessage = errorMessage;
+            }
         }
 
         public bool IsValid
@@ -49,9 +77,9 @@ namespace Recaptcha
             get { return this.isValid; }
         }
 
-        public string ErrorCode
+        public string ErrorMessage
         {
-            get { return this.errorCode; }
+            get { return this.errorMessage; }
         }
 
         public override bool Equals(object obj)
@@ -62,12 +90,12 @@ namespace Recaptcha
                 return false;
             }
 
-            return other.IsValid == this.IsValid && other.ErrorCode == this.ErrorCode;
+            return other.IsValid == this.isValid && other.ErrorMessage == this.errorMessage;
         }
 
         public override int GetHashCode()
         {
-            return this.IsValid.GetHashCode() ^ this.ErrorCode.GetHashCode();
+            return this.isValid.GetHashCode() ^ this.errorMessage.GetHashCode();
         }
     }
 }

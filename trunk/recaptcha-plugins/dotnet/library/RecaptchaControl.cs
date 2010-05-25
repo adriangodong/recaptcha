@@ -48,7 +48,6 @@ namespace Recaptcha
         private string privateKey;
         private string theme;
         private string customThemeWidget;
-        private string errorMessage;
         private bool skipRecaptcha;
         private bool allowMultipleInstances;
         private bool overrideSecureMode;
@@ -236,17 +235,14 @@ namespace Recaptcha
         {
             get
             {
-                if (!string.IsNullOrEmpty(this.errorMessage))
-                {
-                    return this.errorMessage;
-                }
-
-                return "The verification words are incorrect.";
+                return (this.recaptchaResponse != null) ?
+                    this.recaptchaResponse.ErrorMessage :
+                    null;
             }
 
             set
             {
-                this.errorMessage = value;
+                throw new NotImplementedException("This setter is not implemented.");
             }
         }
 
@@ -283,7 +279,7 @@ namespace Recaptcha
             {
                 this.recaptchaResponse = RecaptchaResponse.Valid;
             }
-            
+
             if (this.recaptchaResponse == null)
             {
                 if (Visible && Enabled)
@@ -294,15 +290,13 @@ namespace Recaptcha
                     validator.Challenge = Context.Request.Form[RECAPTCHA_CHALLENGE_FIELD];
                     validator.Response = Context.Request.Form[RECAPTCHA_RESPONSE_FIELD];
 
-                    if (string.IsNullOrEmpty(validator.Challenge))
+                    if (validator.Challenge == null)
                     {
-                        this.recaptchaResponse = RecaptchaResponse.InvalidGeneric;
-                        this.errorMessage = "Invalid reCAPTCHA request. Missing challenge value.";
+                        this.recaptchaResponse = RecaptchaResponse.InvalidChallenge;
                     }
-                    else if (string.IsNullOrEmpty(validator.Response))
+                    else if (validator.Response == null)
                     {
-                        this.recaptchaResponse = RecaptchaResponse.InvalidGeneric;
-                        this.errorMessage = "Invalid reCAPTCHA request. Missing response value.";
+                        this.recaptchaResponse = RecaptchaResponse.InvalidResponse;
                     }
                     else
                     {
@@ -323,11 +317,6 @@ namespace Recaptcha
             urlBuilder.Append(Context.Request.IsSecureConnection || this.overrideSecureMode ? RECAPTCHA_SECURE_HOST : RECAPTCHA_HOST);
             urlBuilder.Append(noScript ? "/noscript?" : "/challenge?");
             urlBuilder.AppendFormat("k={0}", this.PublicKey);
-            if (this.recaptchaResponse != null && this.recaptchaResponse.ErrorCode != string.Empty)
-            {
-                urlBuilder.AppendFormat("&error={0}", this.recaptchaResponse.ErrorCode);
-            }
-
             return urlBuilder.ToString();
         }
     }
