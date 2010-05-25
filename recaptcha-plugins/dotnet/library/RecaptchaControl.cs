@@ -24,6 +24,7 @@ using System.Configuration;
 using System.Text;
 using System.Web.UI;
 using System.Web.UI.WebControls;
+using System.Net;
 
 namespace Recaptcha
 {
@@ -51,6 +52,7 @@ namespace Recaptcha
         private bool skipRecaptcha;
         private bool allowMultipleInstances;
         private bool overrideSecureMode;
+        private IWebProxy proxy;
 
         #endregion
 
@@ -115,6 +117,14 @@ namespace Recaptcha
         {
             get { return this.overrideSecureMode; }
             set { this.overrideSecureMode = value; }
+        }
+
+        [Category("Settings")]
+        [Description("Set this to override proxy used to validate reCAPTCHA.")]
+        public IWebProxy Proxy
+        {
+            get { return this.proxy; }
+            set { this.proxy = value; }
         }
 
         #endregion
@@ -289,6 +299,7 @@ namespace Recaptcha
                     validator.RemoteIP = Page.Request.UserHostAddress;
                     validator.Challenge = Context.Request.Form[RECAPTCHA_CHALLENGE_FIELD];
                     validator.Response = Context.Request.Form[RECAPTCHA_RESPONSE_FIELD];
+                    validator.Proxy = this.proxy;
 
                     if (validator.Challenge == null)
                     {

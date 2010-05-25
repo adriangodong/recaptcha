@@ -42,6 +42,8 @@ namespace Recaptcha
         private string challenge;
         private string response;
 
+        private IWebProxy proxy;
+
         public string PrivateKey
         {
             get { return this.privateKey; }
@@ -82,6 +84,12 @@ namespace Recaptcha
             set { this.response = value; }
         }
 
+        public IWebProxy Proxy
+        {
+            get { return this.proxy; }
+            set { this.proxy = value; }
+        }
+
         private void CheckNotNull(object obj, string name)
         {
             if (obj == null)
@@ -107,6 +115,10 @@ namespace Recaptcha
             request.Timeout = 30 * 1000 /* 30 seconds */;
             request.Method = "POST";
             request.UserAgent = "reCAPTCHA/ASP.NET";
+            if (this.proxy != null)
+            {
+                request.Proxy = this.proxy;
+            }
 
             request.ContentType = "application/x-www-form-urlencoded";
 
