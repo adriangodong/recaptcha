@@ -68,7 +68,6 @@ namespace Recaptcha
             private const string RESPONSE_FIELD_KEY = "recaptcha_response_field";
 
             private RecaptchaResponse recaptchaResponse;
-            private string errorMessage;
 
             public override void OnActionExecuting(ActionExecutingContext filterContext)
             {
@@ -80,28 +79,20 @@ namespace Recaptcha
 
                 if (string.IsNullOrEmpty(validator.Challenge))
                 {
-                    this.recaptchaResponse = RecaptchaResponse.InvalidGeneric;
-                    this.errorMessage = "Invalid reCAPTCHA request. Missing challenge value.";
+                    this.recaptchaResponse = RecaptchaResponse.InvalidChallenge;
                 }
                 else if (string.IsNullOrEmpty(validator.Response))
                 {
-                    this.recaptchaResponse = RecaptchaResponse.InvalidGeneric;
-                    this.errorMessage = "Invalid reCAPTCHA request. Missing response value.";
+                    this.recaptchaResponse = RecaptchaResponse.InvalidResponse;
                 }
                 else
                 {
                     this.recaptchaResponse = validator.Validate();
                 }
 
-                // this will push the result value into a parameter in our Action
+                // this will push the result values into a parameter in our Action
                 filterContext.ActionParameters["captchaValid"] = this.recaptchaResponse.IsValid;
-                if (!this.recaptchaResponse.IsValid)
-                {
-                    filterContext.ActionParameters["captchaErrorMessage"] =
-                        string.IsNullOrEmpty(this.errorMessage) ?
-                        "The verification words are incorrect." :
-                        this.errorMessage;
-                }
+                filterContext.ActionParameters["captchaErrorMessage"] = this.recaptchaResponse.ErrorMessage;
 
                 base.OnActionExecuting(filterContext);
             }

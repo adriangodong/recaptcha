@@ -132,7 +132,7 @@ namespace Recaptcha
                 {
                     using (TextReader readStream = new StreamReader(httpResponse.GetResponseStream(), Encoding.UTF8))
                     {
-                        results = readStream.ReadToEnd().Split();
+                        results = readStream.ReadToEnd().Split(new string[] { "\n", "\\n" }, StringSplitOptions.RemoveEmptyEntries);
                     }
                 }
             }
@@ -147,7 +147,7 @@ namespace Recaptcha
                 case "true":
                     return RecaptchaResponse.Valid;
                 case "false":
-                    return new RecaptchaResponse(false, results[1]);
+                    return new RecaptchaResponse(false, results[1].Trim(new char[] { '\'' }));
                 default:
                     throw new InvalidProgramException("Unknown status response.");
             }
