@@ -261,17 +261,7 @@ namespace Recaptcha
         {
             get
             {
-                if (Page.IsPostBack && Visible && Enabled && !this.skipRecaptcha)
-                {
-                    if (this.recaptchaResponse == null)
-                    {
-                        this.Validate();
-                    }
-
-                    return this.recaptchaResponse != null && this.recaptchaResponse.IsValid;
-                }
-
-                return true;
+                return this.recaptchaResponse == null ? true : this.recaptchaResponse.IsValid;
             }
 
             set
@@ -285,35 +275,37 @@ namespace Recaptcha
         /// </summary>
         public void Validate()
         {
-            if (this.skipRecaptcha)
+            if (Page.IsPostBack && Visible && Enabled && !this.skipRecaptcha)
             {
-                this.recaptchaResponse = RecaptchaResponse.Valid;
-            }
-
-            if (this.recaptchaResponse == null)
-            {
-                if (Visible && Enabled)
+                if (this.recaptchaResponse == null)
                 {
-                    RecaptchaValidator validator = new RecaptchaValidator();
-                    validator.PrivateKey = this.PrivateKey;
-                    validator.RemoteIP = Page.Request.UserHostAddress;
-                    validator.Challenge = Context.Request.Form[RECAPTCHA_CHALLENGE_FIELD];
-                    validator.Response = Context.Request.Form[RECAPTCHA_RESPONSE_FIELD];
-                    validator.Proxy = this.proxy;
+                    if (Visible && Enabled)
+                    {
+                        RecaptchaValidator validator = new RecaptchaValidator();
+                        validator.PrivateKey = this.PrivateKey;
+                        validator.RemoteIP = Page.Request.UserHostAddress;
+                        validator.Challenge = Context.Request.Form[RECAPTCHA_CHALLENGE_FIELD];
+                        validator.Response = Context.Request.Form[RECAPTCHA_RESPONSE_FIELD];
+                        validator.Proxy = this.proxy;
 
-                    if (validator.Challenge == null)
-                    {
-                        this.recaptchaResponse = RecaptchaResponse.InvalidChallenge;
-                    }
-                    else if (validator.Response == null)
-                    {
-                        this.recaptchaResponse = RecaptchaResponse.InvalidResponse;
-                    }
-                    else
-                    {
-                        this.recaptchaResponse = validator.Validate();
+                        if (validator.Challenge == null)
+                        {
+                            this.recaptchaResponse = RecaptchaResponse.InvalidChallenge;
+                        }
+                        else if (validator.Response == null)
+                        {
+                            this.recaptchaResponse = RecaptchaResponse.InvalidResponse;
+                        }
+                        else
+                        {
+                            this.recaptchaResponse = validator.Validate();
+                        }
                     }
                 }
+            }
+            else
+            {
+                this.recaptchaResponse = RecaptchaResponse.Valid;
             }
         }
 
