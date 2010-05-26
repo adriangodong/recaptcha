@@ -22,6 +22,8 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <UseVSHostingProcess>true</UseVSHostingProcess>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -66,6 +68,7 @@
     <Content Include="MultiView.aspx" />
     <Content Include="MultiViewInUpdatePanel.aspx" />
     <Content Include="UpdatePanel.aspx" />
+    <Content Include="ValidationGroup.aspx" />
     <Content Include="ValidationSummary.aspx" />
     <Content Include="Web.config" />
   </ItemGroup>
@@ -126,6 +129,13 @@
     </Compile>
     <Compile Include="UpdatePanel.aspx.designer.cs">
       <DependentUpon>UpdatePanel.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="ValidationGroup.aspx.cs">
+      <DependentUpon>ValidationGroup.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="ValidationGroup.aspx.designer.cs">
+      <DependentUpon>ValidationGroup.aspx</DependentUpon>
     </Compile>
     <Compile Include="ValidationSummary.aspx.cs">
       <DependentUpon>ValidationSummary.aspx</DependentUpon>
