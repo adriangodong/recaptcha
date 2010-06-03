@@ -54,7 +54,7 @@ namespace Recaptcha.Design
                 // fixme -- I can't get this to open up automatically (
                 DesignerActionItemCollection items = new DesignerActionItemCollection();
                 items.Add(new DesignerActionHeaderItem("API Key"));
-                items.Add(new DesignerActionTextItem("To use reCAPTCHA, you need an API key from http://admin.recaptcha.net/", string.Empty));
+                items.Add(new DesignerActionTextItem("To use reCAPTCHA, you need an API key from https://www.google.com/recaptcha/admin/create", string.Empty));
 
                 return items;
             }

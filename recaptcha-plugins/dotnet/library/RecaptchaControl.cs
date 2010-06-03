@@ -40,8 +40,8 @@ namespace Recaptcha
         private const string RECAPTCHA_CHALLENGE_FIELD = "recaptcha_challenge_field";
         private const string RECAPTCHA_RESPONSE_FIELD = "recaptcha_response_field";
 
-        private const string RECAPTCHA_SECURE_HOST = "https://api-secure.recaptcha.net";
-        private const string RECAPTCHA_HOST = "http://api.recaptcha.net";
+        private const string RECAPTCHA_SECURE_HOST = "https://www.google.com/recaptcha/api";
+        private const string RECAPTCHA_HOST = "http://www.google.com/recaptcha/api";
 
         private RecaptchaResponse recaptchaResponse;
 
@@ -59,7 +59,7 @@ namespace Recaptcha
         #region Public Properties
 
         [Category("Settings")]
-        [Description("The public key from admin.recaptcha.net. Can also be set using RecaptchaPublicKey in AppSettings.")]
+        [Description("The public key from https://www.google.com/recaptcha/admin/create. Can also be set using RecaptchaPublicKey in AppSettings.")]
         public string PublicKey
         {
             get { return this.publicKey; }
@@ -67,7 +67,7 @@ namespace Recaptcha
         }
 
         [Category("Settings")]
-        [Description("The private key from admin.recaptcha.net. Can also be set using RecaptchaPrivateKey in AppSettings.")]
+        [Description("The private key from https://www.google.com/recaptcha/admin/create. Can also be set using RecaptchaPrivateKey in AppSettings.")]
         public string PrivateKey
         {
             get { return this.privateKey; }
