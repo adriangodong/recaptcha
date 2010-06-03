@@ -34,7 +34,7 @@ namespace Recaptcha
     /// </summary>
     public class RecaptchaValidator
     {
-        private const string VerifyUrl = "http://api-verify.recaptcha.net/verify";
+        private const string VerifyUrl = "http://www.google.com/recaptcha/api/verify";
 
         private string privateKey;
         private string remoteIp;
