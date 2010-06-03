@@ -16,10 +16,10 @@ BEGIN {
             name => 'Simple',
             args => [$pubkey],
             expect =>
-              qq{<script src="http://api.recaptcha.net/challenge?k=$pubkey" }
+              qq{<script src="http://www.google.com/recaptcha/api/challenge?k=$pubkey" }
               . qq{type="text/javascript"></script>\n}
               . qq{<noscript><iframe frameborder="0" height="300" }
-              . qq{src="http://api.recaptcha.net/noscript?k=$pubkey" }
+              . qq{src="http://www.google.com/recaptcha/api/noscript?k=$pubkey" }
               . qq{width="500"></iframe><textarea cols="40" name="recaptcha_challenge_field" }
               . qq{rows="3"></textarea><input name="recaptcha_response_field" type="hidden" }
               . qq{value="manual_challenge" /></noscript>\n}
@@ -28,10 +28,10 @@ BEGIN {
             name => 'Error',
             args => [ $pubkey, '<<some random error>>' ],
             expect =>
-              qq{<script src="http://api.recaptcha.net/challenge?error=%3c%3csome+random+error%3e%3e&amp;k=$pubkey" }
+              qq{<script src="http://www.google.com/recaptcha/api/challenge?error=%3c%3csome+random+error%3e%3e&amp;k=$pubkey" }
               . qq{type="text/javascript"></script>\n}
               . qq{<noscript><iframe frameborder="0" height="300" }
-              . qq{src="http://api.recaptcha.net/noscript?error=%3c%3csome+random+error%3e%3e&amp;k=$pubkey" }
+              . qq{src="http://www.google.com/recaptcha/api/noscript?error=%3c%3csome+random+error%3e%3e&amp;k=$pubkey" }
               . qq{width="500"></iframe><textarea cols="40" name="recaptcha_challenge_field" }
               . qq{rows="3"></textarea><input name="recaptcha_response_field" type="hidden" }
               . qq{value="manual_challenge" /></noscript>\n}
@@ -41,10 +41,10 @@ BEGIN {
             args =>
               [ $pubkey, { is_valid => 0, error => '<<some random error>>' } ],
             expect =>
-              qq{<script src="http://api.recaptcha.net/challenge?error=%3c%3csome+random+error%3e%3e&amp;k=$pubkey" }
+              qq{<script src="http://www.google.com/recaptcha/api/challenge?error=%3c%3csome+random+error%3e%3e&amp;k=$pubkey" }
               . qq{type="text/javascript"></script>\n}
               . qq{<noscript><iframe frameborder="0" height="300" }
-              . qq{src="http://api.recaptcha.net/noscript?error=%3c%3csome+random+error%3e%3e&amp;k=$pubkey" }
+              . qq{src="http://www.google.com/recaptcha/api/noscript?error=%3c%3csome+random+error%3e%3e&amp;k=$pubkey" }
               . qq{width="500"></iframe><textarea cols="40" name="recaptcha_challenge_field" }
               . qq{rows="3"></textarea><input name="recaptcha_response_field" type="hidden" }
               . qq{value="manual_challenge" /></noscript>\n}
@@ -53,10 +53,10 @@ BEGIN {
             name => 'Secure',
             args => [ $pubkey, undef, 1 ],
             expect =>
-              qq{<script src="https://api-secure.recaptcha.net/challenge?k=$pubkey" }
+              qq{<script src="https://www.google.com/recaptcha/api/challenge?k=$pubkey" }
               . qq{type="text/javascript"></script>\n}
               . qq{<noscript><iframe frameborder="0" height="300" }
-              . qq{src="https://api-secure.recaptcha.net/noscript?k=$pubkey" }
+              . qq{src="https://www.google.com/recaptcha/api/noscript?k=$pubkey" }
               . qq{width="500"></iframe><textarea cols="40" name="recaptcha_challenge_field" }
               . qq{rows="3"></textarea><input name="recaptcha_response_field" type="hidden" }
               . qq{value="manual_challenge" /></noscript>\n}
@@ -67,10 +67,10 @@ BEGIN {
             expect =>
               qq(<script type="text/javascript">\n//<![CDATA[\nvar RecaptchaOptions = )
               . qq({"tabindex":3,"theme":"white"};\n//]]>\n</script>\n)
-              . qq{<script src="http://api.recaptcha.net/challenge?k=$pubkey" }
+              . qq{<script src="http://www.google.com/recaptcha/api/challenge?k=$pubkey" }
               . qq{type="text/javascript"></script>\n}
               . qq{<noscript><iframe frameborder="0" height="300" }
-              . qq{src="http://api.recaptcha.net/noscript?k=$pubkey" }
+              . qq{src="http://www.google.com/recaptcha/api/noscript?k=$pubkey" }
               . qq{width="500"></iframe><textarea cols="40" name="recaptcha_challenge_field" }
               . qq{rows="3"></textarea><input name="recaptcha_response_field" type="hidden" }
               . qq{value="manual_challenge" /></noscript>\n}

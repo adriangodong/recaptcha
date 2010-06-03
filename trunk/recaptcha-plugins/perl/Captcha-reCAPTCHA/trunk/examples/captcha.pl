@@ -7,7 +7,7 @@ use Captcha::reCAPTCHA;
 use CGI::Simple;
 
 # Your reCAPTCHA keys from
-#   https://admin.recaptcha.net/recaptcha/createsite/
+#  https://www.google.com/recaptcha/admin/create
 use constant PUBLIC_KEY       => '<public key here>';
 use constant PRIVATE_KEY      => '<private key here>';
 

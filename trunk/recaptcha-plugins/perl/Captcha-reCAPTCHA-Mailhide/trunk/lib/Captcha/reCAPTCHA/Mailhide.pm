@@ -7,9 +7,9 @@ use Crypt::Rijndael;
 use MIME::Base64;
 use HTML::Tiny;
 
-our $VERSION = '0.94';
+our $VERSION = '0.95';
 
-use constant API_MAILHIDE_SERVER => 'http://mailhide.recaptcha.net';
+use constant API_MAILHIDE_SERVER => 'http://www.google.com/recaptcha/mailhide';
 
 sub new {
     my $class = shift;
@@ -47,7 +47,7 @@ sub mailhide_url {
 
     croak
       "To use reCAPTCHA::Mailhide, you have to sign up for a public and "
-      . "private key. You can do so at http://mailhide.recaptcha.net/apikey."
+      . "private key. You can do so at http://www.google.com/recaptcha/mailhide/apikey."
       unless $pubkey && $privkey;
 
     croak "You must supply an email address"
@@ -123,7 +123,7 @@ Captcha::reCAPTCHA::Mailhide - A Perl implementation of the reCAPTCHA Mailhide A
 
 =head1 VERSION
 
-This document describes Captcha::reCAPTCHA::Mailhide version 0.94
+This document describes Captcha::reCAPTCHA::Mailhide version 0.95
 
 =head1 SYNOPSIS
 
@@ -163,7 +163,7 @@ L<http://recaptcha.net/plugins/php/>
 To use reCAPTCHA Mailhide you need to get a public, private key pair
 from this page:
 
-L<http://mailhide.recaptcha.net/apikey>
+L<http://www.google.com/recaptcha/mailhide/apikey>
 
 The Mailhide API consists of two methods C<< mailhide_html >>
 and C<< mailhide_url >>. The methods have the same parameters.
@@ -222,7 +222,7 @@ variables.
 
 To use Mailhide get a public/private key pair here:
 
-L<http://mailhide.recaptcha.net/apikey>
+L<http://www.google.com/recaptcha/mailhide/apikey>
 
 =head1 DEPENDENCIES
 

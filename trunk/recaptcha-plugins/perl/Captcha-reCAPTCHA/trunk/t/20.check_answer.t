@@ -24,7 +24,7 @@ BEGIN {
                 challenge  => '..challenge..',
                 response   => '..response..'
             },
-            check_url => 'http://api-verify.recaptcha.net/verify',
+            check_url => 'http://www.google.com/recaptcha/api/verify',
             expect    => { is_valid => 1 },
         },
         {
@@ -37,7 +37,7 @@ BEGIN {
                 challenge  => '..challenge..',
                 response   => '..response..'
             },
-            check_url => 'http://api-verify.recaptcha.net/verify',
+            check_url => 'http://www.google.com/recaptcha/api/verify',
             expect => { is_valid => 0, error => 'incorrect-captcha-sol' },
         },
     );
