@@ -6,11 +6,11 @@ use Carp;
 use LWP::UserAgent;
 use HTML::Tiny;
 
-our $VERSION = '0.93';
+our $VERSION = '0.94';
 
-use constant API_SERVER        => 'http://api.recaptcha.net';
-use constant API_SECURE_SERVER => 'https://api-secure.recaptcha.net';
-use constant API_VERIFY_SERVER => 'http://api-verify.recaptcha.net';
+use constant API_SERVER        => 'http://www.google.com/recaptcha/api';
+use constant API_SECURE_SERVER => 'https://www.google.com/recaptcha/api';
+use constant API_VERIFY_SERVER => 'http://www.google.com';
 use constant SERVER_ERROR      => 'recaptcha-not-reachable';
 
 sub new {
@@ -53,7 +53,7 @@ sub get_html {
     my ( $pubkey, $error, $use_ssl, $options ) = @_;
 
     croak
-      "To use reCAPTCHA you must get an API key from http://recaptcha.net/api/getkey"
+      "To use reCAPTCHA you must get an API key from https://www.google.com/recaptcha/admin/create"
       unless $pubkey;
 
     my $h = $self->_html;
@@ -124,7 +124,7 @@ sub check_answer {
     my ( $privkey, $remoteip, $challenge, $response ) = @_;
 
     croak
-      "To use reCAPTCHA you must get an API key from http://recaptcha.net/api/getkey"
+      "To use reCAPTCHA you must get an API key from https://www.google.com/recaptcha/admin/create"
       unless $privkey;
 
     croak
@@ -135,7 +135,7 @@ sub check_answer {
       unless $challenge && $response;
 
     my $resp = $self->_post_request(
-        API_VERIFY_SERVER . '/verify',
+        API_VERIFY_SERVER . '/recaptcha/api/verify',
         {
             privatekey => $privkey,
             remoteip   => $remoteip,
@@ -168,7 +168,7 @@ Captcha::reCAPTCHA - A Perl implementation of the reCAPTCHA API
 
 =head1 VERSION
 
-This document describes Captcha::reCAPTCHA version 0.93
+This document describes Captcha::reCAPTCHA version 0.94
 
 =head1 SYNOPSIS
 
@@ -216,7 +216,7 @@ L<http://recaptcha.net/plugins/php/>
 
 To use reCAPTCHA you need to register your site here:
 
-L<https://admin.recaptcha.net/recaptcha/createsite/>
+L<https://www.google.com/recaptcha/admin/create>
 
 =head1 INTERFACE
 
@@ -339,7 +339,7 @@ variables.
 
 To use reCAPTCHA sign up for a key pair here:
 
-L<https://admin.recaptcha.net/recaptcha/createsite/>
+L<https://www.google.com/recaptcha/admin/create>
 
 =head1 DEPENDENCIES
 

@@ -6,7 +6,7 @@ use warnings;
 use Captcha::reCAPTCHA::Mailhide;
 
 # Your reCAPTCHA mailhide keys from
-#   http://mailhide.recaptcha.net/apikey
+#  http://www.google.com/recaptcha/mailhide/apikey
 use constant MAIL_PUBLIC_KEY  => '<public mailhide key here>';
 use constant MAIL_PRIVATE_KEY => '<private mailhide key here>';
 
