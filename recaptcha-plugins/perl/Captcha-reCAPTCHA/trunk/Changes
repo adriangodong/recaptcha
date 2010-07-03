@@ -42,3 +42,6 @@ Revision history for Captcha-reCAPTCHA
 0.92    2007-11-19
         Split Captcha::reCAPTCHA::Mailhide into a separate distro so we
         don't have to depend on Crypt::Rijndael.
+
+0.93    2010-07-03
+        Updated Perl plugin to use Google infrastructure.
