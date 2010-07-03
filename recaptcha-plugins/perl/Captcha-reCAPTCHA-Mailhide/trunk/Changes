@@ -44,3 +44,6 @@ Revision history for Captcha-reCAPTCHA
 
 0.93    2007-12-18
         Handle versions of HTML::Tiny that encode &apos; as &#39;
+
+0.94    2010-07-03
+        Updated Perl plugin to use Google infrastructure.
