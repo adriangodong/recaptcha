@@ -9,109 +9,107 @@ use HTML::Tiny;
 
 our $VERSION = '0.94';
 
-use constant API_MAILHIDE_SERVER => 'http://www.google.com/recaptcha/mailhide';
+use constant API_MAILHIDE_SERVER =>
+ 'http://www.google.com/recaptcha/mailhide';
 
 sub new {
-    my $class = shift;
-    my $self = bless {}, $class;
-    croak "new takes no parameters" if @_;
-    return $self;
+  my $class = shift;
+  my $self = bless {}, $class;
+  croak "new takes no parameters" if @_;
+  return $self;
 }
 
 sub _aes_encrypt {
-    my ( $val, $ky ) = @_;
+  my ( $val, $ky ) = @_;
 
-    my $val_len = length( $val );
-    my $pad_len = int( ( $val_len + 15 ) / 16 ) * 16;
+  my $val_len = length( $val );
+  my $pad_len = int( ( $val_len + 15 ) / 16 ) * 16;
 
-    # Pad value
-    $val .= chr( 16 - $val_len % 16 ) x ( $pad_len - $val_len )
-      if $val_len < $pad_len;
+  # Pad value
+  $val .= chr( 16 - $val_len % 16 ) x ( $pad_len - $val_len )
+   if $val_len < $pad_len;
 
-    my $cipher = Crypt::Rijndael->new( $ky, Crypt::Rijndael::MODE_CBC );
-    $cipher->set_iv( "\0" x 16 );
+  my $cipher = Crypt::Rijndael->new( $ky, Crypt::Rijndael::MODE_CBC );
+  $cipher->set_iv( "\0" x 16 );
 
-    return $cipher->encrypt( $val );
+  return $cipher->encrypt( $val );
 }
 
 sub _urlbase64 {
-    my $str = shift;
-    chomp( my $enc = encode_base64( $str ) );
-    $enc =~ tr{+/}{-_};
-    return $enc;
+  my $str = shift;
+  chomp( my $enc = encode_base64( $str ) );
+  $enc =~ tr{+/}{-_};
+  return $enc;
 }
 
 sub mailhide_url {
-    my $self = shift;
-    my ( $pubkey, $privkey, $email ) = @_;
+  my $self = shift;
+  my ( $pubkey, $privkey, $email ) = @_;
 
-    croak
-      "To use reCAPTCHA::Mailhide, you have to sign up for a public and "
-      . "private key. You can do so at http://www.google.com/recaptcha/mailhide/apikey."
-      unless $pubkey && $privkey;
+  croak
+   "To use reCAPTCHA::Mailhide, you have to sign up for a public and "
+   . "private key. You can do so at http://www.google.com/recaptcha/mailhide/apikey."
+   unless $pubkey && $privkey;
 
-    croak "You must supply an email address"
-      unless $email;
+  croak "You must supply an email address"
+   unless $email;
 
-    my $h = HTML::Tiny->new();
+  my $h = HTML::Tiny->new();
 
-    return
-      API_MAILHIDE_SERVER . '/d?'
-      . $h->query_encode(
-        {
-            k => $pubkey,
-            c => _urlbase64(
-                _aes_encrypt( $email, pack( 'H*', $privkey ) )
-            )
-        }
-      );
+  return
+   API_MAILHIDE_SERVER . '/d?'
+   . $h->query_encode(
+    {
+      k => $pubkey,
+      c => _urlbase64( _aes_encrypt( $email, pack( 'H*', $privkey ) ) )
+    }
+   );
 }
 
 sub _email_parts {
-    my ( $user, $dom ) = split( /\@/, shift, 2 );
-    my $ul = length( $user );
-    return ( substr( $user, 0, $ul <= 4 ? 1 : $ul <= 6 ? 3 : 4 ),
-        '...', '@', $dom );
+  my ( $user, $dom ) = split( /\@/, shift, 2 );
+  my $ul = length( $user );
+  return ( substr( $user, 0, $ul <= 4 ? 1 : $ul <= 6 ? 3 : 4 ),
+    '...', '@', $dom );
 }
 
 sub mailhide_html {
-    my $self = shift;
-    my ( $pubkey, $privkey, $email ) = @_;
+  my $self = shift;
+  my ( $pubkey, $privkey, $email ) = @_;
 
-    my $h = HTML::Tiny->new();
+  my $h = HTML::Tiny->new();
 
-    my $url = $self->mailhide_url( $pubkey, $privkey, $email );
-    my ( $user, $dots, $at, $dom ) = _email_parts( $email );
+  my $url = $self->mailhide_url( $pubkey, $privkey, $email );
+  my ( $user, $dots, $at, $dom ) = _email_parts( $email );
 
-    my %window_options = (
-        toolbar    => 0,
-        scrollbars => 0,
-        location   => 0,
-        statusbar  => 0,
-        menubar    => 0,
-        resizable  => 0,
-        width      => 500,
-        height     => 300
-    );
+  my %window_options = (
+    toolbar    => 0,
+    scrollbars => 0,
+    location   => 0,
+    statusbar  => 0,
+    menubar    => 0,
+    resizable  => 0,
+    width      => 500,
+    height     => 300
+  );
 
-    my $options = join ',',
-      map { "$_=$window_options{$_}" } sort keys %window_options;
+  my $options = join ',',
+   map { "$_=$window_options{$_}" } sort keys %window_options;
 
-    return join(
-        '',
-        $h->entity_encode( $user ),
-        $h->a(
-            {
-                href => $url,
-                onclick =>
-                  "window.open('$url', '', '$options'); return false;",
-                title => 'Reveal this e-mail address'
-            },
-            $dots
-        ),
-        $at,
-        $h->entity_encode( $dom )
-    );
+  return join(
+    '',
+    $h->entity_encode( $user ),
+    $h->a(
+      {
+        href    => $url,
+        onclick => "window.open('$url', '', '$options'); return false;",
+        title   => 'Reveal this e-mail address'
+      },
+      $dots
+    ),
+    $at,
+    $h->entity_encode( $dom )
+  );
 }
 
 1;
