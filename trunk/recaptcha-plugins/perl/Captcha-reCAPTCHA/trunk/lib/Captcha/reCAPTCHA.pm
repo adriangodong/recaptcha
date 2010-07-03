@@ -6,7 +6,7 @@ use Carp;
 use LWP::UserAgent;
 use HTML::Tiny;
 
-our $VERSION = '0.94';
+our $VERSION = '0.93';
 
 use constant API_SERVER => 'http://www.google.com/recaptcha/api';
 use constant API_SECURE_SERVER =>
@@ -168,7 +168,7 @@ Captcha::reCAPTCHA - A Perl implementation of the reCAPTCHA API
 
 =head1 VERSION
 
-This document describes Captcha::reCAPTCHA version 0.94
+This document describes Captcha::reCAPTCHA version 0.93
 
 =head1 SYNOPSIS
 
