@@ -19,6 +19,7 @@
 // THE SOFTWARE.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Configuration;
 using System.Text;
@@ -48,6 +49,8 @@ namespace Recaptcha
         private string publicKey;
         private string privateKey;
         private string theme;
+        private string language;
+        private Dictionary<string, string> customTranslations;
         private string customThemeWidget;
         private bool skipRecaptcha;
         private bool allowMultipleInstances;
@@ -74,16 +77,33 @@ namespace Recaptcha
             set { this.privateKey = value; }
         }
 
-        [Category("Appearence")]
+        [Category("Appearance")]
         [DefaultValue("red")]
-        [Description("The theme for the reCAPTCHA control. Currently supported values are red, blackglass, white, and clean")]
+        [Description("The theme for the reCAPTCHA control. Currently supported values are 'red', 'white', 'blackglass', 'clean', and 'custom'.")]
         public string Theme
         {
             get { return this.theme; }
             set { this.theme = value; }
         }
 
-        [Category("Appearence")]
+        [Category("Appearance")]
+        [DefaultValue(null)]
+        [Description("UI language for the reCAPTCHA control. Currently supported values are 'en', 'nl', 'fr', 'de', 'pt', 'ru', 'es', and 'tr'.")]
+        public string Language
+        {
+            get { return this.language; }
+            set { this.language = value; }
+        }
+
+        [Category("Appearance")]
+        [DefaultValue(null)]
+        public Dictionary<string, string> CustomTranslations
+        {
+            get { return this.customTranslations; }
+            set { this.customTranslations = value; }
+        }
+
+        [Category("Appearance")]
         [DefaultValue(null)]
         [Description("When using custom theming, this is a div element which contains the widget. ")]
         public string CustomThemeWidget
@@ -197,9 +217,20 @@ namespace Recaptcha
             output.WriteLine("var RecaptchaOptions = {");
             output.Indent++;
             output.WriteLine("theme : '{0}',", this.theme ?? string.Empty);
-            if (null != customThemeWidget)
-                output.WriteLine("custom_theme_widget : '{0}',", customThemeWidget);
-            output.WriteLine("tabindex : {0}", TabIndex);
+            if (!string.IsNullOrEmpty(this.language))
+                output.WriteLine("lang : '{0}',", this.language);
+            if (this.customTranslations != null && this.customTranslations.Count > 0)
+            {
+                output.WriteLine("custom_translations : {");
+                foreach (var customTranslation in this.customTranslations)
+                {
+                    output.WriteLine("{0} : '{1}',", customTranslation.Key, customTranslation.Value);
+                }
+                output.WriteLine("},");
+            }
+            if (!string.IsNullOrEmpty(this.customThemeWidget))
+                output.WriteLine("custom_theme_widget : '{0}',", this.customThemeWidget);
+            output.WriteLine("tabindex : {0}", base.TabIndex);
             output.Indent--;
             output.WriteLine("};");
             output.Indent--;

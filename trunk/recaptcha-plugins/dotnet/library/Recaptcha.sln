@@ -1,6 +1,6 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 10.00
-# Visual Studio 2008
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recaptcha", "Recaptcha.csproj", "{7D501169-F895-4F94-BEF0-15671D065DD9}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recaptcha.Test", "..\test\Recaptcha.Test.csproj", "{027EC450-3782-4806-A1FA-3D31F3DA7A63}"
