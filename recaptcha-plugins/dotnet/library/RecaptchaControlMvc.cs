@@ -100,23 +100,22 @@ namespace Recaptcha
 
         public static string GenerateCaptcha(this HtmlHelper helper)
         {
-            return GenerateCaptcha(helper, "recaptcha", "default");
+            return GenerateCaptcha(helper, "recaptcha", "default", null);
         }
 
-        public static string GenerateCaptcha(this HtmlHelper helper, string id, string theme)
+        public static string GenerateCaptcha(this HtmlHelper helper, string id, string theme, string language)
         {
             if (string.IsNullOrEmpty(publicKey) || string.IsNullOrEmpty(privateKey))
             {
                 throw new ApplicationException("reCAPTCHA needs to be configured with a public & private key.");
             }
 
-            var captchaControl = new Recaptcha.RecaptchaControl
-            {
-                ID = id,
-                Theme = theme,
-                PublicKey = publicKey,
-                PrivateKey = privateKey
-            };
+            var captchaControl = new Recaptcha.RecaptchaControl();
+            captchaControl.ID = id;
+            captchaControl.Theme = theme;
+            if (!string.IsNullOrEmpty(language)) captchaControl.Language = language;
+            captchaControl.PublicKey = publicKey;
+            captchaControl.PrivateKey = privateKey;
 
             var htmlWriter = new HtmlTextWriter(new StringWriter());
 
