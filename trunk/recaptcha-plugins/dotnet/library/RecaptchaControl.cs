@@ -221,10 +221,17 @@ namespace Recaptcha
                 output.WriteLine("lang : '{0}',", this.language);
             if (this.customTranslations != null && this.customTranslations.Count > 0)
             {
+                var i = 0;
                 output.WriteLine("custom_translations : {");
                 foreach (var customTranslation in this.customTranslations)
                 {
-                    output.WriteLine("{0} : '{1}',", customTranslation.Key, customTranslation.Value);
+                    i++;
+                    output.WriteLine(
+                        i != this.customTranslations.Count ?
+                            "{0} : '{1}'," :
+                            "{0} : '{1}'",
+                        customTranslation.Key,
+                        customTranslation.Value);
                 }
                 output.WriteLine("},");
             }
