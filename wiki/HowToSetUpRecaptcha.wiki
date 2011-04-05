@@ -1,1 +1,878 @@
-Blank intentionally
+#summary How to set up reCAPTCHA
+
+*Note: this documentation is a community-supported, unofficial version of the official docs, and may be out of date or incorrect in parts. The official docs are located at: http://code.google.com/apis/recaptcha/intro.html *
+
+reCAPTCHA is a free CAPTCHA service that helps protect your site against spam, malicious registrations and other forms of attacks where computers try to disguise themselves as a human. reCAPTCHA comes in the form of a widget that you can easily add to your blog, forum, registration, etc. Below you can find instructions on how to add reCAPTCHA to your site.
+
+= Part 1: Sign Up =
+
+First, you'll need to [https://www.google.com/recaptcha/admin sign up] and create reCAPTCHA keys for your site. 
+
+The keys are unique to your domain and sub-domains and will not work for other domains unless you:
+  * Sign up for multiple keys (one for each site)
+  * Create a global key by checking the box for "Enable this key on all domains (global key)"
+
+For example:
+  * The keys for *test.com* will work on *a.test.com*, *b.test.com*, *c.test.com* and any other sub-domains
+  * If the option âEnable this key on all domains (global key)â is checked, the keys will work on *a.test.com*, *x.com*, *y.com* and any other domain and sub-domains
+
+= Part 2: Installation =
+Installation consists of two steps and optionally a third step where you customize the widget:
+
+  # Client Side: Displaying the reCAPTCHA Widget (Required)
+  # Server Side: Verifying the solution (Required)
+  # Customizations (Optional)
+
+In most Web forms, you usually have two files: the form itself with the fields and the file with the script to process the inputs to the form. These two files correspond to steps 1 and 2 above. Therefore, in most cases you will have to modify two different files. 
+
+Displaying the reCAPTCHA widget is the simpler step. You can usually display it using an application plugin (recommended; see below), or alternatively by adding the javascript below inside your &lt;form&gt; element (a third option discussed later is to use the [[#AJAX API|AJAX API]]):
+
+{{{
+ <script type="text/javascript"
+   src="https://www.google.com/recaptcha/api/challenge?k=YOUR_PUBLIC_KEY"
+ </script>
+ <noscript>
+   <iframe src="https://www.google.com/recaptcha/api/noscript?k=YOUR_PUBLIC_KEY"
+       height="300" width="500" frameborder="0"></iframe><br>
+ </noscript>
+}}}
+
+It probably goes without saying, but we'll say it anyway: you need to replace the two instances of YOUR_PUBLIC_KEY; with the public key that you received during the account creation process (part 1 above). Be careful that you don't use your private key by mistake. 
+
+Verifying the solution is a bit more difficult, and usually requires modifying a script. If youâre using one of the following programming environments or applications, use these resources and instructions:
+
+*Programming Environments:*
+
+  * [[#PHP|PHP]]
+  * [[#ASP.NET|ASP.NET]]
+  * [[#Classic_ASP|Classic ASP]] (contributed by Mark Short)
+  * [[#Java/JSP|Java/JSP]]
+  * [[#Perl|Perl]]
+  * [http://python.org/pypi/recaptcha-client Python]
+  * [http://www.loonsoft.com/recaptcha/ Ruby] (contributed by McClain Looney)
+  * Another [http://github.com/ambethia/recaptcha/ Ruby] library from Jason L Perry
+  * [http://code.google.com/p/mailhide-tag/ JSP Mailhide Tag] (contributed by Tamas Magyar)
+  * [http://recaptcha.riaforge.org/ ColdFusion] (contributed by Robin Hilliard)
+  * [http://www.danstrong.com/reCAPTCHA-WebDNA.html WebDNA] (contributed by Dan Strong)
+
+*Applications:*
+
+  * [http://recaptcha.net/plugins/wordpress/ WordPress]
+  * [http://recaptcha.net/plugins/mediawiki/ MediaWiki]
+  * [http://recaptcha.net/plugins/phpbb/ phpBB]
+  * [[#FormMail|FormMail]]
+  * [http://multipart-mixed.com/software/recaptcha.html Movable Type] (contributed by Josh Carter)
+  * [http://drupal.org/project/recaptcha Drupal] (contributed by Rob Loach)
+  * [http://trac.symfony-project.com/trac/wiki/sfReCaptchaPlugin Symfony] (contributed by Arthur Koziel)
+  * [http://typo3.org/extensions/repository/view/jm_recaptcha/current/ TYPO3] (maintained by Markus Blaschke, contributed by Jens Mittag. See also the [http://typo3.org/extensions/repository/view/jm_recaptcha_example/current/ example] of using the plugin)
+  * [http://lordmatt.co.uk/item/812/ NucleusCMS] (contributed by Matt)
+  * [http://www.vbulletin.org/forum/showthread.php?t=151824 vBulletin] (contributed by Magnus)
+  * [http://extensions.joomla.org/component/option,com_mtree/task,viewlink/link_id,2866/Itemid,35/ Joomla] (contributed by Robert van den Breemen)
+  * [http://code.google.com/p/mailhide-tag/ JSP Mailhide] (by Tamas Magyar)
+  * [http://www.gospelrhys.co.uk/plugins/bbpress-plugins/recaptcha-bbpress-plugin bbPress] (by Rhys Wynne)
+  * [http://www.webgui.org/wiki/enabling-recaptcha WebGUI]
+
+*Otherwise:*
+
+  * [[#DIY Installation: The reCAPTCHA API|DIY Installation]] (requires you to write code to communicate with our servers to verify the solution)
+
+== PHP ==
+
+Download the [http://code.google.com/p/recaptcha/downloads/list?q=label:phplib-Latest reCAPTCHA PHP library]. You will only need one file from there (recaptchalib.php). The other files are examples, readme and legal stuff -- they donât affect functionality.
+
+=== Client Side (How to make the CAPTCHA image show up) ===
+If you want to use the PHP library to display the reCAPTCHA widget, you'll need to insert this snippet of code inside the <form> element where the reCAPTCHA widget will be placed:
+
+{{{
+  require_once('recaptchalib.php');
+  $publickey = "YOUR_PUBLIC_KEY"; // You got this from the signup page.
+  echo recaptcha_get_html($publickey);
+}}}
+
+With the code, your form might look something like this:
+  &lt;nowiki&gt;&lt;!-- your HTML content --&gt;&lt;/nowiki&gt;&lt;br&gt;
+  &lt;form method=&quot;post&quot; action=&quot;verify.php&quot;&gt;
+    &lt;?php
+      require_once('recaptchalib.php');
+      $publickey = &quot;&lt;font color=red&gt;your_public_key&lt;/font&gt;&quot;; // you got this from the signup page
+      echo recaptcha_get_html($publickey);
+    ?&gt;
+    &lt;input type=&quot;submit&quot; /&gt;
+  &lt;/form&gt;&lt;br&gt;
+  &lt;nowiki&gt;&lt;!-- more of your HTML content --&gt;&lt;/nowiki&gt;
+
+Don't forget to set $publickey by replacing &lt;font color=red&gt;your_public_key&lt;/font&gt; with the value you obtained in Part 1 above.
+
+Note that the value of the &quot;action&quot; attribute is &quot;verify.php&quot;. Now, verify.php is the destination file in which the values of this form are submitted to. So you will need a file verify.php in the same location as the client html.
+
+The require_once function in the example above expects recaptchalib.php to be in the same directory as your form file. If it is in another directory, you must link it appropriately. For example if your recaptchalib.php is in the directory called âcaptchaâ that is on the same level as your form file, the function will look like this: require_once('captcha/recaptchalib.php').
+
+Also make sure your form is set to get the form variables using $_POST, instead of $_REQUEST, and that the form itself is using the POST method.
+
+=== Server Side (How to test if the user entered the right answer) ===
+
+The following code should be placed at the top of the verify.php file:
+
+  &lt;?php
+  require_once('recaptchalib.php');
+  $privatekey = &quot;&lt;font color=red&gt;your_private_key&lt;/font&gt;&quot;;
+  $resp = recaptcha_check_answer ($privatekey,
+                                $_SERVER[&quot;REMOTE_ADDR&quot;],
+                                $_POST[&quot;recaptcha_challenge_field&quot;],
+                                $_POST[&quot;recaptcha_response_field&quot;]);&lt;br&gt;
+  if (!$resp-&gt;is_valid) {
+    // What happens when the CAPTCHA was entered incorrectly
+    die (&quot;The reCAPTCHA wasn't entered correctly. Go back and try it again.&quot; .
+         &quot;(reCAPTCHA said: &quot; . $resp-&gt;error . &quot;)&quot;);
+  } else {
+    // Your code here to handle a successful verification
+  }
+  ?&gt;
+
+In the code above:
+* _recaptcha_check_answer_ returns an object that represents whether the user successfully completed the challenge.
+* If _$resp-&gt;is_valid_ is true then the captcha challenge was correctly completed and you should continue with form processing.
+* If _$resp-&gt;is_valid_ is false then the user failed to provide the correct captcha text and you should redisplay the form to allow them another attempt. In this case _$resp-&gt;error_ will be an error code that can be provided to _recaptcha_get_html_. Passing the error code makes the reCAPTCHA control display a message explaining that the user entered the text incorrectly and should try again.
+
+Notice that this code is asking for the *private* key, which should not be confused with the public key. You get that from the same page as the public key.
+
+That's it! reCAPTCHA should now be working on your site. 
+
+* [[#Part 3: Customizing Look and Feel|Customizing Look and Feel]]
+* [[#Troubleshooting|Troubleshooting]]
+
+== ASP.NET ==
+
+* Download the [http://code.google.com/p/recaptcha/downloads/list?q=label:aspnetlib-Latest reCAPTCHA ASP.NET library].
+* Add a reference on your website to library/bin/Release/Recaptcha.dll: On the Visual Studio Website menu, choose Add Reference and then click the .NET tab in the dialog box. Select the Recaptcha.dll component from the list of .NET components and then click OK. If you don't see the component, click the Browse tab and look for the assembly file on your hard drive. 
+
+* Insert the reCAPTCHA control into the form you wish to protect by adding the following code snippets: 
+
+At the top of the aspx page, insert this:
+  &lt;%@ Register TagPrefix=&quot;recaptcha&quot; Namespace=&quot;Recaptcha&quot; Assembly=&quot;Recaptcha&quot; %&gt;
+Then insert the reCAPTCHA control inside of the &lt;form runat=&quot;server&quot;&gt; tag:
+  &lt;recaptcha:RecaptchaControl
+    ID=&quot;recaptcha&quot;
+    runat=&quot;server&quot;
+    PublicKey=&quot;&lt;font color=red&gt;your_public_key&lt;/font&gt;&quot;            
+    PrivateKey=&quot;&lt;font color=red&gt;your_private_key&lt;/font&gt;&quot;
+    /&gt;
+* You will need to substitute your public and private key into PublicKey and PrivateKey respectively.
+* Make sure you use ASP.NET validation to validate your form (you should check Page.IsValid on submission). 
+* The following is a &quot;Hello World&quot; with reCAPTCHA using Visual Basic. A C# sample is included with the library download:
+
+  &lt;%@ Page Language=&quot;VB&quot; %&gt;
+  &lt;%@ Register TagPrefix=&quot;recaptcha&quot; Namespace=&quot;Recaptcha&quot; Assembly=&quot;Recaptcha&quot; %&gt;
+  &lt;script runat=server&gt;
+      Sub btnSubmit_Click(ByVal sender As Object, ByVal e As EventArgs)
+          If Page.IsValid Then
+              lblResult.Text = &quot;You Got It!&quot;
+              lblResult.ForeColor = Drawing.Color.Green
+          Else
+              lblResult.Text = &quot;Incorrect&quot;
+              lblResult.ForeColor = Drawing.Color.Red
+          End If
+      End Sub
+  &lt;/script&gt;
+  &lt;html&gt;
+  &lt;body&gt;
+      &lt;form runat=&quot;server&quot;&gt;
+          &lt;asp:Label Visible=false ID=&quot;lblResult&quot; runat=&quot;server&quot; /&gt;   
+          &lt;recaptcha:RecaptchaControl
+              ID=&quot;recaptcha&quot;
+              runat=&quot;server&quot;
+              Theme=&quot;red&quot;
+              PublicKey=&quot;&lt;font color=red&gt;your_public_key&lt;/font&gt;&quot;            
+              PrivateKey=&quot;&lt;font color=red&gt;your_private_key&lt;/font&gt;&quot;
+              /&gt;
+          &lt;nowiki&gt;&lt;br /&gt;&lt;/nowiki&gt;
+          &lt;asp:Button ID=&quot;btnSubmit&quot; runat=&quot;server&quot; Text=&quot;Submit&quot; OnClick=&quot;btnSubmit_Click&quot; /&gt;
+      &lt;/form&gt;
+  &lt;/body&gt;
+  &lt;/html&gt;
+
+* [[#Part 3: Customizing Look and Feel|Customizing Look and Feel]]
+* [[#Troubleshooting|Troubleshooting]]
+
+
+== Classic ASP ==
+
+* Put this code at the top of your ASP page:
+
+  &lt;%
+  recaptcha_challenge_field  = Request(&quot;recaptcha_challenge_field&quot;)
+  recaptcha_response_field   = Request(&quot;recaptcha_response_field&quot;)
+  recaptcha_public_key       = &quot;&lt;font color=red&gt;your_public_key&lt;/font&gt;&quot; ' your public key
+  recaptcha_private_key      = &quot;&lt;font color=red&gt;your_private_key&lt;/font&gt;&quot; ' your private key&lt;br&gt;
+  ' returns the HTML for the widget
+  function recaptcha_challenge_writer()&lt;br&gt;
+  recaptcha_challenge_writer = _
+  &quot;&lt;script type=&quot;&quot;text/javascript&quot;&quot;&gt;&quot; &amp; _
+  &quot;var RecaptchaOptions = {&quot; &amp; _
+  &quot;   theme : 'red',&quot; &amp; _
+  &quot;   tabindex : 0&quot; &amp; _
+  &quot;};&quot; &amp; _
+  &quot;&lt;/script&gt;&quot; &amp; _
+  &quot;&lt;script type=&quot;&quot;text/javascript&quot;&quot; src=&quot;&quot;&lt;nowiki&gt;http://api.recaptcha.net/challenge?k=&lt;/nowiki&gt;&quot; &amp; recaptcha_public_key &amp; &quot;&quot;&quot;&gt;&lt;/script&gt;&quot; &amp; _
+  &quot;&lt;noscript&gt;&quot; &amp; _
+    &quot;&lt;iframe src=&quot;&quot;&lt;nowiki&gt;http://api.recaptcha.net/noscript?k=&lt;/nowiki&gt;&quot; &amp; recaptcha_public_key &amp; &quot;&quot;&quot; frameborder=&quot;&quot;1&quot;&quot;&gt;&lt;/iframe&gt;&lt;nowiki&gt;&lt;br&gt;&lt;/nowiki&gt;&quot; &amp; _
+      &quot;&lt;textarea name=&quot;&quot;recaptcha_challenge_field&quot;&quot; rows=&quot;&quot;3&quot;&quot;cols=&quot;&quot;40&quot;&quot;&gt;&lt;/textarea&gt;&quot; &amp; _
+      &quot;&lt;input type=&quot;&quot;hidden&quot;&quot; name=&quot;&quot;recaptcha_response_field&quot;&quot;value=&quot;&quot;manual_challenge&quot;&quot;&gt;&quot; &amp; _
+  &quot;&lt;/noscript&gt;&quot;&lt;br&gt;  
+  end function&lt;br&gt;  
+  ' returns &quot;&quot; if correct, otherwise it returns the error response
+  function recaptcha_confirm(rechallenge,reresponse)&lt;br&gt;  
+  Dim VarString
+  VarString = _
+          &quot;privatekey=&quot; &amp; recaptcha_private_key &amp; _
+          &quot;&amp;remoteip=&quot; &amp; Request.ServerVariables(&quot;REMOTE_ADDR&quot;) &amp; _
+          &quot;&amp;challenge=&quot; &amp; rechallenge &amp; _
+          &quot;&amp;response=&quot; &amp; reresponse&lt;br&gt;  
+  Dim objXmlHttp
+  Set objXmlHttp = Server.CreateObject(&quot;Msxml2.ServerXMLHTTP&quot;)
+  objXmlHttp.open &quot;POST&quot;, &quot;&lt;nowiki&gt;http://api-verify.recaptcha.net/verify&lt;/nowiki&gt;&quot;, False
+  objXmlHttp.setRequestHeader &quot;Content-Type&quot;, &quot;application/x-www-form-urlencoded&quot;
+  objXmlHttp.send VarString&lt;br&gt;
+  Dim ResponseString
+  ResponseString = split(objXmlHttp.responseText, vblf)
+  Set objXmlHttp = Nothing&lt;br&gt;  
+  if ResponseString(0) = &quot;true&quot; then
+    'They answered correctly
+     recaptcha_confirm = &quot;&quot;
+  else
+    'They answered incorrectly
+     recaptcha_confirm = ResponseString(1)
+  end if&lt;br&gt;  
+  end function&lt;br&gt;
+  server_response = &quot;&quot;
+  newCaptcha = True
+  if (recaptcha_challenge_field &lt;&gt; &quot;&quot; or recaptcha_response_field &lt;&gt; &quot;&quot;) then
+    server_response = recaptcha_confirm(recaptcha_challenge_field, recaptcha_response_field)
+    newCaptcha = False  
+  end if&lt;br&gt;
+  %&gt; 
+
+What happens here is the variables &quot;server_response&quot; and &quot;newCaptcha&quot; are set whenever the page is loaded, allowing you to determine the state of your page.
+
+* You can use the following HTML as a skeleton:
+
+  &lt;html&gt;
+  &lt;body&gt;&lt;br&gt;
+  &lt;% if server_response &lt;&gt; &quot;&quot; or newCaptcha then %&gt;&lt;br&gt;
+    &lt;% if newCaptcha = False then %&gt;&lt;br&gt;
+      &lt;nowiki&gt;&lt;!-- An error occurred --&gt;&lt;/nowiki&gt;
+      Wrong!&lt;br&gt;
+    &lt;% end if %&gt;&lt;br&gt;
+    &lt;nowiki&gt;&lt;!-- Generating the form --&gt;&lt;/nowiki&gt;
+    &lt;form action=&quot;recaptcha.asp&quot; method=&quot;post&quot;&gt;
+      &lt;%=recaptcha_challenge_writer()%&gt;
+    &lt;/form&gt;&lt;br&gt;
+  &lt;% else %&gt;&lt;br&gt;
+    &lt;nowiki&gt;&lt;!-- The solution was correct --&gt;&lt;/nowiki&gt;
+    Correct!&lt;br&gt;
+  &lt;%end if%&gt;&lt;br&gt;
+  &lt;/body&gt;
+  &lt;/html&gt;
+
+
+== Java/JSP ==
+
+Download the [http://code.google.com/p/recaptcha/downloads/list?q=label:java-Latest reCAPTCHA Java Library here] (contributed by Soren) and unzip it. Typically the only thing you'll need is the jar file (recaptcha4j-X.X.X.jar), which you have to copy to a place where it can be loaded by your java application. For example, if you are using Tomcat to run JSP, you may put the jar file in a directory called _WEB-INF/lib/_.
+
+=== Client Side (How to make the CAPTCHA image show up) ===
+
+If you want to use the Java plugin to display the reCAPTCHA widget, you'll need to import the appropriate reCAPTCHA classes. In JSP, you would do this by inserting these lines near the top of the file with the form element where the reCAPTCHA widget will be displayed:
+
+    &lt;%@ page import=&quot;net.tanesha.recaptcha.ReCaptcha&quot; %&gt;
+    &lt;%@ page import=&quot;net.tanesha.recaptcha.ReCaptchaFactory&quot; %&gt;
+
+Then, you need to create an instance of reCAPTCHA:
+
+    ReCaptcha c = ReCaptchaFactory.newReCaptcha(&quot;&lt;font color=red&gt;your_public_key&lt;/font&gt;&quot;, &quot;&lt;font color=red&gt;your_private_key&lt;/font&gt;&quot;, false);
+
+Finally, the HTML to display the reCAPTCHA widget can be obtained from the following function call:
+
+    c.createRecaptchaHtml(null, null)
+
+So, in JSP your code may look something like this:
+
+    &lt;%@ page import=&quot;net.tanesha.recaptcha.ReCaptcha&quot; %&gt;
+    &lt;%@ page import=&quot;net.tanesha.recaptcha.ReCaptchaFactory&quot; %&gt;&lt;br&gt;
+    &lt;html&gt;
+      &lt;body&gt;
+        &lt;form action=&quot;&quot; method=&quot;post&quot;&gt;
+        &lt;%
+          ReCaptcha c = ReCaptchaFactory.newReCaptcha(&quot;&lt;font color=red&gt;your_public_key&lt;/font&gt;&quot;, &quot;&lt;font color=red&gt;your_private_key&lt;/font&gt;&quot;, false);
+          out.print(c.createRecaptchaHtml(null, null));
+        %&gt;
+        &lt;input type=&quot;submit&quot; value=&quot;submit&quot; /&gt;
+        &lt;/form&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+
+Don't forget to replace &lt;font color=red&gt;your_public_key&lt;/font&gt; and &lt;font color=red&gt;your_private_key&lt;/font&gt; with the values you obtained in Part 1 above.
+
+=== Server Side (How to test if the user entered the right answer) ===
+
+In the application that verifies your form, you'll first need to import the necessary reCAPTCHA classes:
+
+    import net.tanesha.recaptcha.ReCaptchaImpl;
+    import net.tanesha.recaptcha.ReCaptchaResponse;
+
+Next, you need to insert the code that verifies the reCAPTCHA solution entered by the user. The example below (in JSP) shows how this can be done:
+
+    &lt;%@ page import=&quot;net.tanesha.recaptcha.ReCaptchaImpl&quot; %&gt;
+    &lt;%@ page import=&quot;net.tanesha.recaptcha.ReCaptchaResponse&quot; %&gt;&lt;br&gt;
+    &lt;html&gt;
+      &lt;body&gt;
+      &lt;%
+        String remoteAddr = request.getRemoteAddr();
+        ReCaptchaImpl reCaptcha = new ReCaptchaImpl();
+        reCaptcha.setPrivateKey(&quot;&lt;font color=red&gt;your_private_key&lt;/font&gt;&quot;);&lt;br&gt;
+        String challenge = request.getParameter(&quot;recaptcha_challenge_field&quot;);
+        String uresponse = request.getParameter(&quot;recaptcha_response_field&quot;);
+        ReCaptchaResponse reCaptchaResponse = reCaptcha.checkAnswer(remoteAddr, challenge, uresponse);&lt;br&gt;
+        if (reCaptchaResponse.isValid()) {
+          out.print(&quot;Answer was entered correctly!&quot;);
+        } else {
+          out.print(&quot;Answer is wrong&quot;);
+        }
+      %&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+
+In the code above:
+* _remoteAddr_ is the user's IP address (which is passed to the reCAPTCHA servers)
+* _uresponse_ contains the user's answer to the reCAPTCHA challenge.
+
+If you're having trouble, you can also see the following article that explains how to add reCAPTCHA to your Java application: [http://wheelersoftware.com/articles/recaptcha-java.html How to reCAPTCHA Your Java Application]
+
+=== Important: DNS Caching ===
+
+Java has an annoying issue that may cause the connection between your server and reCAPTCHA to be interrupted every few months, and reCAPTCHA will stop working in your site when that happens. Read below to see how to fix this.
+
+By default the Java Virtual Machine (JVM) caches all DNS lookups forever instead of using the time-to-live (TTL) value which is specified in the DNS record of each host. For those of you how do not know it, a DNS lookup is a request sent to a DNS server which converts a readable hostname to an IP address. For example, it converts *www.recaptcha.net* to the IP address *69.12.97.164*. It is of course much more complex than this, and if you want to learn more, [http://en.wikipedia.org/wiki/Domain_Name_System wikipedia's entry on DNS] is a good starting point. 
+
+Although not frequently, reCAPTCHA servers can change IP addresses. Because Java caches DNS lookups forever, this can cause the connection between your server and reCAPTCHA to go down when the reCAPTCHA IP address changes. If this happens, restarting your JVM (e.g., restarting Tomcat) can fix the problem because it causes a new DNS lookup. However, you probably don't want to restart your JVM once every few months whenever your site breaks because the reCAPTCHA servers changed IP address.
+
+To fix this issue for good, you can pass *-Dsun.net.inetaddr.ttl=30* to your app-server (this tells Java to only cache DNS for 30 seconds). In Tomcat for Windows, this can be done by following the steps below:
+
+1. Stop Tomcat&lt;br&gt;
+2. Go to tomcat\bin&lt;br&gt;
+3. Run Tomcat5w.exe&lt;br&gt;
+4. Goto java tab&lt;br&gt;
+5. Add java property to java options section: -Dsun.net.inetaddr.ttl=30&lt;br&gt;
+6. Exit&lt;br&gt;
+7. Start Tomcat
+
+In Tomcat for Linux or MacOS X, you need to run the following command in the command line and restart Tomcat:
+
+    export JAVA_OPTS=&quot;$JAVA_OPTS -Dsun.net.inetaddr.ttl=30&quot;
+
+[http://www.sdn.sap.com/irj/scn/weblogs?blog=/pub/wlg/1887 Here is an article] explaining more about this issue. 
+
+== Perl ==
+
+Download the [http://search.cpan.org/dist/Captcha-reCAPTCHA/lib/Captcha/reCAPTCHA.pm reCAPTCHA Perl Module] (contributed by Andy Armstrong). You will need to install this module on your machine (web server). The module depends on 
+the modules [http://search.cpan.org/~gaas/libwww-perl-5.805/lib/LWP/UserAgent.pm LWP::UserAgent] and [http://search.cpan.org/dist/HTML-Tiny/lib/HTML/Tiny.pm HTML::Tiny], both of which will also need to be installed. Here are some basic [http://www.perlmonks.org/index.pl?node_id=128077 instructions on installing Perl modules].
+
+=== Client Side (How to make the CAPTCHA image show up) ===
+
+If you want to use the Perl library to display the reCAPTCHA widget, you'll need to insert this line near the top of the file with the form element where the reCAPTCHA widget will be displayed:
+
+    use Captcha::reCAPTCHA;
+
+Then, you need to create an instance of reCAPTCHA:
+
+    my $c = Captcha::reCAPTCHA-&gt;new;
+
+Finally, to display the reCAPTCHA widget, you must place the following line inside the &lt;form&gt; tag:
+
+    print $c-&gt;get_html(&quot;&lt;font color=red&gt;your_public_key&lt;/font&gt;&quot;);
+
+So, your code may look something like this:
+
+    use Captcha::reCAPTCHA;&lt;br&gt;
+    my $c = Captcha::reCAPTCHA-&gt;new;&lt;br&gt;
+    print &lt;&lt;EOT;
+    &lt;html&gt;
+      &lt;body&gt;
+        &lt;form action=&quot;&quot; method=&quot;post&quot;&gt;
+    EOT&lt;br&gt;
+    print $c-&gt;get_html(&quot;&lt;font color=red&gt;your_public_key&lt;/font&gt;&quot;);&lt;br&gt;
+    print &lt;&lt;EOT;
+        &lt;input type=&quot;submit&quot; value=&quot;submit&quot; /&gt;
+        &lt;/form&gt;
+      &lt;/body&gt;
+    &lt;/html&gt;
+    EOT
+
+Don't forget to replace &lt;font color=red&gt;your_public_key&lt;/font&gt; with the value you obtained in Part 1 above.
+
+=== Server Side (How to test if the user entered the right answer) ===
+
+Below is a skeleton of how to verify the reCAPTCHA answer:
+
+    use Captcha::reCAPTCHA;&lt;br&gt;
+    my $c = Captcha::reCAPTCHA-&gt;new;&lt;br&gt;
+    my $challenge = the value of param 'recaptcha_challenge_field';
+    my $response = the value of param 'recaptcha_response_field';&lt;br&gt;
+    # Verify submission
+    my $result = $c-&gt;check_answer(
+        &quot;&lt;font color=red&gt;your_private_key&lt;/font&gt;&quot;, $ENV{'REMOTE_ADDR'},
+        $challenge, $response
+    );&lt;br&gt;
+    if ( $result-&gt;{is_valid} ) {
+        print &quot;Yes!&quot;;
+    }
+    else {
+        # Error
+        print &quot;No&quot;;
+    }
+
+* [[#Part 3: Customizing Look and Feel|Customizing Look and Feel]]
+* [[#Troubleshooting|Troubleshooting]]
+
+== FormMail ==
+
+Here we will explain how to add reCAPTCHA to your FormMail script without using the reCAPTCHA Perl Module. If you know what you're doing, you can alternatively use the reCAPTCHA Perl Module. 
+
+=== Client Side (How to make the CAPTCHA image show up) ===
+
+In your HTML page, inside the &lt;form&gt; element you must add the following code:
+
+  &lt;nowiki&gt;
+  &lt;script type=&quot;text/javascript&quot;
+    src=&quot;http://api.recaptcha.net/challenge?k=&lt;/nowiki&gt;&lt;font color=red&gt;your_public_key&lt;/font&gt;&lt;nowiki&gt;&quot;&gt;
+  &lt;/script&gt;
+  &lt;noscript&gt;
+    &lt;iframe src=&quot;http://api.recaptcha.net/noscript?k=&lt;/nowiki&gt;&lt;font color=red&gt;your_public_key&lt;/font&gt;&lt;nowiki&gt;&quot;
+        height=&quot;300&quot; width=&quot;500&quot; frameborder=&quot;0&quot;&gt;&lt;/iframe&gt;&lt;br&gt;
+    &lt;textarea name=&quot;recaptcha_challenge_field&quot; rows=&quot;3&quot; cols=&quot;40&quot;&gt;
+    &lt;/textarea&gt;
+    &lt;input type=&quot;hidden&quot; name=&quot;recaptcha_response_field&quot; 
+        value=&quot;manual_challenge&quot;&gt;
+  &lt;/noscript&gt;
+  &lt;/nowiki&gt;
+
+It probably goes without saying, but we'll say it anyway: you need to replace the two instances of &lt;font color=red&gt;your_public_key&lt;/font&gt; with the public key that you received during the account creation process (Part 1 above). Be careful that you don't use your private key by mistake. 
+
+This will basically add two parameters, which are passed to formmail.cgi (or FormMail.pl) through a POST request, namely:
+
+;recaptcha_challenge_field
+:This is the challenge created through your public key.
+
+;recaptcha_response_field
+:This is the user-submitted response to the challenge above.
+
+=== Server Side (How to test if the user entered the right answer) ===
+
+Next, you need to modify formmail.cgi (or FormMail.pl) to handle the two parameters and to validate the challenge from the reCAPTCHA servers. At this point, it's probably a good idea to make a backup copy of your FormMail.pl, just in case. In the code below, &quot;+&quot; means the line needs to be added to the FormMail script, and &quot;-&quot; means the line needs to be removed from it. In every case, we show where the lines need to be added or removed by showing the adjacent lines in the FormMail script. 
+
+First, you need to tell Perl to use the module LWP::UserAgent by adding the following line to FormMail:
+
+ # ACCESS CONTROL FIX: Peter D. Thompson Yezek                                #
+ #                     &lt;nowiki&gt;http://www.securityfocus.com/archive/1/62033&lt;/nowiki&gt;           #
+ ##############################################################################
+ +use LWP::UserAgent;
+ +
+
+(This will require the module [http://search.cpan.org/~gaas/libwww-perl-5.805/lib/LWP/UserAgent.pm LWP::UserAgent] to be in your Perl environment. Most installations of Perl already have this module. In case the module is not installed, here are some basic [http://www.perlmonks.org/index.pl?node_id=128077 instructions on installing Perl modules].)
+
+Then, add code to call the CAPTCHA check functionality defined below.
+
+ # Check Required Fields
+ &amp;check_required;
+  
+ +# Check the captcha challenge and response.
+ +&amp;check_captcha;
+ +
+ # Send E-Mail
+ &amp;send_mail;
+ 
+ # Return HTML Page or Redirect User
+ &amp;return_html;
+ 
+Now, validate the CAPTCHA response and generate an error if the response doesn't match the challenge.
+
+ +##############################################################################
+ +# Check the CAPTCHA response via the reCAPTCHA service.
+ +sub check_captcha {
+ +
+ +      my $ua = LWP::UserAgent-&gt;new();
+ +      my $result=$ua-&gt;post(
+ +      '&lt;nowiki&gt;http://api-verify.recaptcha.net/verify'&lt;/nowiki&gt;,
+ +      {
+ +          privatekey =&gt; '&lt;font color=red&gt;your_private_key&lt;/font&gt;',
+ +          remoteip   =&gt; $ENV{'REMOTE_ADDR'},
+ +          challenge  =&gt; $Form{'recaptcha_challenge_field'},
+ +          response   =&gt; $Form{'recaptcha_response_field'}
+ +      });
+ +
+ +      if ( $result-&gt;is_success &amp;&amp; $result-&gt;content =~ /^true/) {
+ +              return;
+ +      } else {
+ +              &amp;error('captcha_failed');
+ +      }
+ +}
+ +
+ # NOTE rev1.91: This function is no longer intended to stop abuse, that      #
+ #    functionality is now embedded in the checks made on @recipients and the #
+ #    recipient form field.                                                   #
+
+Finally, create the functionality that prints the error message in case the check fails:
+
+         if ($Config{'missing_fields_redirect'}) {
+             print &quot;Location: &quot; . &amp;clean_html($Config{'missing_fields_redirect'}) . &quot;\n\n&quot;;
+         }
+ +    }
+ +    elsif ($error eq 'captcha_failed') {
+ +            print &lt;&lt;&quot;(END ERROR HTML)&quot;;
+ +Content-type: text/html
+ +
+ +&lt;html&gt;
+ + &lt;head&gt;
+ +  &lt;title&gt;Error: Captcha Check Failed&lt;/title&gt;
+ + &lt;/head&gt;
+ + &lt;body bgcolor=#FFFFFF text=#000000&gt;
+ + &lt;nowiki&gt;&lt;center&gt;&lt;/nowiki&gt;
+ +  &lt;nowiki&gt;&lt;table border=0 width=600 bgcolor=#9C9C9C&gt;&lt;/nowiki&gt;
+ +    &lt;tr&gt;&lt;th&gt;&lt;font size=+2&gt;Error: Captcha Check Failed&lt;/font&gt;&lt;/th&gt;&lt;/tr&gt;
+ +   &lt;/table&gt;
+ +  &lt;nowiki&gt;&lt;table border=0 width=600 bgcolor=#CFCFCF&gt;&lt;/nowiki&gt;
+ +    &lt;tr&gt;&lt;td&gt;The Captcha response of the form you submitted did not match the challenge.
+ +     Please check the form and make sure that your response matches the challenge in the captcha image.
+ +     You can use the browser back button to return to the form.
+ +     &lt;/center&gt;
+ +    &lt;/td&gt;&lt;/tr&gt;
+ +   &lt;/table&gt;
+ +  &lt;/center&gt;
+ + &lt;/body&gt;
+ +&lt;/html&gt;
+ +(END ERROR HTML)
+ +    }
+         else {
+              foreach $missing_field (@error_fields) {
+ &lt;nowiki&gt;           $missing_field_list .= &quot;&lt;li&gt;&quot; . &amp;clean_html($missing_field) . &quot;\n&quot;;&lt;/nowiki&gt;
+ .
+ .
+ .
+  &lt;/html&gt;
+ (END ERROR HTML)
+         }
+ -    }
+ -
+     exit;
+ }
+
+That's it! reCAPTCHA should now be working on your site. 
+
+* [[#Part 3: Customizing Look and Feel|Customizing Look and Feel]]
+* [[#Troubleshooting|Troubleshooting]]
+
+== DIY Installation: The reCAPTCHA API ==
+
+=== Overview: How reCAPTCHA Works ===
+
+[[File:recaptcha-api-diagram.gif]]
+
+# The user loads the web page with the reCAPTCHA challenge JavaScript embedded.
+# The user's browser requests a challenge from reCAPTCHA. reCAPTCHA gives the user a challenge and a token that identifies the challenge.
+# The user fills out the web page form, and submits the result to your application server, along with the challenge token.
+# reCAPTCHA checks the user's answer, and gives you back a response.
+# If true, generally you will allow the user access to some service or information. E.g. allow them to comment on a forum, register for a wiki, or get access to an email address. If false, you can allow the user to try again.
+
+
+=== Client Side (How to make the CAPTCHA image show up) ===
+
+This part requires you to embed some code in your website. You can use either:
+
+* [[#Challenge and Non-JavaScript API|The Challenge and Non-JavaScript API]]
+* [[#AJAX API|The reCAPTCHA AJAX API]]
+
+==== Challenge and Non-JavaScript API ====
+
+You will need to insert this snippet of JavaScript &amp; non-JavaScript code in your &lt;form&gt; element and replace &lt;font color=red&gt;your_public_key&lt;/font&gt; with your public key:
+  &lt;script type=&quot;text/javascript&quot;
+     src=&quot;&lt;nowiki&gt;http://api.recaptcha.net/challenge?k=&lt;/nowiki&gt;&lt;font color=red&gt;your_public_key&lt;/font&gt;&quot;&gt;
+  &lt;/script&gt;
+  &lt;noscript&gt;
+     &lt;iframe src=&quot;&lt;nowiki&gt;http://api.recaptcha.net/noscript?k=&lt;/nowiki&gt;&lt;font color=red&gt;your_public_key&lt;/font&gt;&quot;
+         height=&quot;300&quot; width=&quot;500&quot; frameborder=&quot;0&quot;&gt;&lt;/iframe&gt;&lt;nowiki&gt;&lt;br&gt;&lt;/nowiki&gt;
+     &lt;textarea name=&quot;recaptcha_challenge_field&quot; rows=&quot;3&quot; cols=&quot;40&quot;&gt;
+     &lt;/textarea&gt;
+     &lt;input type=&quot;hidden&quot; name=&quot;recaptcha_response_field&quot; 
+         value=&quot;manual_challenge&quot;&gt;
+  &lt;/noscript&gt;
+
+So it will look something like this:
+  &lt;nowiki&gt;&lt;!-- ... your HTML content ... --&gt;&lt;/nowiki&gt;&lt;br&gt;
+  &lt;form action=&quot;&lt;b&gt;&lt;i&gt;&lt;link to file that processes this form and verifies the reCAPTCHA solution&gt;&lt;/i&gt;&lt;/b&gt;&quot; method=&quot;post&quot;&gt;
+    &lt;br&gt;   &lt;nowiki&gt;&lt;!-- ... your form code here ... --&gt;&lt;/nowiki&gt;&lt;br&gt;
+    &lt;script type=&quot;text/javascript&quot;
+       src=&quot;&lt;nowiki&gt;http://api.recaptcha.net/challenge?k=&lt;/nowiki&gt;&lt;font color=red&gt;your_public_key&lt;/font&gt;&quot;&gt;
+    &lt;/script&gt;
+    &lt;noscript&gt;
+       &lt;iframe src=&quot;&lt;nowiki&gt;http://api.recaptcha.net/noscript?k=&lt;/nowiki&gt;&lt;font color=red&gt;your_public_key&lt;/font&gt;&quot;
+           height=&quot;300&quot; width=&quot;500&quot; frameborder=&quot;0&quot;&gt;&lt;/iframe&gt;&lt;nowiki&gt;&lt;br&gt;&lt;/nowiki&gt;
+       &lt;textarea name=&quot;recaptcha_challenge_field&quot; rows=&quot;3&quot; cols=&quot;40&quot;&gt;
+       &lt;/textarea&gt;
+       &lt;input type=&quot;hidden&quot; name=&quot;recaptcha_response_field&quot; 
+           value=&quot;manual_challenge&quot;&gt;
+    &lt;/noscript&gt;
+    &lt;br&gt;   &lt;nowiki&gt;&lt;!-- ... more of your form code here ... --&gt;&lt;/nowiki&gt;&lt;br&gt;
+  &lt;/form&gt;
+  &lt;br&gt;&lt;nowiki&gt;&lt;!-- ... more of your HTML content ... --&gt;&lt;/nowiki&gt;&lt;br&gt;
+
+There are two form fields: 
+* *recaptcha_challenge_field* is a hidden field that describes the CAPTCHA which the user is solving. It corresponds to the &quot;challenge&quot; parameter required by the reCAPTCHA verification API.
+* *recaptcha_response_field* is a text field where the user enters their solution. It corresponds to the &quot;response&quot; parameter required by the reCAPTCHA verification API
+
+These two fields will be passed to the file on your server that processes this form and verifies the reCAPTCHA solution via the [reCAPTCHA verification API].
+
+==== AJAX API ====
+
+Alternatively you can use the reCAPTCHA AJAX API if you require the reCAPTCHA widget to show on the fly based on some kind of user input.
+
+Firstly, you will need to insert this snippet of JavaScript in the &lt;head&gt; element of your HTML document:
+  &lt;script type=&quot;text/javascript&quot; src=&quot;http://api.recaptcha.net/js/recaptcha_ajax.js&quot;&gt;&lt;/script&gt;
+
+This JavaScript file defines an object called Recaptcha. The methods of the Recaptcha object are outlined [http://recaptcha.net/apidocs/captcha/client.html#recaptcha-methods here].
+
+Secondly, you will need to create an empty &lt;nowiki&gt;&lt;div&gt;&lt;/nowiki&gt; element with an id in your HTML document for which the reCAPTCHA object will be placed.
+
+Now, in order to create the reCAPTCHA widget, you will need to call the Recaptcha object's *create* method in response to some user action and replace:
+* &lt;font color=red&gt;your_public_key&lt;/font&gt; with your public key
+* &lt;font color=red&gt;element_id&lt;/font&gt; with the id of the div element you reserved for the reCAPTCHA widget
+
+  Recaptcha.create(&quot;&lt;font color=red&gt;your_public_key&lt;/font&gt;&quot;,
+    &quot;&lt;font color=red&gt;element_id&lt;/font&gt;&quot;, 
+    {  
+      theme: &quot;red&quot;,
+      callback: Recaptcha.focus_response_field 
+    }
+  );
+
+Taking a closer look at the *Recaptcha.create (public_key, element, options)* method, there are 3 input parameters:
+* public_key: your public key
+* element: JavaScript Element object or the string ID of the element in your HTML document (we don't cover the JavaScript Element in this example)
+* options: JavaScript Dictionary with [http://recaptcha.net/apidocs/captcha/client.html#customization specific keys and values]
+
+Your HTML page should look something like this:
+
+  &lt;html&gt;&lt;br&gt;
+    &lt;head&gt;
+      &lt;br&gt;&lt;nowiki&gt;     &lt;!-- ... your HTML &lt;head&gt; content ... --&gt;&lt;/nowiki&gt;&lt;br&gt;
+      &lt;script type=&quot;text/javascript&quot; src=&quot;http://api.recaptcha.net/js/recaptcha_ajax.js&quot;&gt;&lt;/script&gt;&lt;br&gt;
+      &lt;nowiki&gt;&lt;!-- Wrapping the Recaptcha create method in a javascript function --&gt;&lt;/nowiki&gt;
+      &lt;script type=&quot;text/javascript&quot;&gt;
+         function showRecaptcha(element) {
+           Recaptcha.create(&quot;&lt;font color=red&gt;your_public_key&lt;/font&gt;&quot;, element, {
+             theme: &quot;red&quot;, 
+             callback: Recaptcha.focus_response_field});
+         }
+      &lt;/script&gt;
+      &lt;br&gt;&lt;nowiki&gt;     &lt;!-- ... more of your HTML &lt;head&gt; content ... --&gt;&lt;/nowiki&gt;&lt;br&gt;
+    &lt;/head&gt;&lt;br&gt;
+    &lt;body&gt;
+      &lt;br&gt;&lt;nowiki&gt;     &lt;!-- ... your HTML &lt;body&gt; content ... --&gt;&lt;/nowiki&gt;&lt;br&gt;
+      &lt;nowiki&gt;&lt;div id=&quot;&lt;/nowiki&gt;&lt;font color=red&gt;recaptcha_div&lt;/font&gt;&lt;nowiki&gt;&quot;&gt;&lt;/div&gt;&lt;nowiki&gt;&lt;br&gt;
+      &lt;input type=&quot;button&quot; value=&quot;Show reCAPTCHA&quot; onclick=&quot;showRecaptcha('&lt;/nowiki&gt;&lt;font color=red&gt;recaptcha_div&lt;/font&gt;&lt;nowiki&gt;');&quot;&gt;&lt;/input&gt;
+      &lt;br&gt;&lt;nowiki&gt;     &lt;!-- ... more of your HTML &lt;body&gt; content ... --&gt;&lt;/nowiki&gt;&lt;br&gt;
+    &lt;body&gt;&lt;br&gt;
+  &lt;/html&gt;
+
+To verify the solution, you will need to pass two variables from the widget (along with a few other server side parameters) to the reCAPTCHA verification API. These variables can be accessed by the Recaptcha object's methods:
+* *Recaptcha.get_challenge()*: corresponds to the &quot;challenge&quot; parameter required by the reCAPTCHA verification API
+* *Recaptcha.get_response()*: corresponds to the &quot;response&quot; parameter required by the reCAPTCHA verification API
+
+
+=== Server Side (How to test if the user entered the right answer) ===
+
+==== API Request ====
+URL: http://api-verify.recaptcha.net/verify 
+
+{| border=&quot;1&quot;
+|Parameters (sent via POST)  	 
+|
+|-
+|privatekey (required) 
+|Your private key 
+|-
+|remoteip (required) 
+|The IP address of the user who solved the CAPTCHA. 
+|-
+|challenge (required) 
+|The value of &quot;recaptcha_challenge_field&quot; sent via the form 
+|-
+|response (required) 
+|The value of &quot;recaptcha_response_field&quot; sent via the form 
+|}
+
+==== API Response ====
+
+The response from verify is a series of strings separated by \n. To read the string, split the line and read each field. New lines may be added in the future. 
+
+{| border=&quot;1&quot;
+|Line 1 
+|&quot;true&quot; or &quot;false&quot;. True if the reCAPTCHA was successful 
+|-
+|Line 2 
+|if Line 1 is false, then this string will be an error code. 
+reCAPTCHA can display the error to the user (through the error  parameter of api.recaptcha.net/challenge). Implementations should not depend on error code names, as they may change in the future.
+
+Example: If your response looks like this:
+
+false
+incorrect-captcha-sol
+
+... you can add '&amp;error=incorrect-captcha-sol' to the challenge request URL, and the user will get an error code.
+|}
+
+= Part 3: Customizing Look and Feel =
+
+Now that you've successfully installed reCAPTCHA on your site, you may want to change the way it looks. There are two ways to do this: (1) choosing one of the standard reCAPTCHA themes, or (2) fully customizing the appearance of reCAPTCHA. 
+
+== Standard Themes ==
+
+The first step is to add the following code in your main HTML page anywhere *before* the &lt;form&gt; element where reCAPTCHA appears:
+
+ &lt;script type=&quot;text/javascript&quot;&gt;
+ var RecaptchaOptions = {
+    theme : '&lt;font color=red&gt;theme_name&lt;/font&gt;'
+ };
+ &lt;/script&gt;
+
+*Note*: This will not work if it appears after the main script where reCAPTCHA is first invoked.
+
+To use a standard theme, you need to replace &lt;font color=red&gt;theme_name&lt;/font&gt; by one of the following four theme names:
+
+* 'red' (default theme)
+* 'white'
+[[Image:Rcptacleanxk9.png]]
+* 'blackglass'
+[[Image:Rcptablackglasslj0.png]]
+* 'clean'
+[[Image:Rcptagraycz8.png]]
+
+== Custom Theming ==
+
+To use a fully custom theme, you will need to tell reCAPTCHA that it should not create a user interface of its own. reCAPTCHA will rely on the presence of HTML elements with the following IDs to display the CAPTCHA to the user:
+
+* An empty div with ID recaptcha_image. This is where the actual image will be placed. The div will be automatically set to 300x57 pixels.
+* A text input with ID and name both set to recaptcha_response_field. This is where the user can enter their answer.
+* A div that contains the entire reCAPTCHA widget. The ID of this div should be placed into the parameter custom_theme_widget of RecaptchaOptions, and the style of the div should be set to display:none. After the reCAPTCHA theming code has fully loaded, it will make the div visible. This element avoids making the page flicker while it loads.
+
+To implement all of this this, first place the following code in your main HTML page anywhere *before* the &lt;form&gt; element where reCAPTCHA appears:
+
+ &lt;script type=&quot;text/javascript&quot;&gt;
+ var RecaptchaOptions = {
+    theme : 'custom',
+    custom_theme_widget: 'recaptcha_widget'
+ };
+ &lt;/script&gt;
+
+Then, inside the &lt;form&gt; element where you want reCAPTCHA to appear, place:
+
+ &lt;nowiki&gt;
+
+ &lt;div id=&quot;recaptcha_widget&quot; style=&quot;display:none&quot;&gt;
+
+   &lt;div id=&quot;recaptcha_image&quot;&gt;&lt;/div&gt;
+   &lt;div class=&quot;recaptcha_only_if_incorrect_sol&quot; style=&quot;color:red&quot;&gt;Incorrect please try again&lt;/div&gt;
+
+   &lt;span class=&quot;recaptcha_only_if_image&quot;&gt;Enter the words above:&lt;/span&gt;
+   &lt;span class=&quot;recaptcha_only_if_audio&quot;&gt;Enter the numbers you hear:&lt;/span&gt;
+
+   &lt;input type=&quot;text&quot; id=&quot;recaptcha_response_field&quot; name=&quot;recaptcha_response_field&quot; /&gt;
+
+   &lt;div&gt;&lt;a href=&quot;javascript:Recaptcha.reload()&quot;&gt;Get another CAPTCHA&lt;/a&gt;&lt;/div&gt;
+   &lt;div class=&quot;recaptcha_only_if_image&quot;&gt;&lt;a href=&quot;javascript:Recaptcha.switch_type('audio')&quot;&gt;Get an audio CAPTCHA&lt;/a&gt;&lt;/div&gt;
+   &lt;div class=&quot;recaptcha_only_if_audio&quot;&gt;&lt;a href=&quot;javascript:Recaptcha.switch_type('image')&quot;&gt;Get an image CAPTCHA&lt;/a&gt;&lt;/div&gt;
+
+   &lt;div&gt;&lt;a href=&quot;javascript:Recaptcha.showhelp()&quot;&gt;Help&lt;/a&gt;&lt;/div&gt;
+
+ &lt;/div&gt;
+
+ &lt;script type=&quot;text/javascript&quot;
+    src=&quot;http://api.recaptcha.net/challenge?k=&lt;/nowiki&gt;&lt;font color=red&gt;your_public_key&lt;/font&gt;&lt;nowiki&gt;&quot;&gt;
+ &lt;/script&gt;
+ &lt;noscript&gt;
+   &lt;iframe src=&quot;http://api.recaptcha.net/noscript?k=&lt;/nowiki&gt;&lt;font color=red&gt;your_public_key&lt;/font&gt;&lt;nowiki&gt;&quot;
+        height=&quot;300&quot; width=&quot;500&quot; frameborder=&quot;0&quot;&gt;&lt;/iframe&gt;&lt;br /&gt;
+   &lt;textarea name=&quot;recaptcha_challenge_field&quot; rows=&quot;3&quot; cols=&quot;40&quot;&gt;
+   &lt;/textarea&gt;
+   &lt;input type=&quot;hidden&quot; name=&quot;recaptcha_response_field&quot;
+        value=&quot;manual_challenge&quot; /&gt;
+ &lt;/noscript&gt;&lt;/nowiki&gt;
+
+Notice that the last few lines are simply the standard way to display reCAPTCHA explained at the beginning of this document.  
+
+Here's what's going on in the code above. The Recaptcha JavaScript object provides methods which allow you to change the state of the CAPTCHA. The method *reload* displays a new CAPTCHA challenge, and the method *switch_type* toggles between image and audio CAPTCHAs.  
+In order to create a full UI for reCAPTCHA, we display different information when the CAPTCHA is in different states. For instance, when the user is viewing an image CAPTCHA, a link to &quot;Get an audio CAPTCHA&quot; is shown. Four CSS classes are available for you to create a stateful UI:
+
+* recaptcha_only_if_image, visible when an image CAPTCHA is being displayed
+* recaptcha_only_if_audio, visible when an audio CAPTCHA is being displayed
+* recaptcha_only_if_incorrect_sol, visible when the previous solution was incorrect
+* recaptcha_only_if_no_incorrect_sol, visible when the previous solution was not incorrect
+
+While theming does give you many options, you need to follow some user interface consistency rules:
+
+* You must state that you are using reCAPTCHA near the CAPTCHA widget.
+* You must provide a visible button that calls the reload function.
+* You must provide a way for visually impaired users to access an audio CAPTCHA.
+* You must provide alt text for any images that you use as buttons in the reCAPTCHA widget.
+
+= Troubleshooting =
+
+== I Can't Work Out Where to Add reCAPTCHA ==
+
+This advice applies to everyone who's integrating reCAPTCHA -- irrespective of language.
+
+Firstly you need to identify two *hot spots* in your code. These are
+the places where you'll be adding the reCAPTCHA calls.
+
+*Display reCAPTCHA*
+
+The first hot spot is the code that generates the form. Hopefully
+that's easy enough to find and you have been able to display the CAPTCHA on your form.
+
+*Check reCAPTCHA*
+
+The second hot spot is the one that seems to cause people problems. You need to identify the code that handles form submission -- that is the code that runs when the user clicks on _submit_. It's hard to generalize about what this code looks like but here are
+some clues that may help you:
+
+* if your form can ever display an error message, for example if a required field is blank, look for the code that generates that error message.
+
+* if your form places information in a database look for code that does a SQL INSERT.
+
+* if your form sends mail, search for the code that does that.
+
+*Form Already Has Validation*
+
+Life will be easier if your form already has some validation logic (i.e.
+it handles invalid input from the user by displaying a
+message instead of performing whatever action it normally would).
+If that's the case and you can find the code that does that you're
+nearly home free. If the form can display an error message search
+for the text of the error message within the code and you're sure
+to be close. Once you've found the validation code you need to add a call to
+the check_answer function in addition to whatever other checks are there
+(email address blank? age too young? etc.).
+
+*Form Has No Validation*
+
+If there's currently no validation logic for your form -- if clicking on
+submit *always* succeeds -- then you have a more tricky problem. 
+In that case you'll have to add the reCAPTCHA validation code right
+before the existing form handling code does whatever it does when the
+user submits. You'll also have to figure out how to redisplay the form
+to give the user another attempt at the captcha.
+Unfortunately there's no one stock answer to how you do that. It depends
+entirely on the structure of the code you already have. If the existing
+code isn't too complex you may have luck posting it on the reCAPTCHA
+discussion group and asking for advice.
+
+== It's Not Working! Help! ==
+
+See the Troubleshooting section of the [http://code.google.com/apis/recaptcha/docs/troubleshooting.html Developer's Guide] or the [http://code.google.com/p/recaptcha/wiki/FAQ FAQ].
