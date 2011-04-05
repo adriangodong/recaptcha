@@ -39,7 +39,7 @@ Displaying the reCAPTCHA widget is the simpler step. You can usually display it 
 
 You need to replace the two instances of YOUR_PUBLIC_KEY with the public key that you received during the account creation process (part 1 above). Be careful that you don't use your private key by mistake. 
 
-Verifying the solution is a bit more difficult, and usually requires modifying a script. If youâre using one of the following programming environments or applications, use these resources and instructions:
+Verifying the solution is a bit more difficult, and usually requires modifying a script. If you're using one of the following programming environments or applications, use these resources and instructions:
 
 *Programming Environments:*
 
