@@ -1,4 +1,4 @@
-#summary How to set up reCAPTCHA
+#summary How to set up reCAPTCHA.
 
 *Note: this documentation is a community-supported, unofficial version of the official docs, and may be out of date or incorrect in parts. The official docs are located at: http://code.google.com/apis/recaptcha/intro.html *
 
