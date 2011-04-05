@@ -108,9 +108,9 @@ Don't forget to set $publickey by replacing YOUR_PUBLIC_KEY with the value you o
 
 Note that the value of the "action" attribute is "verify.php". Now, verify.php is the destination file in which the values of this form are submitted to. So you will need a file verify.php in the same location as the client html.
 
-The require_once function in the example above expects recaptchalib.php to be in the same directory as your form file. If it is in another directory, you must link it appropriately. For example if your recaptchalib.php is in the directory called âcaptchaâ that is on the same level as your form file, the function will look like this: require_once('captcha/recaptchalib.php').
+The require_once function in the example above expects recaptchalib.php to be in the same directory as your form file. If it is in another directory, you must link it appropriately. For example if your recaptchalib.php is in the directory called 'captcha' that is on the same level as your form file, the function will look like this: require_once('captcha/recaptchalib.php').
 
-Also make sure your form is set to get the form variables using $_POST, instead of $_REQUEST, and that the form itself is using the POST method.
+Also make sure your form is set to get the form variables using `$_POST`, instead of `$_REQUEST`, and that the form itself is using the POST method.
 
 === Server Side (How to test if the user entered the right answer) ===
 
