@@ -430,9 +430,6 @@ Below is a skeleton of how to verify the reCAPTCHA answer:
         print &quot;No&quot;;
     }
 
-* [[#Part 3: Customizing Look and Feel|Customizing Look and Feel]]
-* [[#Troubleshooting|Troubleshooting]]
-
 == FormMail ==
 
 Here we will explain how to add reCAPTCHA to your FormMail script without using the reCAPTCHA Perl Module. If you know what you're doing, you can alternatively use the reCAPTCHA Perl Module. 
