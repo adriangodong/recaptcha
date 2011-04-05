@@ -13,8 +13,8 @@ The keys are unique to your domain and sub-domains and will not work for other d
   * Create a global key by checking the box for "Enable this key on all domains (global key)"
 
 For example:
-  * The keys for *test.com* will work on *a.test.com*, *b.test.com*, *c.test.com* and any other sub-domains
-  * If the option âEnable this key on all domains (global key)â is checked, the keys will work on *a.test.com*, *x.com*, *y.com* and any other domain and sub-domains
+  * The keys for *test.com* will work on *a.test.com*, *b.test.com*, *c.test.com* and any other sub-domains.
+  * If the option "Enable this key on all domains (global key)" is checked, the keys will work on *a.test.com*, *x.com*, *y.com* and any other domains or sub-domains.
 
 = Part 2: Installation =
 Installation consists of two steps and optionally a third step where you customize the widget:
@@ -25,7 +25,7 @@ Installation consists of two steps and optionally a third step where you customi
 
 In most Web forms, you usually have two files: the form itself with the fields and the file with the script to process the inputs to the form. These two files correspond to steps 1 and 2 above. Therefore, in most cases you will have to modify two different files. 
 
-Displaying the reCAPTCHA widget is the simpler step. You can usually display it using an application plugin (recommended; see below), or alternatively by adding the javascript below inside your &lt;form&gt; element (a third option discussed later is to use the [[#AJAX API|AJAX API]]):
+Displaying the reCAPTCHA widget is the simpler step. You can usually display it using an application plugin (recommended; see below), or alternatively by adding the javascript below inside your <form> element (a third option, discussed later, is to use the AJAX API.)
 
 {{{
  <script type="text/javascript"
@@ -37,17 +37,17 @@ Displaying the reCAPTCHA widget is the simpler step. You can usually display it 
  </noscript>
 }}}
 
-It probably goes without saying, but we'll say it anyway: you need to replace the two instances of YOUR_PUBLIC_KEY; with the public key that you received during the account creation process (part 1 above). Be careful that you don't use your private key by mistake. 
+You need to replace the two instances of YOUR_PUBLIC_KEY with the public key that you received during the account creation process (part 1 above). Be careful that you don't use your private key by mistake. 
 
 Verifying the solution is a bit more difficult, and usually requires modifying a script. If youâre using one of the following programming environments or applications, use these resources and instructions:
 
 *Programming Environments:*
 
-  * [[#PHP|PHP]]
-  * [[#ASP.NET|ASP.NET]]
-  * [[#Classic_ASP|Classic ASP]] (contributed by Mark Short)
-  * [[#Java/JSP|Java/JSP]]
-  * [[#Perl|Perl]]
+  * PHP
+  * ASP.NET
+  * Classic ASP (contributed by Mark Short)
+  * Java/JSP
+  * Perl
   * [http://python.org/pypi/recaptcha-client Python]
   * [http://www.loonsoft.com/recaptcha/ Ruby] (contributed by McClain Looney)
   * Another [http://github.com/ambethia/recaptcha/ Ruby] library from Jason L Perry
@@ -60,7 +60,7 @@ Verifying the solution is a bit more difficult, and usually requires modifying a
   * [http://recaptcha.net/plugins/wordpress/ WordPress]
   * [http://recaptcha.net/plugins/mediawiki/ MediaWiki]
   * [http://recaptcha.net/plugins/phpbb/ phpBB]
-  * [[#FormMail|FormMail]]
+  * FormMail
   * [http://multipart-mixed.com/software/recaptcha.html Movable Type] (contributed by Josh Carter)
   * [http://drupal.org/project/recaptcha Drupal] (contributed by Rob Loach)
   * [http://trac.symfony-project.com/trac/wiki/sfReCaptchaPlugin Symfony] (contributed by Arthur Koziel)
@@ -74,7 +74,7 @@ Verifying the solution is a bit more difficult, and usually requires modifying a
 
 *Otherwise:*
 
-  * [[#DIY Installation: The reCAPTCHA API|DIY Installation]] (requires you to write code to communicate with our servers to verify the solution)
+  * The DIY installation requires you to write code to communicate with reCAPTCHA servers to verify the solution.
 
 == PHP ==
 
