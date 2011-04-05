@@ -25,7 +25,7 @@ Installation consists of two steps and optionally a third step where you customi
 
 In most Web forms, you usually have two files: the form itself with the fields and the file with the script to process the inputs to the form. These two files correspond to steps 1 and 2 above. Therefore, in most cases you will have to modify two different files. 
 
-Displaying the reCAPTCHA widget is the simpler step. You can usually display it using an application plugin (recommended; see below), or alternatively by adding the javascript below inside your <form> element (a third option, discussed later, is to use the AJAX API.)
+Displaying the reCAPTCHA widget is the simpler step. You can usually display it using an application plugin (recommended; see below), or alternatively by adding the javascript below inside your `<form>` element (a third option, discussed later, is to use the AJAX API.)
 
 {{{
  <script type="text/javascript"
@@ -78,10 +78,10 @@ Verifying the solution is a bit more difficult, and usually requires modifying a
 
 == PHP ==
 
-Download the [http://code.google.com/p/recaptcha/downloads/list?q=label:phplib-Latest reCAPTCHA PHP library]. You will only need one file from there (recaptchalib.php). The other files are examples, readme and legal stuff -- they donât affect functionality.
+Download the [http://code.google.com/p/recaptcha/downloads/list?q=label:phplib-Latest reCAPTCHA PHP library]. You will only need one file from there (recaptchalib.php). The other files are examples, readme and legal stuff -- they don't affect functionality.
 
 === Client Side (How to make the CAPTCHA image show up) ===
-If you want to use the PHP library to display the reCAPTCHA widget, you'll need to insert this snippet of code inside the <form> element where the reCAPTCHA widget will be placed:
+If you want to use the PHP library to display the reCAPTCHA widget, you'll need to insert this snippet of code inside the `<form>` element where the reCAPTCHA widget will be placed:
 
 {{{
   require_once('recaptchalib.php');
@@ -90,20 +90,23 @@ If you want to use the PHP library to display the reCAPTCHA widget, you'll need 
 }}}
 
 With the code, your form might look something like this:
-  &lt;nowiki&gt;&lt;!-- your HTML content --&gt;&lt;/nowiki&gt;&lt;br&gt;
-  &lt;form method=&quot;post&quot; action=&quot;verify.php&quot;&gt;
-    &lt;?php
-      require_once('recaptchalib.php');
-      $publickey = &quot;&lt;font color=red&gt;your_public_key&lt;/font&gt;&quot;; // you got this from the signup page
-      echo recaptcha_get_html($publickey);
-    ?&gt;
-    &lt;input type=&quot;submit&quot; /&gt;
-  &lt;/form&gt;&lt;br&gt;
-  &lt;nowiki&gt;&lt;!-- more of your HTML content --&gt;&lt;/nowiki&gt;
 
-Don't forget to set $publickey by replacing &lt;font color=red&gt;your_public_key&lt;/font&gt; with the value you obtained in Part 1 above.
+{{{
+<!-- your HTML content -->
+ <form method="post" action="verify.php">
+   <?php
+     require_once('recaptchalib.php');
+     $publickey = "<font color=red>YOUR_PUBLIC_KEY</font>"; // you got this from the signup page
+     echo recaptcha_get_html($publickey);
+   ?>
+   <input type="submit" />
+ </form><br>
+<!-- more of your HTML content -->
+}}}
 
-Note that the value of the &quot;action&quot; attribute is &quot;verify.php&quot;. Now, verify.php is the destination file in which the values of this form are submitted to. So you will need a file verify.php in the same location as the client html.
+Don't forget to set $publickey by replacing YOUR_PUBLIC_KEY with the value you obtained in Part 1 above.
+
+Note that the value of the "action" attribute is "verify.php". Now, verify.php is the destination file in which the values of this form are submitted to. So you will need a file verify.php in the same location as the client html.
 
 The require_once function in the example above expects recaptchalib.php to be in the same directory as your form file. If it is in another directory, you must link it appropriately. For example if your recaptchalib.php is in the directory called âcaptchaâ that is on the same level as your form file, the function will look like this: require_once('captcha/recaptchalib.php').
 
@@ -113,33 +116,32 @@ Also make sure your form is set to get the form variables using $_POST, instead 
 
 The following code should be placed at the top of the verify.php file:
 
-  &lt;?php
-  require_once('recaptchalib.php');
-  $privatekey = &quot;&lt;font color=red&gt;your_private_key&lt;/font&gt;&quot;;
-  $resp = recaptcha_check_answer ($privatekey,
-                                $_SERVER[&quot;REMOTE_ADDR&quot;],
-                                $_POST[&quot;recaptcha_challenge_field&quot;],
-                                $_POST[&quot;recaptcha_response_field&quot;]);&lt;br&gt;
-  if (!$resp-&gt;is_valid) {
-    // What happens when the CAPTCHA was entered incorrectly
-    die (&quot;The reCAPTCHA wasn't entered correctly. Go back and try it again.&quot; .
-         &quot;(reCAPTCHA said: &quot; . $resp-&gt;error . &quot;)&quot;);
-  } else {
-    // Your code here to handle a successful verification
-  }
-  ?&gt;
+{{{
+ <?php
+ require_once('recaptchalib.php');
+ $privatekey = "<font color=red>your_private_key</font>";
+ $resp = recaptcha_check_answer ($privatekey,
+                               $_SERVER["REMOTE_ADDR"],
+                               $_POST["recaptcha_challenge_field"],
+                               $_POST["recaptcha_response_field"]);<br>
+ if (!$resp->is_valid) {
+   // What happens when the CAPTCHA was entered incorrectly
+   die ("The reCAPTCHA wasn't entered correctly. Go back and try it again." .
+        "(reCAPTCHA said: " . $resp->error . ")");
+ } else {
+   // Your code here to handle a successful verification
+ }
+ ?>
+}}}
 
 In the code above:
-* _recaptcha_check_answer_ returns an object that represents whether the user successfully completed the challenge.
-* If _$resp-&gt;is_valid_ is true then the captcha challenge was correctly completed and you should continue with form processing.
-* If _$resp-&gt;is_valid_ is false then the user failed to provide the correct captcha text and you should redisplay the form to allow them another attempt. In this case _$resp-&gt;error_ will be an error code that can be provided to _recaptcha_get_html_. Passing the error code makes the reCAPTCHA control display a message explaining that the user entered the text incorrectly and should try again.
+* `_recaptcha_check_answer_` returns an object that represents whether the user successfully completed the challenge.
+* If `_$resp->is_valid_` is true then the captcha challenge was correctly completed and you should continue with form processing.
+* If `_$resp->is_valid_` is false then the user failed to provide the correct captcha text and you should redisplay the form to allow them another attempt. In this case `_$resp->error_` will be an error code that can be provided to `_recaptcha_get_html_`. Passing the error code makes the reCAPTCHA control display a message explaining that the user entered the text incorrectly and should try again.
 
 Notice that this code is asking for the *private* key, which should not be confused with the public key. You get that from the same page as the public key.
 
 That's it! reCAPTCHA should now be working on your site. 
-
-* [[#Part 3: Customizing Look and Feel|Customizing Look and Feel]]
-* [[#Troubleshooting|Troubleshooting]]
 
 == ASP.NET ==
 
