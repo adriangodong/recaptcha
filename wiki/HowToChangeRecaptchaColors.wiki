@@ -1,3 +1,5 @@
+#summary How to apply custom CSS styles to the reCAPTCHA widget.
+
 *Important: this method is not officially supported and may break when new versions of reCAPTCHA system will come out.*
 
 *For a full list of themes and how to create your own skin for your widget, go here: http://code.google.com/apis/recaptcha/docs/customization.html *
