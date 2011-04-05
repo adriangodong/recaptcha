@@ -45,7 +45,7 @@ Verifying the solution is a bit more difficult, and usually requires modifying a
 
   * [#PHP PHP]
   * [#ASP.NET ASP.NET]
-  * [#Classic%20ASP Classic ASP] (contributed by Mark Short)
+  * [#Classic_ASP Classic ASP] (contributed by Mark Short)
   * [#Java/JSP Java/JSP]
   * [#Perl Perl]
   * [http://python.org/pypi/recaptcha-client Python]
