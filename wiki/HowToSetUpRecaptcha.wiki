@@ -44,10 +44,10 @@ Verifying the solution is a bit more difficult, and usually requires modifying a
 *Programming Environments:*
 
   * [#PHP PHP]
-  * ASP.NET
-  * Classic ASP (contributed by Mark Short)
-  * Java/JSP
-  * Perl
+  * [#ASP.NET ASP.NET]
+  * [#Classic%20ASP Classic ASP] (contributed by Mark Short)
+  * [#Java/JSP Java/JSP]
+  * [#Perl Perl]
   * [http://python.org/pypi/recaptcha-client Python]
   * [http://www.loonsoft.com/recaptcha/ Ruby] (contributed by McClain Looney)
   * Another [http://github.com/ambethia/recaptcha/ Ruby] library from Jason L Perry
@@ -60,7 +60,7 @@ Verifying the solution is a bit more difficult, and usually requires modifying a
   * [http://recaptcha.net/plugins/wordpress/ WordPress]
   * [http://recaptcha.net/plugins/mediawiki/ MediaWiki]
   * [http://recaptcha.net/plugins/phpbb/ phpBB]
-  * FormMail
+  * [#FormMail FormMail]
   * [http://multipart-mixed.com/software/recaptcha.html Movable Type] (contributed by Josh Carter)
   * [http://drupal.org/project/recaptcha Drupal] (contributed by Rob Loach)
   * [http://trac.symfony-project.com/trac/wiki/sfReCaptchaPlugin Symfony] (contributed by Arthur Koziel)
