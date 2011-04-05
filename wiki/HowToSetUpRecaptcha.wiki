@@ -43,7 +43,7 @@ Verifying the solution is a bit more difficult, and usually requires modifying a
 
 *Programming Environments:*
 
-  * PHP
+  * [#PHP PHP]
   * ASP.NET
   * Classic ASP (contributed by Mark Short)
   * Java/JSP
