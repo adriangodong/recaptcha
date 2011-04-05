@@ -135,9 +135,9 @@ The following code should be placed at the top of the verify.php file:
 }}}
 
 In the code above:
-  * `_recaptcha_check_answer_` returns an object that represents whether the user successfully completed the challenge.
-  * If `_$resp->is_valid_` is true then the captcha challenge was correctly completed and you should continue with form processing.
-  * If `_$resp->is_valid_` is false then the user failed to provide the correct captcha text and you should redisplay the form to allow them another attempt. In this case `_$resp->error_` will be an error code that can be provided to `_recaptcha_get_html_`. Passing the error code makes the reCAPTCHA control display a message explaining that the user entered the text incorrectly and should try again.
+  * `recaptcha_check_answer` returns an object that represents whether the user successfully completed the challenge.
+  * If `$resp->is_valid` is true then the captcha challenge was correctly completed and you should continue with form processing.
+  * If `$resp->is_valid` is false then the user failed to provide the correct captcha text and you should redisplay the form to allow them another attempt. In this case `$resp->error` will be an error code that can be provided to `recaptcha_get_html`. Passing the error code makes the reCAPTCHA control display a message explaining that the user entered the text incorrectly and should try again.
 
 Notice that this code is asking for the *private* key, which should not be confused with the public key. You get that from the same page as the public key.
 
