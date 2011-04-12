@@ -7,8 +7,8 @@ except ImportError:
 
 setup(name='recaptcha-client',
       version='1.0.6',
-      url = "http://recaptcha.net",
-      author = "Ben Maurer",
+      url = "http://www.google.com/recaptcha",
+      author = "The reCAPTCHA Team",
       author_email = "support@recaptcha.net",
       description = "A plugin for reCAPTCHA and reCAPTCHA Mailhide",
       long_description = """\
@@ -30,15 +30,14 @@ Please use the associated mailing list for any questions or comments:
 recaptcha@googlegroups.com. Like the Google Code project, the Google Group
 mailing list is also shared among the several reCAPTCHA client implementations.
 
-reCAPTCHA is written by Ben Maurer and maintained by Josh Bronson. It is
-licensed under an MIT/X11 license.
+The reCAPTCHA module is licensed under an MIT/X11 license.
 """,
 
       license = "MIT/X11",
       classifiers = [
         "Topic :: Security",
         "Topic :: Internet :: WWW/HTTP :: Dynamic Content :: CGI Tools/Libraries",
-        "Development Status :: 4 - Beta",
+        "Development Status :: 5 - Production/Stable",
         "Environment :: Web Environment",
         ],
 
