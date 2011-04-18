@@ -20,6 +20,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Text;
 using System.Web.Mvc;
 using System.Configuration;
@@ -33,6 +34,7 @@ namespace Recaptcha
         private static string publicKey;
         private static string privateKey;
         private static bool skipRecaptcha;
+        private static IWebProxy proxy;
 
         public static string PublicKey
         {
@@ -50,6 +52,12 @@ namespace Recaptcha
         {
             get { return skipRecaptcha; }
             set { skipRecaptcha = value; }
+        }
+
+        public static IWebProxy Proxy
+        {
+            get { return proxy; }
+            set { proxy = value; }
         }
 
         static RecaptchaControlMvc()
@@ -76,6 +84,7 @@ namespace Recaptcha
                 validator.RemoteIP = filterContext.HttpContext.Request.UserHostAddress;
                 validator.Challenge = filterContext.HttpContext.Request.Form[CHALLENGE_FIELD_KEY];
                 validator.Response = filterContext.HttpContext.Request.Form[RESPONSE_FIELD_KEY];
+                validator.Proxy = proxy;
 
                 if (string.IsNullOrEmpty(validator.Challenge))
                 {
