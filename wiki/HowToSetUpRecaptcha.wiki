@@ -74,7 +74,7 @@ Verifying the solution is a bit more difficult, and usually requires modifying a
 
 *Otherwise:*
 
-  * The DIY installation requires you to write code to communicate with reCAPTCHA servers to verify the solution.
+  * [http://code.google.com/apis/recaptcha/intro.html The DIY installation] requires you to write code to communicate with reCAPTCHA servers to verify the solution.
 
 == PHP ==
 
@@ -121,9 +121,9 @@ The following code should be placed at the top of the verify.php file:
  require_once('recaptchalib.php');
  $privatekey = "YOUR_PRIVATE_KEY";
  $resp = recaptcha_check_answer ($privatekey,
-                               $_SERVER["REMOTE_ADDR"],
-                               $_POST["recaptcha_challenge_field"],
-                               $_POST["recaptcha_response_field"]);<br>
+                                 $_SERVER["REMOTE_ADDR"],
+                                 $_POST["recaptcha_challenge_field"],
+                                 $_POST["recaptcha_response_field"]);
  if (!$resp->is_valid) {
    // What happens when the CAPTCHA was entered incorrectly
    die ("The reCAPTCHA wasn't entered correctly. Go back and try it again." .
@@ -210,9 +210,9 @@ That's it! reCAPTCHA should now be working on your site.
  recaptcha_challenge_field  = Request("recaptcha_challenge_field")
  recaptcha_response_field   = Request("recaptcha_response_field")
  recaptcha_public_key       = "<font color=red>your_public_key</font>" ' your public key
- recaptcha_private_key      = "<font color=red>your_private_key</font>" ' your private key<br>
+ recaptcha_private_key      = "<font color=red>your_private_key</font>" ' your private key
  ' returns the HTML for the widget
- function recaptcha_challenge_writer()<br>
+ function recaptcha_challenge_writer()
  recaptcha_challenge_writer = _
  "<script type=""text/javascript"">" & _
  "var RecaptchaOptions = {" & _
@@ -225,38 +225,38 @@ That's it! reCAPTCHA should now be working on your site.
    "<iframe src=""http://www.google.com/recaptcha/api/noscript?k=" & recaptcha_public_key & """ frameborder=""1""></iframe><br>" & _
      "<textarea name=""recaptcha_challenge_field"" rows=""3""cols=""40""></textarea>" & _
      "<input type=""hidden"" name=""recaptcha_response_field""value=""manual_challenge"">" & _
- "</noscript>"<br>  
- end function<br>  
+ "</noscript>"
+ end function
  ' returns "" if correct, otherwise it returns the error response
- function recaptcha_confirm(rechallenge,reresponse)<br>  
+ function recaptcha_confirm(rechallenge,reresponse)
  Dim VarString
  VarString = _
          "privatekey=" & recaptcha_private_key & _
          "&remoteip=" & Request.ServerVariables("REMOTE_ADDR") & _
          "&challenge=" & rechallenge & _
-         "&response=" & reresponse<br>  
+         "&response=" & reresponse
  Dim objXmlHttp
  Set objXmlHttp = Server.CreateObject("Msxml2.ServerXMLHTTP")
  objXmlHttp.open "POST", "http://www.google.com/recaptcha/api/verify", False
  objXmlHttp.setRequestHeader "Content-Type", "application/x-www-form-urlencoded"
- objXmlHttp.send VarString<br>
+ objXmlHttp.send VarString
  Dim ResponseString
  ResponseString = split(objXmlHttp.responseText, vblf)
- Set objXmlHttp = Nothing<br>  
+ Set objXmlHttp = Nothing
  if ResponseString(0) = "true" then
    'They answered correctly
     recaptcha_confirm = ""
  else
    'They answered incorrectly
     recaptcha_confirm = ResponseString(1)
- end if<br>  
- end function<br>
+ end if
+ end function
  server_response = ""
  newCaptcha = True
  if (recaptcha_challenge_field <> "" or recaptcha_response_field <> "") then
    server_response = recaptcha_confirm(recaptcha_challenge_field, recaptcha_response_field)
    newCaptcha = False  
- end if<br>
+ end if
 }}}
 
 What happens here is the variables "server_response" and "newCaptcha" are set whenever the page is loaded, allowing you to determine the state of your page.
@@ -265,20 +265,20 @@ What happens here is the variables "server_response" and "newCaptcha" are set wh
 
 {{{
  <html>
- <body><br>
- <% if server_response <> "" or newCaptcha then %><br>
-   <% if newCaptcha = False then %><br>
+ <body>
+ <% if server_response <> "" or newCaptcha then %>
+   <% if newCaptcha = False then %>
      <!-- An error occurred -->
-     Wrong!<br>
-   <% end if %><br>
+     Wrong!
+   <% end if %>
    <!-- Generating the form -->
    <form action="recaptcha.asp" method="post">
      <%=recaptcha_challenge_writer()%>
-   </form><br>
- <% else %><br>
+   </form>
+ <% else %>
    <!-- The solution was correct -->
-   Correct!<br>
- <%end if%><br>
+   Correct!
+ <%end if%>
  </body>
  </html>
 }}}
@@ -312,7 +312,7 @@ So, in JSP your code may look something like this:
 
 {{{
    <%@ page import="net.tanesha.recaptcha.ReCaptcha" %>
-   <%@ page import="net.tanesha.recaptcha.ReCaptchaFactory" %><br>
+   <%@ page import="net.tanesha.recaptcha.ReCaptchaFactory" %>
    <html>
      <body>
        <form action="" method="post">
@@ -341,16 +341,16 @@ Next, you need to insert the code that verifies the reCAPTCHA solution entered b
 
 {{{
    <%@ page import="net.tanesha.recaptcha.ReCaptchaImpl" %>
-   <%@ page import="net.tanesha.recaptcha.ReCaptchaResponse" %><br>
+   <%@ page import="net.tanesha.recaptcha.ReCaptchaResponse" %>
    <html>
      <body>
      <%
        String remoteAddr = request.getRemoteAddr();
        ReCaptchaImpl reCaptcha = new ReCaptchaImpl();
-       reCaptcha.setPrivateKey("<font color=red>your_private_key</font>");<br>
+       reCaptcha.setPrivateKey("<font color=red>your_private_key</font>");
        String challenge = request.getParameter("recaptcha_challenge_field");
        String uresponse = request.getParameter("recaptcha_response_field");
-       ReCaptchaResponse reCaptchaResponse = reCaptcha.checkAnswer(remoteAddr, challenge, uresponse);<br>
+       ReCaptchaResponse reCaptchaResponse = reCaptcha.checkAnswer(remoteAddr, challenge, uresponse);
        if (reCaptchaResponse.isValid()) {
          out.print("Answer was entered correctly!");
        } else {
