@@ -142,3 +142,60 @@ In the code above:
 Notice that this code is asking for the *private* key, which should not be confused with the public key. You get that from the same page as the public key.
 
 That's it! reCAPTCHA should now be working on your site. 
+
+== ASP.NET ==
+
+  * Download the reCAPTCHA ASP.NET library.
+  * Add a reference on your website to library/bin/Release/Recaptcha.dll: On the Visual Studio Website menu, choose Add Reference and then click the .NET tab in the dialog box. Select the Recaptcha.dll component from the list of .NET components and then click OK. If you don't see the component, click the Browse tab and look for the assembly file on your hard drive.
+  * Insert the reCAPTCHA control into the form you wish to protect by adding the following code snippets:
+
+  * At the top of the aspx page, insert this:
+
+{{{
+ <%@ Register TagPrefix="recaptcha" Namespace="Recaptcha" Assembly="Recaptcha" %>
+}}}
+
+  * Then insert the reCAPTCHA control inside of the `<form runat="server">` tag:
+
+{{{
+ <recaptcha:RecaptchaControl
+   ID="recaptcha"
+   runat="server"
+   PublicKey="<font color=red>your_public_key</font>"            
+   PrivateKey="<font color=red>your_private_key</font>"
+   />
+}}}
+  * You will need to substitute your public and private key into PublicKey and PrivateKey respectively.
+  * Make sure you use ASP.NET validation to validate your form (you should check Page.IsValid on submission).
+  * The following is a "Hello World" with reCAPTCHA using Visual Basic. A C# sample is included with the library download:
+{{{
+ <%@ Page Language="VB" %>
+ <%@ Register TagPrefix="recaptcha" Namespace="Recaptcha" Assembly="Recaptcha" %>
+ <script runat=server>
+     Sub btnSubmit_Click(ByVal sender As Object, ByVal e As EventArgs)
+         If Page.IsValid Then
+             lblResult.Text = "You Got It!"
+             lblResult.ForeColor = Drawing.Color.Green
+         Else
+             lblResult.Text = "Incorrect"
+             lblResult.ForeColor = Drawing.Color.Red
+         End If
+     End Sub
+ </script>
+ <html>
+ <body>
+     <form runat="server">
+         <asp:Label Visible=false ID="lblResult" runat="server" />   
+         <recaptcha:RecaptchaControl
+             ID="recaptcha"
+             runat="server"
+             Theme="red"
+             PublicKey="<font color=red>your_public_key</font>"            
+             PrivateKey="<font color=red>your_private_key</font>"
+             />
+         <nowiki><br /></nowiki>
+         <asp:Button ID="btnSubmit" runat="server" Text="Submit" OnClick="btnSubmit_Click" />
+     </form>
+ </body>
+ </html>
+}}}
