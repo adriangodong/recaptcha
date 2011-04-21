@@ -4,6 +4,8 @@
 
 reCAPTCHA is a free CAPTCHA service that helps protect your site against spam, malicious registrations and other forms of attacks where computers try to disguise themselves as a human. reCAPTCHA comes in the form of a widget that you can easily add to your blog, forum, registration, etc. Below you can find instructions on how to add reCAPTCHA to your site.
 
+<wiki:toc max_depth="1" />
+
 = Part 1: Sign Up =
 
 First, you'll need to [https://www.google.com/recaptcha/admin sign up] and create reCAPTCHA keys for your site. 
