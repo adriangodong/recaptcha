@@ -145,7 +145,7 @@ That's it! reCAPTCHA should now be working on your site.
 
 == ASP.NET ==
 
-  * Download the reCAPTCHA ASP.NET library.
+  * Download the [http://code.google.com/p/recaptcha/downloads/list?q=label:aspnetlib-Latest reCAPTCHA ASP.NET library].
   * Add a reference on your website to library/bin/Release/Recaptcha.dll: On the Visual Studio Website menu, choose Add Reference and then click the .NET tab in the dialog box. Select the Recaptcha.dll component from the list of .NET components and then click OK. If you don't see the component, click the Browse tab and look for the assembly file on your hard drive.
   * Insert the reCAPTCHA control into the form you wish to protect by adding the following code snippets:
 
@@ -282,3 +282,107 @@ What happens here is the variables "server_response" and "newCaptcha" are set wh
  </body>
  </html>
 }}}
+
+== Java/JSP == 
+
+Download the [http://code.google.com/p/recaptcha/downloads/list?q=label:java-Latest reCAPTCHA Java Library here] (contributed by Soren) and unzip it. Typically the only thing you'll need is the jar file (recaptcha4j-X.X.X.jar), which you have to copy to a place where it can be loaded by your java application. For example, if you are using Tomcat to run JSP, you may put the jar file in a directory called WEB-INF/lib/.
+
+=== Client Side (How to make the CAPTCHA image show up) ===
+
+If you want to use the Java plugin to display the reCAPTCHA widget, you'll need to import the appropriate reCAPTCHA classes. In JSP, you would do this by inserting these lines near the top of the file with the form element where the reCAPTCHA widget will be displayed:
+
+{{{
+<%@ page import="net.tanesha.recaptcha.ReCaptcha" %>
+<%@ page import="net.tanesha.recaptcha.ReCaptchaFactory" %>
+}}}
+
+Then, you need to create an instance of reCAPTCHA:
+
+{{{
+ReCaptcha c = ReCaptchaFactory.newReCaptcha("YOUR_PUBLIC_KEY", "YOUR_PRIVATE_KEY", false);
+}}}
+
+Finally, the HTML to display the reCAPTCHA widget can be obtained from the following function call:
+
+{{{
+c.createRecaptchaHtml(null, null)
+}}}
+
+So, in JSP your code may look something like this:
+
+{{{
+   <%@ page import="net.tanesha.recaptcha.ReCaptcha" %>
+   <%@ page import="net.tanesha.recaptcha.ReCaptchaFactory" %><br>
+   <html>
+     <body>
+       <form action="" method="post">
+       <%
+         ReCaptcha c = ReCaptchaFactory.newReCaptcha("YOUR_PUBLIC_KEY", "YOUR_PRIVATE_KEY", false);
+         out.print(c.createRecaptchaHtml(null, null));
+       %>
+       <input type="submit" value="submit" />
+       </form>
+     </body>
+   </html>
+}}}
+
+Don't forget to replace YOUR_PUBLIC_KEY and YOUR_PRIVATE_KEY with the values you obtained in Part 1 above.
+
+=== Server Side (How to test if the user entered the right answer) ===
+
+In the application that verifies your form, you'll first need to import the necessary reCAPTCHA classes:
+
+{{{
+import net.tanesha.recaptcha.ReCaptchaImpl;
+import net.tanesha.recaptcha.ReCaptchaResponse;
+}}}
+
+Next, you need to insert the code that verifies the reCAPTCHA solution entered by the user. The example below (in JSP) shows how this can be done:
+
+{{{
+   <%@ page import="net.tanesha.recaptcha.ReCaptchaImpl" %>
+   <%@ page import="net.tanesha.recaptcha.ReCaptchaResponse" %><br>
+   <html>
+     <body>
+     <%
+       String remoteAddr = request.getRemoteAddr();
+       ReCaptchaImpl reCaptcha = new ReCaptchaImpl();
+       reCaptcha.setPrivateKey("<font color=red>your_private_key</font>");<br>
+       String challenge = request.getParameter("recaptcha_challenge_field");
+       String uresponse = request.getParameter("recaptcha_response_field");
+       ReCaptchaResponse reCaptchaResponse = reCaptcha.checkAnswer(remoteAddr, challenge, uresponse);<br>
+       if (reCaptchaResponse.isValid()) {
+         out.print("Answer was entered correctly!");
+       } else {
+         out.print("Answer is wrong");
+       }
+     %>
+     </body>
+   </html>
+}}}
+
+In the code above:
+  * remoteAddr is the user's IP address (which is passed to the reCAPTCHA servers)
+  * uresponse contains the user's answer to the reCAPTCHA challenge.
+
+If you're having trouble, you can also see the following article that explains how to add reCAPTCHA to your Java application: [http://wheelersoftware.com/articles/recaptcha-java.html How to reCAPTCHA Your Java Application]
+
+=== Important: DNS Caching ===
+
+Java has an annoying issue that may cause the connection between your server and reCAPTCHA to be interrupted every few months, and reCAPTCHA will stop working in your site when that happens. Read below to see how to fix this.
+
+By default the Java Virtual Machine (JVM) caches all DNS lookups forever instead of using the time-to-live (TTL) value which is specified in the DNS record of each host. For those of you how do not know it, a DNS lookup is a request sent to a DNS server which converts a readable hostname to an IP address. For example, it converts *www.recaptcha.net* to the IP address *69.12.97.164*.
+
+reCAPTCHA servers can change IP addresses. Because Java caches DNS lookups forever, this can cause the connection between your server and reCAPTCHA to go down when the reCAPTCHA IP address changes. If this happens, restarting your JVM (e.g., restarting Tomcat) can fix the problem because it causes a new DNS lookup. However, you probably don't want to restart your JVM once every few months whenever your site breaks because the reCAPTCHA servers changed IP addresses.
+
+To fix this issue for good, you can pass *-Dsun.net.inetaddr.ttl=30* to your app-server (this tells Java to only cache DNS for 30 seconds). In Tomcat for Windows, this can be done by following the steps below:
+
+  * Stop Tomcat
+  * Go to tomcat\bin
+  * Run Tomcat5w.exe
+  * Go to Java tab
+  * Add java property to java options section: -Dsun.net.inetaddr.ttl=30
+  * Exit
+  * Start Tomcat
+
+[http://www.mattryall.net/blog/2005/03/javas-awful-dns-caching Here is an article] explaining more about this issue.
