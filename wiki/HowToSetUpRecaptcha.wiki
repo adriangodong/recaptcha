@@ -576,3 +576,96 @@ Finally, create the functionality that prints the error message in case the chec
 }}}
 
 That's it! reCAPTCHA should now be working on your site.
+
+= Part 3: Customizing Look and Feel =
+
+Now that you've successfully installed reCAPTCHA on your site, you may want to change the way it looks. There are two ways to do this: (1) choosing one of the standard reCAPTCHA themes, or (2) fully customizing the appearance of reCAPTCHA.
+
+== Standard Themes ==
+
+The first step is to add the following code in your main HTML page anywhere *before* the `<form>` element where reCAPTCHA appears:
+
+{{{
+<script type="text/javascript">
+var RecaptchaOptions = {
+   theme : 'THEME_NAME'
+};
+</script>
+}}}
+
+Note: This will not work if it appears after the main script where reCAPTCHA is first invoked.
+
+To use a standard theme, you need to replace THEME_NAME by one of the following four theme names:
+  * red (default theme)
+  * white
+  * blackglass
+  * clean
+
+== Custom Theming ==
+
+To use a fully custom theme, you will need to tell reCAPTCHA that it should not create a user interface of its own. reCAPTCHA will rely on the presence of HTML elements with the following IDs to display the CAPTCHA to the user:
+
+  * An empty div with ID recaptcha_image. This is where the actual image will be placed. The div will be automatically set to 300x57 pixels.
+  * A text input with ID and name both set to recaptcha_response_field. This is where the user can enter their answer.
+  * A div that contains the entire reCAPTCHA widget. The ID of this div should be placed into the parameter custom_theme_widget of RecaptchaOptions, and the style of the div should be set to display:none. After the reCAPTCHA theming code has fully loaded, it will make the div visible. This element avoids making the page flicker while it loads.
+
+To implement all of this this, first place the following code in your main HTML page anywhere before the `<form>` element where reCAPTCHA appears:
+
+{{{
+<script type="text/javascript">
+var RecaptchaOptions = {
+   theme : 'custom',
+   custom_theme_widget: 'recaptcha_widget'
+};
+</script>
+}}}
+
+Then, inside the <form> element where you want reCAPTCHA to appear, place:
+
+{{{
+<div id="recaptcha_widget" style="display:none">
+  <div id="recaptcha_image"></div>
+  <div class="recaptcha_only_if_incorrect_sol" style="color:red">Incorrect please try again</div>
+  <span class="recaptcha_only_if_image">Enter the words above:</span>
+  <span class="recaptcha_only_if_audio">Enter the numbers you hear:</span>
+  <input type="text" id="recaptcha_response_field" name="recaptcha_response_field" />
+  <div><a href="javascript:Recaptcha.reload()">Get another CAPTCHA</a></div>
+  <div class="recaptcha_only_if_image"><a href="javascript:Recaptcha.switch_type('audio')">Get an audio CAPTCHA</a></div>
+  <div class="recaptcha_only_if_audio"><a href="javascript:Recaptcha.switch_type('image')">Get an image CAPTCHA</a></div>
+  <div><a href="javascript:Recaptcha.showhelp()">Help</a></div>
+</div>
+<script type="text/javascript"
+   src="http://www.google.com/recaptcha/api/challenge?k=YOUR_PUBLIC_KEY">
+</script>
+<noscript>
+  <iframe src="http://www.google.com/recaptcha/api/noscript?k=YOUR_PUBLIC_KEY"
+       height="300" width="500" frameborder="0"></iframe><br />
+  <textarea name="recaptcha_challenge_field" rows="3" cols="40">
+  </textarea>
+  <input type="hidden" name="recaptcha_response_field"
+       value="manual_challenge" />
+</noscript>
+}}}
+
+Notice that the last few lines are simply the standard way to display reCAPTCHA explained at the beginning of this document.
+Here's what's going on in the code above. The Recaptcha JavaScript object provides methods which allow you to change the state of the CAPTCHA. The method reload displays a new CAPTCHA challenge, and the method switch_type toggles between image and audio CAPTCHAs. In order to create a full UI for reCAPTCHA, we display different information when the CAPTCHA is in different states. For instance, when the user is viewing an image CAPTCHA, a link to "Get an audio CAPTCHA" is shown. 
+
+Four CSS classes are available for you to create a stateful UI:
+
+  * recaptcha_only_if_image, visible when an image CAPTCHA is being displayed
+  * recaptcha_only_if_audio, visible when an audio CAPTCHA is being displayed
+  * recaptcha_only_if_incorrect_sol, visible when the previous solution was incorrect
+  * recaptcha_only_if_no_incorrect_sol, visible when the previous solution was not incorrect
+
+While theming does give you many options, you need to follow some user interface consistency rules:
+
+  * You must state that you are using reCAPTCHA near the CAPTCHA widget.
+  * You must provide a visible button that calls the reload function.
+  * You must provide a way for visually impaired users to access an audio CAPTCHA.
+  * You must provide alt text for any images that you use as buttons in the reCAPTCHA widget.
+
+= Troubleshooting =
+
+For troubleshooting, check out the [http://code.google.com/apis/recaptcha/docs/troubleshooting.html official troubleshooting guide].
+
+If that doesn't help answer your question, try asking on the public [reCAPTCHA support forum http://groups.google.com/group/recaptcha].
