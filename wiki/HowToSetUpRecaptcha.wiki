@@ -386,3 +386,193 @@ To fix this issue for good, you can pass *-Dsun.net.inetaddr.ttl=30* to your app
   * Start Tomcat
 
 [http://www.mattryall.net/blog/2005/03/javas-awful-dns-caching Here is an article] explaining more about this issue.
+
+== Perl ==
+
+Download the [http://search.cpan.org/dist/Captcha-reCAPTCHA/lib/Captcha/reCAPTCHA.pm reCAPTCHA Perl Module] (contributed by Andy Armstrong). You will need to install this module on your machine (web server). The module depends on the modules LWP::UserAgent and HTML::Tiny, both of which will also need to be installed. Here are some basic [http://www.perlmonks.org/index.pl?node_id=128077 instructions on installing Perl modules.]
+
+=== Client Side (How to make the CAPTCHA image show up) ===
+
+If you want to use the Perl library to display the reCAPTCHA widget, you'll need to insert this line near the top of the file with the form element where the reCAPTCHA widget will be displayed:
+
+{{{
+use Captcha::reCAPTCHA;
+}}}
+
+Then, you need to create an instance of reCAPTCHA:
+
+{{{
+my $c = Captcha::reCAPTCHA->new;
+}}}
+
+Finally, to display the reCAPTCHA widget, you must place the following line inside the `<form>` tag:
+
+{{{
+print $c->get_html("YOUR_PUBLIC_KEY");
+}}}
+
+So, your code may look something like this:
+
+{{{
+use Captcha::reCAPTCHA;
+my $c = Captcha::reCAPTCHA->new;
+print <<EOT;
+<html>
+  <body>
+    <form action="" method="post">
+EOT
+print $c->get_html("<font color=red>your_public_key</font>");
+print <<EOT;
+    <input type="submit" value="submit" />
+    </form>
+  </body>
+</html>
+EOT
+}}}
+
+Don't forget to replace YOUR_PUBLIC_KEY with the value you obtained in Part 1 above.
+
+=== Server Side (How to test if the user entered the right answer) ===
+
+Below is a skeleton of how to verify the reCAPTCHA answer:
+
+{{{
+use Captcha::reCAPTCHA;
+my $c = Captcha::reCAPTCHA->new;
+my $challenge = the value of param 'recaptcha_challenge_field';
+my $response = the value of param 'recaptcha_response_field';
+# Verify submission
+my $result = $c->check_answer(
+    "YOUR_PRIVATE_KEY", $ENV{'REMOTE_ADDR'},
+    $challenge, $response
+);
+if ( $result->{is_valid} ) {
+    print "Yes!";
+}
+else {
+    # Error
+    print "No";
+}
+}}}
+
+== FormMail ==
+
+Here we will explain how to add reCAPTCHA to your FormMail script without using the reCAPTCHA Perl Module. If you know what you're doing, you can alternatively use the reCAPTCHA Perl Module.
+
+=== Client Side (How to make the CAPTCHA image show up) ===
+
+In your HTML page, inside the `<form>` element you must add the following code:
+
+{{{
+ <script type="text/javascript"
+   src="http://www.google.com/recaptcha/api/challenge?k=YOUR_PUBLIC_KEY">
+ </script>
+ <noscript>
+   <iframe src="http://www.google.com/recaptcha/api/noscript?k=YOUR_PUBLIC_KEY"
+       height="300" width="500" frameborder="0"></iframe><br>
+   <textarea name="recaptcha_challenge_field" rows="3" cols="40">
+   </textarea>
+   <input type="hidden" name="recaptcha_response_field" 
+       value="manual_challenge">
+ </noscript>
+}}}
+
+You need to replace the two instances of YOUR_PUBLIC_KEY with the public key that you received during the account creation process (Part 1 above). Be careful that you don't use your private key by mistake.
+
+This will basically add two parameters, which are passed to formmail.cgi (or FormMail.pl) through a POST request, namely:
+
+  * recaptcha_challenge_field
+    * This is the challenge created through your public key.
+  * recaptcha_response_field
+    * This is the user-submitted response to the challenge above.
+
+=== Server Side (How to test if the user entered the right answer) ===
+
+Next, you need to modify formmail.cgi (or FormMail.pl) to handle the two parameters and to validate the challenge from the reCAPTCHA servers. At this point, it's probably a good idea to make a backup copy of your FormMail.pl, just in case. In the code below, "+" means the line needs to be added to the FormMail script, and "-" means the line needs to be removed from it. In every case, we show where the lines need to be added or removed by showing the adjacent lines in the FormMail script.
+
+First, you need to tell Perl to use the module LWP::UserAgent by adding the following line to FormMail:
+
+{{{
+# ACCESS CONTROL FIX: Peter D. Thompson Yezek                                #
+#                     http://www.securityfocus.com/archive/1/62033           #
+##############################################################################
++use LWP::UserAgent;
+}}}
+
+Now, validate the CAPTCHA response and generate an error if the response doesn't match the challenge.
+
+{{{
++##############################################################################
++# Check the CAPTCHA response via the reCAPTCHA service.
++sub check_captcha {
++
++      my $ua = LWP::UserAgent->new();
++      my $result=$ua->post(
++      '<nowiki>http://api-verify.recaptcha.net/verify'</nowiki>,
++      {
++          privatekey => '<font color=red>your_private_key</font>',
++          remoteip   => $ENV{'REMOTE_ADDR'},
++          challenge  => $Form{'recaptcha_challenge_field'},
++          response   => $Form{'recaptcha_response_field'}
++      });
++
++      if ( $result->is_success && $result->content =~ /^true/) {
++              return;
++      } else {
++              &error('captcha_failed');
++      }
++}
++
+# NOTE rev1.91: This function is no longer intended to stop abuse, that      #
+#    functionality is now embedded in the checks made on @recipients and the #
+#    recipient form field.                                                   #
+}}}
+
+Finally, create the functionality that prints the error message in case the check fails:
+
+{{{
+        if ($Config{'missing_fields_redirect'}) {
+            print "Location: " . &clean_html($Config{'missing_fields_redirect'}) . "\n\n";
+        }
++    }
++    elsif ($error eq 'captcha_failed') {
++            print <<"(END ERROR HTML)";
++Content-type: text/html
++
++<html>
++ <head>
++  <title>Error: Captcha Check Failed</title>
++ </head>
++ <body bgcolor=#FFFFFF text=#000000>
++ <nowiki><center></nowiki>
++  <nowiki><table border=0 width=600 bgcolor=#9C9C9C></nowiki>
++    <tr><th><font size=+2>Error: Captcha Check Failed</font></th></tr>
++   </table>
++  <nowiki><table border=0 width=600 bgcolor=#CFCFCF></nowiki>
++    <tr><td>The Captcha response of the form you submitted did not match the challenge.
++     Please check the form and make sure that your response matches the challenge in the captcha image.
++     You can use the browser back button to return to the form.
++     </center>
++    </td></tr>
++   </table>
++  </center>
++ </body>
++</html>
++(END ERROR HTML)
++    }
+        else {
+             foreach $missing_field (@error_fields) {
+<nowiki>           $missing_field_list .= "<li>" . &clean_html($missing_field) . "\n";</nowiki>
+.
+.
+.
+ </html>
+(END ERROR HTML)
+        }
+-    }
+-
+    exit;
+}
+}}}
+
+That's it! reCAPTCHA should now be working on your site.
