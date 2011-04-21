@@ -508,7 +508,7 @@ Now, validate the CAPTCHA response and generate an error if the response doesn't
 +
 +      my $ua = LWP::UserAgent->new();
 +      my $result=$ua->post(
-+      '<nowiki>http://api-verify.recaptcha.net/verify'</nowiki>,
++      'http://api-verify.recaptcha.net/verify',
 +      {
 +          privatekey => '<font color=red>your_private_key</font>',
 +          remoteip   => $ENV{'REMOTE_ADDR'},
@@ -544,11 +544,11 @@ Finally, create the functionality that prints the error message in case the chec
 +  <title>Error: Captcha Check Failed</title>
 + </head>
 + <body bgcolor=#FFFFFF text=#000000>
-+ <nowiki><center></nowiki>
-+  <nowiki><table border=0 width=600 bgcolor=#9C9C9C></nowiki>
++ <center>
++  <table border=0 width=600 bgcolor=#9C9C9C>
 +    <tr><th><font size=+2>Error: Captcha Check Failed</font></th></tr>
 +   </table>
-+  <nowiki><table border=0 width=600 bgcolor=#CFCFCF></nowiki>
++  <table border=0 width=600 bgcolor=#CFCFCF>
 +    <tr><td>The Captcha response of the form you submitted did not match the challenge.
 +     Please check the form and make sure that your response matches the challenge in the captcha image.
 +     You can use the browser back button to return to the form.
@@ -562,7 +562,7 @@ Finally, create the functionality that prints the error message in case the chec
 +    }
         else {
              foreach $missing_field (@error_fields) {
-<nowiki>           $missing_field_list .= "<li>" . &clean_html($missing_field) . "\n";</nowiki>
+           $missing_field_list .= "<li>" . &clean_html($missing_field) . "\n";
 .
 .
 .
@@ -620,7 +620,7 @@ var RecaptchaOptions = {
 </script>
 }}}
 
-Then, inside the <form> element where you want reCAPTCHA to appear, place:
+Then, inside the `<form>` element where you want reCAPTCHA to appear, place:
 
 {{{
 <div id="recaptcha_widget" style="display:none">
@@ -668,4 +668,4 @@ While theming does give you many options, you need to follow some user interface
 
 For troubleshooting, check out the [http://code.google.com/apis/recaptcha/docs/troubleshooting.html official troubleshooting guide].
 
-If that doesn't help answer your question, try asking on the public [reCAPTCHA support forum http://groups.google.com/group/recaptcha].
+If that doesn't help answer your question, try asking on the public [http://groups.google.com/group/recaptcha reCAPTCHA support forum].
