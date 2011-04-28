@@ -290,7 +290,7 @@ namespace Recaptcha
 
             set
             {
-                throw new NotImplementedException("This setter is not implemented.");
+                throw new NotImplementedException("ErrorMessage property is not settable. To customize reCAPTCHA error message, use custom translation settings.");
             }
         }
 
@@ -304,7 +304,7 @@ namespace Recaptcha
 
             set
             {
-                throw new NotImplementedException("This setter is not implemented.");
+                throw new NotImplementedException("IsValid property is not settable. This property is populated automatically.");
             }
         }
 
