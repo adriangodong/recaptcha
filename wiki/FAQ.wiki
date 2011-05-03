@@ -52,6 +52,16 @@ On the verification word, reCAPTCHA intentionally allows an "off by one" error d
 
 You probably aren't validating the reCAPTCHA with the API servers.
 
+== I keep getting "incorrect-captcha-sol" even though I'm entering the correct words ===
+
+You are _probably_ not passing in the user's input into the verification routine because you're not getting them from the previous step. You should be ensuring the contents of (in PHP, other languages may differ in syntax) `$_POST['recaptcha_response_field']` and `$_POST['recaptcha_challenge_field']` [http://code.google.com/apis/recaptcha/docs/tips.html are not empty or null] before calling the verification routine anyway.
+
+Reasons this may be happening include:
+  * You are expecting the input to come from `POST`, but your input form specifies the `method` as `GET` (or you've not specified it at all, in which case it will default to `GET`)
+  * You have placed your input `<form>` in a `<table>` (the table should be in the form) in your input code
+  * You have typo'd either of the `POST` variables in your verification code.
+
+
 = Other =
 
 == Can I delete a key/all keys/a site/my account? ==
