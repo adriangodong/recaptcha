@@ -24,7 +24,7 @@ it means that reCAPTCHA has detected that your browser can handle some Javascrip
 
 Follow the instructions in the message and turn off JS *totally* in your browser for the duration of your testing.
 
-Do not assume that turning off JS means simply doing this (in IE6 and IE7):  Tools > Internet Options > Security > Custom level > Scripting > Active scripting > Disable.  By default, this will only turn off JS in your Intranet zone, which means that the page containing the recaptcha widget will have JS turned off; but the page loaded into the iframe between the noscript tags will still have JS turned on, hence you will get the abovementioned message.
+Do not assume that turning off JS means simply doing this (in IE6 and IE7):  Tools > Internet Options > Security > Custom level > Scripting > Active scripting > Disable.  By default, this will only turn off JS in your Intranet zone, which means that the page containing the recaptcha widget will have JS turned off; but the page loaded into the iframe between the noscript tags will still have JS turned on, hence you will get the above-mentioned message.
 
 To turn off JS *totally* in this case, select the Internet zone (under Tools > Internet Options > Security) and then choose Custom level > Scripting > Active scripting > Disable as was done for the Intranet zone.
 
@@ -52,7 +52,7 @@ On the verification word, reCAPTCHA intentionally allows an "off by one" error d
 
 You probably aren't validating the reCAPTCHA with the API servers.
 
-== I keep getting "incorrect-captcha-sol" even though I'm entering the correct words ===
+== I keep getting "incorrect-captcha-sol" even though I'm entering the correct words ==
 
 You are _probably_ not passing in the user's input into the verification routine because you're not getting them from the previous step. You should be ensuring the contents of (in PHP, other languages may differ in syntax) `$_POST['recaptcha_response_field']` and `$_POST['recaptcha_challenge_field']` [http://code.google.com/apis/recaptcha/docs/tips.html are not empty or null] before calling the verification routine anyway.
 
@@ -60,6 +60,12 @@ Reasons this may be happening include:
   * You are expecting the input to come from `POST`, but your input form specifies the `method` as `GET` (or you've not specified it at all, in which case it will default to `GET`)
   * You have placed your input `<form>` in a `<table>` (the table should be in the form) in your input code
   * You have typo'd either of the `POST` variables in your verification code.
+
+== I'm getting certificate errors for api-secure.recaptcha.net ==
+
+The recaptcha.net domain was deprecated back in [http://groups.google.com/group/recaptcha/browse_thread/thread/7a4839d13ac3dcf5/a51be72cd56c1461 June 2010], and finally obsoleted starting in [http://groups.google.com/group/recaptcha/msg/8e88d1199244a778 April 2011].
+
+As the second link indicates, you need to replace all instances of https://api-secure.recaptcha.net/XXX with https://www.google.com/recaptcha/api/XXX 
 
 
 = Other =
