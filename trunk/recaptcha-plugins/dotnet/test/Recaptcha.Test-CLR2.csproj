@@ -40,6 +40,7 @@
     <Content Include="CreateUserWizardCustom.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="FormView.aspx" />
+    <Content Include="Iframe.aspx" />
     <Content Include="ListView.aspx" />
     <Content Include="MultiView.aspx" />
     <Content Include="MultiViewInUpdatePanel.aspx" />
@@ -76,6 +77,13 @@
     </Compile>
     <Compile Include="FormView.aspx.designer.cs">
       <DependentUpon>FormView.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Iframe.aspx.cs">
+      <DependentUpon>Iframe.aspx</DependentUpon>
+      <SubType>ASPXCodeBehind</SubType>
+    </Compile>
+    <Compile Include="Iframe.aspx.designer.cs">
+      <DependentUpon>Iframe.aspx</DependentUpon>
     </Compile>
     <Compile Include="ListView.aspx.cs">
       <DependentUpon>ListView.aspx</DependentUpon>
