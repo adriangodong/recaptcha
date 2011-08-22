@@ -14,6 +14,7 @@
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <OldToolsVersion>3.5</OldToolsVersion>
     <TargetFrameworkProfile />
+    <UseIISExpress>false</UseIISExpress>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -39,8 +40,10 @@
   <ItemGroup>
     <Content Include="CreateUserWizard.aspx" />
     <Content Include="CreateUserWizardCustom.aspx" />
+    <Content Include="CustomTranslation.aspx" />
     <Content Include="Default.aspx" />
     <Content Include="FormView.aspx" />
+    <Content Include="Iframe.aspx" />
     <Content Include="ListView.aspx" />
     <Content Include="MultiView.aspx" />
     <Content Include="MultiViewInUpdatePanel.aspx" />
@@ -64,6 +67,12 @@
     <Compile Include="CreateUserWizardCustom.aspx.designer.cs">
       <DependentUpon>CreateUserWizardCustom.aspx</DependentUpon>
     </Compile>
+    <Compile Include="CustomTranslation.aspx.cs">
+      <DependentUpon>CustomTranslation.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="CustomTranslation.aspx.designer.cs">
+      <DependentUpon>CustomTranslation.aspx</DependentUpon>
+    </Compile>
     <Compile Include="Default.aspx.cs">
       <DependentUpon>Default.aspx</DependentUpon>
       <SubType>ASPXCodeBehind</SubType>
@@ -77,6 +86,12 @@
     </Compile>
     <Compile Include="FormView.aspx.designer.cs">
       <DependentUpon>FormView.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Iframe.aspx.cs">
+      <DependentUpon>Iframe.aspx</DependentUpon>
+    </Compile>
+    <Compile Include="Iframe.aspx.designer.cs">
+      <DependentUpon>Iframe.aspx</DependentUpon>
     </Compile>
     <Compile Include="ListView.aspx.cs">
       <DependentUpon>ListView.aspx</DependentUpon>
