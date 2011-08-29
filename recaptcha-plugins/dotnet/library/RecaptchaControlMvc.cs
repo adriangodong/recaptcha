@@ -19,9 +19,7 @@
 // THE SOFTWARE.
 
 using System;
-using System.Collections.Generic;
 using System.Net;
-using System.Text;
 using System.Web.Mvc;
 using System.Configuration;
 using System.Web.UI;
@@ -79,29 +77,37 @@ namespace Recaptcha
 
             public override void OnActionExecuting(ActionExecutingContext filterContext)
             {
-                RecaptchaValidator validator = new Recaptcha.RecaptchaValidator();
-                validator.PrivateKey = RecaptchaControlMvc.PrivateKey;
-                validator.RemoteIP = filterContext.HttpContext.Request.UserHostAddress;
-                validator.Challenge = filterContext.HttpContext.Request.Form[CHALLENGE_FIELD_KEY];
-                validator.Response = filterContext.HttpContext.Request.Form[RESPONSE_FIELD_KEY];
-                validator.Proxy = proxy;
 
-                if (string.IsNullOrEmpty(validator.Challenge))
+                if (SkipRecaptcha)
                 {
-                    this.recaptchaResponse = RecaptchaResponse.InvalidChallenge;
-                }
-                else if (string.IsNullOrEmpty(validator.Response))
-                {
-                    this.recaptchaResponse = RecaptchaResponse.InvalidResponse;
+                    filterContext.ActionParameters["captchaValid"] = true;
                 }
                 else
                 {
-                    this.recaptchaResponse = validator.Validate();
-                }
+                    RecaptchaValidator validator = new Recaptcha.RecaptchaValidator();
+                    validator.PrivateKey = RecaptchaControlMvc.PrivateKey;
+                    validator.RemoteIP = filterContext.HttpContext.Request.UserHostAddress;
+                    validator.Challenge = filterContext.HttpContext.Request.Form[CHALLENGE_FIELD_KEY];
+                    validator.Response = filterContext.HttpContext.Request.Form[RESPONSE_FIELD_KEY];
+                    validator.Proxy = proxy;
 
-                // this will push the result values into a parameter in our Action
-                filterContext.ActionParameters["captchaValid"] = this.recaptchaResponse.IsValid;
-                filterContext.ActionParameters["captchaErrorMessage"] = this.recaptchaResponse.ErrorMessage;
+                    if (string.IsNullOrEmpty(validator.Challenge))
+                    {
+                        this.recaptchaResponse = RecaptchaResponse.InvalidChallenge;
+                    }
+                    else if (string.IsNullOrEmpty(validator.Response))
+                    {
+                        this.recaptchaResponse = RecaptchaResponse.InvalidResponse;
+                    }
+                    else
+                    {
+                        this.recaptchaResponse = validator.Validate();
+                    }
+
+                    // this will push the result values into a parameter in our Action
+                    filterContext.ActionParameters["captchaValid"] = this.recaptchaResponse.IsValid;
+                    filterContext.ActionParameters["captchaErrorMessage"] = this.recaptchaResponse.ErrorMessage;
+                }
 
                 base.OnActionExecuting(filterContext);
             }
