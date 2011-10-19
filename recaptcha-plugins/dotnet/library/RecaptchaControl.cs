@@ -284,6 +284,8 @@ namespace Recaptcha
             get
             {
                 return (this.recaptchaResponse != null) ?
+                    this.customTranslations != null && !string.IsNullOrEmpty(this.customTranslations["incorrect_try_again"]) ?
+                    this.customTranslations["incorrect_try_again"] :
                     this.recaptchaResponse.ErrorMessage :
                     null;
             }
