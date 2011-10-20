@@ -61,6 +61,16 @@ Reasons this may be happening include:
   * You have placed your input `<form>` in a `<table>` (the table should be in the form) in your input code
   * You have typo'd either of the `POST` variables in your verification code.
 
+When posting about this problem to the list, please supply the output of the following (PHP - provide similar for other languages please) debug code which should go directly before any call to `recaptcha_check_answer()` or any other call that submits the entered input for verification:
+
+{{{
+<?php
+echo "<pre> _POST: =========\n";
+print_r($_POST);
+echo "\n=========\n</pre>"
+?>
+}}}
+
 == I'm getting certificate errors for api-secure.recaptcha.net ==
 
 The recaptcha.net domain was deprecated back in [http://groups.google.com/group/recaptcha/browse_thread/thread/7a4839d13ac3dcf5/a51be72cd56c1461 June 2010], and finally obsoleted starting in [http://groups.google.com/group/recaptcha/msg/8e88d1199244a778 April 2011].
