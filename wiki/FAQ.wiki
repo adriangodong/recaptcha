@@ -75,7 +75,7 @@ echo "\n=========\n</pre>"
 
 The recaptcha.net domain was deprecated back in [http://groups.google.com/group/recaptcha/browse_thread/thread/7a4839d13ac3dcf5/a51be72cd56c1461 June 2010], and finally obsoleted starting in [http://groups.google.com/group/recaptcha/msg/8e88d1199244a778 April 2011].
 
-As the second link indicates, you need to replace all instances of https://api-secure.recaptcha.net/XXX with https://www.google.com/recaptcha/api/XXX 
+As the second link indicates, you need to replace all instances of https://api-secure.recaptcha.net/XXX with https://www.google.com/recaptcha/api/XXX (or update the [http://code.google.com/p/recaptcha/downloads/list plugin] you're using.)
 
 = Other =
 
