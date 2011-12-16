@@ -67,7 +67,7 @@ When posting about this problem to the list, please supply the output of the fol
 <?php
 echo "<pre> _POST: =========\n";
 print_r($_POST);
-echo "\n=========\n</pre>"
+echo "\n=========\n</pre>";
 ?>
 }}}
 
