@@ -71,6 +71,24 @@ echo "\n=========\n</pre>"
 ?>
 }}}
 
+Example output from the above on a form that also has a user, two password entries and an email:
+{{{
+ _POST: =========
+Array
+(
+    [user] => asdfghjk
+    [password] => asdf
+    [password2] => asdf
+    [email] => 
+    [recaptcha_challenge_field] => 03AHJ_VuvGHdNKNYZCZt_MJ6EDiDNdorrvARpUiuQ2OjZ4y2zR_ejuRGW5zPGPaHVDg_sywkAuA3rsMKoKNjMzUvNjxWAs8G8DBVexQKuKanfvFIt0uFj2LfEU6KKwHNDONM_MJpn01fBHnRxhhvHwbt4fL__7Q_dmvA
+    [recaptcha_response_field] => jerespe zollner:
+)
+
+=========
+}}}
+
+The last two elements shown above should be (a) present and (b) have values.
+
 == I'm getting certificate errors for api-secure.recaptcha.net ==
 
 The recaptcha.net domain was deprecated back in [http://groups.google.com/group/recaptcha/browse_thread/thread/7a4839d13ac3dcf5/a51be72cd56c1461 June 2010], and finally obsoleted starting in [http://groups.google.com/group/recaptcha/msg/8e88d1199244a778 April 2011].
