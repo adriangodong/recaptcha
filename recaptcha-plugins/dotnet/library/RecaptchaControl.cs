@@ -278,7 +278,7 @@ namespace Recaptcha
         #region IValidator Members
 
         [LocalizableAttribute(true)]
-        [DefaultValue("The verification words are incorrect.")]
+        [DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
         public string ErrorMessage
         {
             get
@@ -297,11 +297,12 @@ namespace Recaptcha
         }
 
         [Browsable(false)]
+        [DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
         public bool IsValid
         {
             get
             {
-                return this.recaptchaResponse == null ? true : this.recaptchaResponse.IsValid;
+                return this.recaptchaResponse == null || this.recaptchaResponse.IsValid;
             }
 
             set
