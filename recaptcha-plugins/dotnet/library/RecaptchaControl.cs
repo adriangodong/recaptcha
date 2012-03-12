@@ -277,7 +277,7 @@ namespace Recaptcha
 
         #region IValidator Members
 
-        [LocalizableAttribute(true)]
+        [Browsable(false)]
         [DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
         public string ErrorMessage
         {
