@@ -360,7 +360,8 @@ namespace Recaptcha
             StringBuilder urlBuilder = new StringBuilder();
             urlBuilder.Append(Context.Request.IsSecureConnection || this.overrideSecureMode ? RECAPTCHA_SECURE_HOST : RECAPTCHA_HOST);
             urlBuilder.Append(noScript ? "/noscript?" : "/challenge?");
-            urlBuilder.AppendFormat("k={0}", this.PublicKey);
+            urlBuilder.AppendFormat("k={0}&", this.PublicKey);
+            urlBuilder.AppendFormat("hl={0}&", this.Language);
             return urlBuilder.ToString();
         }
     }
