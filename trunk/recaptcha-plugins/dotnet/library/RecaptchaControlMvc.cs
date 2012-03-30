@@ -32,6 +32,7 @@ namespace Recaptcha
         private static string publicKey;
         private static string privateKey;
         private static bool skipRecaptcha;
+        private static bool overrideSecureMode;
         private static IWebProxy proxy;
 
         public static string PublicKey
@@ -50,6 +51,12 @@ namespace Recaptcha
         {
             get { return skipRecaptcha; }
             set { skipRecaptcha = value; }
+        }
+
+        public static bool OverrideSecureMode
+        {
+            get { return overrideSecureMode; }
+            set { overrideSecureMode = value; }
         }
 
         public static IWebProxy Proxy
@@ -131,6 +138,7 @@ namespace Recaptcha
             if (!string.IsNullOrEmpty(language)) captchaControl.Language = language;
             captchaControl.PublicKey = publicKey;
             captchaControl.PrivateKey = privateKey;
+            captchaControl.OverrideSecureMode = overrideSecureMode;
 
             var htmlWriter = new HtmlTextWriter(new StringWriter());
 
@@ -138,5 +146,6 @@ namespace Recaptcha
 
             return htmlWriter.InnerWriter.ToString();
         }
+
     }
 }
