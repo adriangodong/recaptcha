@@ -122,10 +122,10 @@ namespace Recaptcha
 
         public static string GenerateCaptcha(this HtmlHelper helper)
         {
-            return GenerateCaptcha(helper, "recaptcha", "default", null);
+            return GenerateCaptcha(helper, "recaptcha", "default", null, null);
         }
 
-        public static string GenerateCaptcha(this HtmlHelper helper, string id, string theme, string language)
+        public static string GenerateCaptcha(this HtmlHelper helper, string id, string theme, string language, short? tabIndex)
         {
             if (string.IsNullOrEmpty(publicKey) || string.IsNullOrEmpty(privateKey))
             {
@@ -136,6 +136,7 @@ namespace Recaptcha
             captchaControl.ID = id;
             captchaControl.Theme = theme;
             if (!string.IsNullOrEmpty(language)) captchaControl.Language = language;
+            if (tabIndex.HasValue) captchaControl.TabIndex = tabIndex.Value;
             captchaControl.PublicKey = publicKey;
             captchaControl.PrivateKey = privateKey;
             captchaControl.OverrideSecureMode = overrideSecureMode;
