@@ -117,6 +117,7 @@ sub _post_request {
   my ( $url, $args ) = @_;
 
   my $ua = LWP::UserAgent->new();
+  $ua->env_proxy();
   return $ua->post( $url, $args );
 }
 
@@ -329,6 +330,12 @@ and C<error>.
     }
 
 See the /examples subdirectory for examples of how to call C<check_answer>.
+
+Note: this method will make an HTTP request to Google to verify the user input.
+If this request must be routed via a proxy in your environment, use the
+standard environment variable to specify the proxy address, e.g.:
+
+    $ENV{http_proxy} = 'http://myproxy:3128';
 
 =back
 
