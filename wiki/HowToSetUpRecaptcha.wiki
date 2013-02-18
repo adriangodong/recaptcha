@@ -1,6 +1,6 @@
 #summary How to set up reCAPTCHA.
 
-*Note: this documentation is a community-supported, unofficial version of the official docs, and may be out of date or incorrect in parts. The official docs are located at: http://code.google.com/apis/recaptcha/intro.html *
+*Note: this documentation is a community-supported, unofficial version of the official docs, and may be out of date or incorrect in parts. The official docs are located at: https://developers.google.com/recaptcha/intro *
 
 reCAPTCHA is a free CAPTCHA service that helps protect your site against spam, malicious registrations and other forms of attacks where computers try to disguise themselves as a human. reCAPTCHA comes in the form of a widget that you can easily add to your blog, forum, registration, etc. Below you can find instructions on how to add reCAPTCHA to your site.
 
